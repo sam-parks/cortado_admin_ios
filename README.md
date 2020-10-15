@@ -1,4 +1,4 @@
-# cortado_admin_ios_ios
+# cortado_admin_ios
 
 A new Flutter project.
 

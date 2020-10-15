@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/bloc.dart';
 import 'package:cortado_admin_ios/src/data/order.dart';
+import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/services/order_service.dart';
 
 class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
-  OrderService _orderService;
+  OrderService get _orderService => locator.get();
 
-  OrdersBloc(this._orderService) : super(null);
-
+  OrdersBloc() : super(null);
 
   @override
   Stream<OrdersState> mapEventToState(

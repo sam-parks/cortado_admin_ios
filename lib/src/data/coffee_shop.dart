@@ -1,7 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase/firestore.dart';
 
 class CoffeeShopsModel extends ChangeNotifier {
   List<CoffeeShop> coffeeShops = [];
@@ -68,7 +68,7 @@ class CoffeeShop {
       this.currentDistance,
       this.picture);
 
-  CoffeeShop.fromSnapshot(DocumentSnapshot snapshot)
+  CoffeeShop.fromSnapshot(dynamic snapshot)
       : this.fromData(snapshot.data(), reference: snapshot.ref);
 
   CoffeeShop.fromData(Map<dynamic, dynamic> data, {this.reference}) {

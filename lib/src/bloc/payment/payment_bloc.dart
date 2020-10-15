@@ -2,15 +2,16 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/custom_account.dart';
+import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/services/coffee_shop_service.dart';
 import 'package:cortado_admin_ios/src/services/stripe_service.dart';
 import 'bloc.dart';
 
 class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
-  PaymentBloc(this.stripeService, this.coffeeShopService) : super(null);
+  PaymentBloc() : super(null);
 
-  StripeService stripeService;
-  CoffeeShopService coffeeShopService;
+  StripeService get stripeService => locator.get();
+  CoffeeShopService get coffeeShopService => locator.get();
 
   @override
   Stream<PaymentState> mapEventToState(

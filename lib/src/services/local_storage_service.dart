@@ -5,9 +5,6 @@ import 'package:localstorage/localstorage.dart';
 class LocalStorageService extends ChangeNotifier {
   final LocalStorage storage = LocalStorage('user.json');
 
-  LocalStorageService._();
-  static LocalStorageService _instance = LocalStorageService._();
-  static LocalStorageService get instance => _instance;
 
   Future<void> saveUserToLocal(CortadoUser user) {
     return storage.setItem("currentUser", user.toJsonEncodable());

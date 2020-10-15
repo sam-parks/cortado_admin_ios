@@ -29,6 +29,7 @@ dependencies:
   cloud_firestore: ^0.14.0+2
   firebase_messaging: ^7.0.0
   cloud_functions: ^0.6.0
+  firebase_storage: ^4.0.1
 
   #Utilities
   intl: any
@@ -62,6 +63,7 @@ dependencies:
   font_awesome_flutter: ^8.8.1
   flavor: ^1.0.1
   flutter_masked_text: ^0.8.0
+  get_it: ^3.1.0
 
 
   #BLOC and PROVIDER

@@ -1,16 +1,11 @@
 import 'dart:async';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
-import 'package:cortado_admin_ios/src/data/cortado_user.dart';
-import 'package:cortado_admin_ios/src/data/models/auth_state.dart';
-import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
-import 'package:cortado_admin_ios/src/services/firebase_service.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/charts/daily_redemptions_bar_chart.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 
 class ManageUserPage extends StatefulWidget {
   ManageUserPage({Key key, this.coffeeShop}) : super(key: key);
@@ -20,36 +15,13 @@ class ManageUserPage extends StatefulWidget {
 }
 
 class _ManageUserPageState extends State<ManageUserPage> {
-  CoffeeShop _coffeeShop;
-  List<CortadoUser> _users = [];
+
   StreamSubscription _usersStream;
 
   @override
   void dispose() {
     super.dispose();
     _usersStream.cancel();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _coffeeShop = widget.coffeeShop == null
-        ? Provider.of<CoffeeShopState>(context, listen: false).coffeeShop
-        : widget.coffeeShop;
-    UserType userType = Provider.of<AuthState>(context, listen: false).userType;
-    if (userType == UserType.superUser) {
-      _usersStream = allUsers().listen((user) {
-        setState(() {
-          _users.add(user);
-        });
-      });
-    } else {
-      _usersStream = users(_coffeeShop.reference).listen((user) {
-        setState(() {
-          _users.add(user);
-        });
-      });
-    }
   }
 
   ScrollController _scrollController = ScrollController();

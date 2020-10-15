@@ -1,6 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart' as cf;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cortado_admin_ios/src/data/models/auth_state.dart';
-import 'package:firebase/firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 class CortadoUser {
@@ -35,7 +34,7 @@ class CortadoUser {
   CortadoUser.fromSnap(DocumentSnapshot snapshot, {auth.User firebaseUser})
       : this.fromData(
           snapshot.data(),
-          reference: snapshot.ref,
+          reference: snapshot.reference,
           firebaseUser: firebaseUser,
         );
 
@@ -90,8 +89,8 @@ class CortadoUser {
       "isCortadoAdmin": this.isCortadoAdmin,
       "isCoffeeShopAdmin": this.isCoffeeShopAdmin,
       "createdAt": this.createdAt == null
-          ? cf.Timestamp.fromDate(DateTime.now())
-          : cf.Timestamp(this.createdAt.millisecondsSinceEpoch ~/ 1000, 0),
+          ? Timestamp.fromDate(DateTime.now())
+          : Timestamp(this.createdAt.millisecondsSinceEpoch ~/ 1000, 0),
     };
   }
 

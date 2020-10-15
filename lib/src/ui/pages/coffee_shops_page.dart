@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:cortado_admin_ios/src/data/message.dart';
-import 'package:cortado_admin_ios/src/services/firebase_service.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/coffee_shop_tile.dart';
 import 'package:flutter/material.dart';
@@ -29,23 +28,7 @@ class _CoffeeShopsPageState extends State<CoffeeShopsPage> {
     _coffeeShopsStream.cancel();
   }
 
-  @override
-  void initState() {
-    super.initState();
 
-    _admins = allCoffeeShopAdmins();
-    _coffeeShopsStream = allCoffeeShops().listen((coffeeShop) {
-      setState(() {
-        _coffeeShops.add(coffeeShop);
-      });
-    });
-
-    _messagesStream = coffeeShopConversations().listen((conversation) {
-      setState(() {
-        _conversations.add(conversation);
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

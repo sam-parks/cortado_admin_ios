@@ -1,10 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/bloc.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
 import 'package:cortado_admin_ios/src/data/order.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
-import 'package:firebase/firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
