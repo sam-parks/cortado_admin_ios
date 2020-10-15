@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
-import 'package:cortado_admin_ios/src/data/models/auth_state.dart';
 import 'package:cortado_admin_ios/src/ui/pages/coffee_shops_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/manage_user_page.dart';
@@ -11,6 +11,7 @@ import 'package:cortado_admin_ios/src/ui/pages/dashboard_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/revenue_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 class SideMenu extends StatefulWidget {
@@ -44,7 +45,7 @@ class _SideMenuState extends State<SideMenu> {
   void initState() {
     super.initState();
     _pageController = widget.dashboardController;
-    _userType = Provider.of<AuthState>(context, listen: false).userType;
+    _userType = Provider.of<AuthBloc>(context).state.user.userType;
     switch (_userType) {
       case UserType.barista:
         _pages = [
@@ -191,8 +192,8 @@ class _DynamicDrawerState extends State<DynamicDrawer> {
   @override
   initState() {
     super.initState();
-    _authState = Provider.of<AuthState>(context, listen: false);
-    _menuItems = createMenuItems(_authState.userType);
+    _authState = BlocProvider.of<AuthBloc>(context).state;
+    _menuItems = createMenuItems(_authState.user.userType);
     _selectedMenuItem = _menuItems[widget.currentScreen.index];
   }
 

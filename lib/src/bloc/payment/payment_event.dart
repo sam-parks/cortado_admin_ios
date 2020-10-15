@@ -1,4 +1,5 @@
-import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
+
+import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 
 abstract class PaymentEvent {
   const PaymentEvent();
@@ -10,7 +11,7 @@ class CreateCustomAccount extends PaymentEvent {
   final String accountHolderType;
   final String routingNumber;
   final String accountNumber;
-  final CoffeeShopState coffeeShopState;
+  final CoffeeShop coffeeShop;
 
   CreateCustomAccount(
     this.businessEmail,
@@ -18,7 +19,7 @@ class CreateCustomAccount extends PaymentEvent {
     this.accountHolderType,
     this.routingNumber,
     this.accountNumber,
-    this.coffeeShopState,
+    this.coffeeShop,
   );
 }
 

@@ -1,16 +1,14 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
-import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
 import 'package:cortado_admin_ios/src/utils/validate.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class MenuCategoryPage extends StatefulWidget {
@@ -33,23 +31,22 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   @override
   Widget build(BuildContext context) {
     MenuBloc menuBloc = BlocProvider.of<MenuBloc>(context);
-
-    return Consumer<CoffeeShopState>(builder:
-        (BuildContext context, CoffeeShopState coffeeShopState, Widget _) {
-      switch (widget.categoryType) {
-        case CategoryType.drink:
-          return _drinkForm(coffeeShopState, menuBloc);
-          break;
-        case CategoryType.food:
-          return _foodform(coffeeShopState, menuBloc);
-          break;
-        case CategoryType.addIn:
-          return _addInForm(coffeeShopState, menuBloc);
-          break;
-        default:
-          return Container();
-      }
-    });
+    // ignore: close_sinks
+    CoffeeShopBloc coffeeShopBloc = BlocProvider.of<CoffeeShopBloc>(context);
+    CoffeeShopState coffeeShopState = coffeeShopBloc.state;
+    switch (widget.categoryType) {
+      case CategoryType.drink:
+        return _drinkForm(coffeeShopState, menuBloc);
+        break;
+      case CategoryType.food:
+        return _foodform(coffeeShopState, menuBloc);
+        break;
+      case CategoryType.addIn:
+        return _addInForm(coffeeShopState, menuBloc);
+        break;
+      default:
+        return Container();
+    }
   }
 
   _addInForm(CoffeeShopState coffeeShopState, MenuBloc menuBloc) {
@@ -290,12 +287,13 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         Category category =
                             Category(id, addIns, title, description);
 
-                        coffeeShopState.coffeeShop.addIns
+                        /* coffeeShopState.coffeeShop.addIns
                             .removeWhere((category) => category.id == id);
                         coffeeShopState.coffeeShop.addIns.add(category);
 
+                        coffeeShopBloc.add(UpdateCoffeeShop(coffeeShop));
                         coffeeShopState.update(coffeeShopState.coffeeShop);
-                        menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
+                        menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop)); */
 
                         Navigator.of(context).pop();
                       }
@@ -316,7 +314,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             Category(Uuid().v4(), addIns, title, description);
 
                         coffeeShopState.coffeeShop.addIns.add(category);
-                        coffeeShopState.update(coffeeShopState.coffeeShop);
+                        //coffeeShopState.update(coffeeShopState.coffeeShop);
                         menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
 
                         Navigator.of(context).pop();
@@ -573,7 +571,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             .removeWhere((category) => category.id == id);
                         coffeeShopState.coffeeShop.food.add(category);
 
-                        coffeeShopState.update(coffeeShopState.coffeeShop);
+                        //coffeeShopState.update(coffeeShopState.coffeeShop);
                         menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
 
                         Navigator.of(context).pop();
@@ -595,7 +593,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             Category(Uuid().v4(), food, title, description);
 
                         coffeeShopState.coffeeShop.food.add(category);
-                        coffeeShopState.update(coffeeShopState.coffeeShop);
+                        //coffeeShopState.update(coffeeShopState.coffeeShop);
                         menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
 
                         Navigator.of(context).pop();
@@ -870,7 +868,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             .removeWhere((category) => category.id == id);
                         coffeeShopState.coffeeShop.drinks.add(category);
 
-                        coffeeShopState.update(coffeeShopState.coffeeShop);
+                        //coffeeShopState.update(coffeeShopState.coffeeShop);
                         menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
 
                         Navigator.of(context).pop();
@@ -892,7 +890,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             Category(Uuid().v4(), drinks, title, description);
 
                         coffeeShopState.coffeeShop.drinks.add(category);
-                        coffeeShopState.update(coffeeShopState.coffeeShop);
+                       // coffeeShopState.update(coffeeShopState.coffeeShop);
                         menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
 
                         Navigator.of(context).pop();

@@ -1,13 +1,12 @@
 import 'dart:typed_data';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/payment/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/user_management_bloc.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:cortado_admin_ios/src/data/custom_account.dart';
-import 'package:cortado_admin_ios/src/data/models/auth_state.dart';
-import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
-import 'package:cortado_admin_ios/src/ui/pages/dashboard_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
@@ -17,7 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:universal_html/prefer_universal/html.dart' as html;
+
 import 'package:cortado_admin_ios/src/ui/widgets/dialogs.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -42,15 +41,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
   List<CortadoUser> _baristas = [];
   UserManagementBloc _userManagementBloc;
+  // ignore: close_sinks
+  AuthBloc _authBloc;
 
   @override
   void initState() {
     super.initState();
 
-    _paymentBloc = Provider.of<PaymentBloc>(context, listen: false);
-    _userManagementBloc =
-        Provider.of<UserManagementBloc>(context, listen: false);
-    _customAccountId = Provider.of<CoffeeShopState>(context, listen: false)
+    _authBloc = BlocProvider.of<AuthBloc>(context);
+    _paymentBloc = BlocProvider.of<PaymentBloc>(context);
+    _userManagementBloc = BlocProvider.of<UserManagementBloc>(context);
+    _customAccountId = BlocProvider.of<CoffeeShopBloc>(context)
+        .state
         .coffeeShop
         .customStripeAccountId;
     if (_customAccountId != null) {
@@ -84,27 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  _startFilePicker() async {
-    html.InputElement uploadInput = html.FileUploadInputElement();
-    uploadInput.click();
-
-    uploadInput.onChange.listen((e) {
-      // read file content as dataURL
-      final files = uploadInput.files;
-      if (files.length == 1) {
-        final file = files[0];
-        html.FileReader reader = html.FileReader();
-
-        reader.onLoadEnd.listen((e) {
-          setState(() {
-            _pictureBytes = reader.result;
-          });
-        });
-
-        reader.readAsArrayBuffer(file);
-      }
-    });
-  }
+  _startFilePicker() async {}
 
   _baristaWidget(CoffeeShopState coffeeShopState) {
     return DashboardCard(
@@ -292,141 +274,135 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     ScrollController _scrollController = ScrollController();
 
-    return Consumer<AuthState>(
-      builder: (BuildContext context, AuthState authState, Widget _) {
-        return Consumer<CoffeeShopState>(
-          builder: (BuildContext context, CoffeeShopState coffeeShopState, _) {
-            _customAccountId = coffeeShopState.coffeeShop.customStripeAccountId;
+    return Consumer<CoffeeShopState>(
+      builder: (BuildContext context, CoffeeShopState coffeeShopState, _) {
+        _customAccountId = coffeeShopState.coffeeShop.customStripeAccountId;
 
-            return Scaffold(
-              resizeToAvoidBottomInset: false,
-              backgroundColor: Colors.transparent,
-              body: MultiBlocListener(
-                listeners: [
-                  BlocListener(
-                      cubit: _userManagementBloc,
-                      listener: (context, state) {
-                        if (state is BaristasRetrieved) {
-                          setState(() {
-                            _baristas = state.baristas;
-                            _baristasLoading = false;
-                          });
-                        }
-                      }),
-                  BlocListener(
-                    cubit: _paymentBloc,
-                    listener: (context, state) async {
-                      if (state is PaymentLoadingState) {
-                        setState(() {
-                          _loading = true;
-                        });
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: Colors.transparent,
+          body: MultiBlocListener(
+            listeners: [
+              BlocListener(
+                  cubit: _userManagementBloc,
+                  listener: (context, state) {
+                    if (state is BaristasRetrieved) {
+                      setState(() {
+                        _baristas = state.baristas;
+                        _baristasLoading = false;
+                      });
+                    }
+                  }),
+              BlocListener(
+                cubit: _paymentBloc,
+                listener: (context, state) async {
+                  if (state is PaymentLoadingState) {
+                    setState(() {
+                      _loading = true;
+                    });
+                  }
+
+                  if (state is CustomAccountCreated) {
+                    setState(() {
+                      _loading = false;
+                    });
+                  }
+
+                  if (state is CustomAccountLinkCreated) {
+                    setState(() {
+                      _loading = false;
+                    });
+
+                    await launch(state.url);
+                  }
+                  if (state is CustomAccountRetrieved) {
+                    setState(() {
+                      _loading = false;
+                      _customAccount = state.customAccount;
+
+                      if (_customAccount
+                          .externalAccounts.externalAccounts.isEmpty) {
+                        return;
                       }
 
-                      if (state is CustomAccountCreated) {
-                        setState(() {
-                          _loading = false;
-                        });
-                      }
-
-                      if (state is CustomAccountLinkCreated) {
-                        setState(() {
-                          _loading = false;
-                        });
-
-                        await launch(state.url);
-                      }
-                      if (state is CustomAccountRetrieved) {
-                        setState(() {
-                          _loading = false;
-                          _customAccount = state.customAccount;
-
-                          if (_customAccount
-                              .externalAccounts.externalAccounts.isEmpty) {
-                            return;
-                          }
-
-                          _externalAccount = _customAccount
-                              .externalAccounts.externalAccounts.first;
-                        });
-                      }
-                    },
-                  )
-                ],
-                child: _loading
-                    ? Container(
-                        alignment: Alignment.center,
-                        child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColors.caramel)))
-                    : Scrollbar(
+                      _externalAccount = _customAccount
+                          .externalAccounts.externalAccounts.first;
+                    });
+                  }
+                },
+              )
+            ],
+            child: _loading
+                ? Container(
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(AppColors.caramel)))
+                : Scrollbar(
+                    controller: _scrollController,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 130),
+                      child: ListView(
                         controller: _scrollController,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 130),
-                          child: ListView(
-                            controller: _scrollController,
-                            children: [
-                              Align(
-                                alignment: Alignment.topLeft,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 30, top: 20.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          AutoSizeText(
-                                            "Profile",
-                                            maxLines: 1,
-                                            style: TextStyles
-                                                .kWelcomeTitleTextStyle,
-                                          ),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
-                                            child: Text(
-                                              "Edit your shop details and payout details.",
-                                              style: TextStyles
-                                                  .kDefaultCaramelTextStyle,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      IconButton(
-                                          color: AppColors.dark,
-                                          tooltip: "Logout",
-                                          icon:
-                                              Icon(FontAwesomeIcons.signOutAlt),
-                                          onPressed: () => signOut(authState,
-                                              coffeeShopState, context)),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 30, top: 20.0),
+                              child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                children: [
-                                  _shopDetailsWidget(coffeeShopState),
+                                children: <Widget>[
                                   Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
-                                      _payoutWidget(coffeeShopState),
-                                      _baristaWidget(coffeeShopState)
+                                      AutoSizeText(
+                                        "Profile",
+                                        maxLines: 1,
+                                        style:
+                                            TextStyles.kWelcomeTitleTextStyle,
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
+                                        child: Text(
+                                          "Edit your shop details and payout details.",
+                                          style: TextStyles
+                                              .kDefaultCaramelTextStyle,
+                                        ),
+                                      )
                                     ],
-                                  )
+                                  ),
+                                  IconButton(
+                                      color: AppColors.dark,
+                                      tooltip: "Logout",
+                                      icon: Icon(FontAwesomeIcons.signOutAlt),
+                                      onPressed: () =>
+                                          _authBloc.add(SignOut())),
                                 ],
                               ),
+                            ),
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _shopDetailsWidget(coffeeShopState),
+                              Column(
+                                children: <Widget>[
+                                  _payoutWidget(coffeeShopState),
+                                  _baristaWidget(coffeeShopState)
+                                ],
+                              )
                             ],
                           ),
-                        ),
+                        ],
                       ),
-              ),
-            );
-          },
+                    ),
+                  ),
+          ),
         );
       },
     );

@@ -22,78 +22,122 @@ class CoffeeShopsModel extends ChangeNotifier {
 }
 
 class CoffeeShop {
-  String id;
-  String name;
-  Map<dynamic, dynamic> address;
-  List<dynamic> blackCoffees;
-  String createdAt;
-  String updatedAt;
-  String description;
-  String disabledReason;
-  String picture;
-  Map hours;
-  RedeemableType redeemableType;
-  String phone;
-  List<String> premiumCoffees;
-  DocumentReference reference;
-  double currentDistance;
-  List<Category> addIns;
-  List<Category> drinks;
-  List<Category> food;
-  List<dynamic> sizes;
-  List<dynamic> discounts;
-  List<dynamic> activeDeals;
-  String customStripeAccountId;
-  bool needsVerificationUpdate;
+  final String id;
+  final String name;
+  final Map<dynamic, dynamic> address;
+  final List<dynamic> blackCoffees;
+  final String createdAt;
+  final String updatedAt;
+  final String description;
+  final String disabledReason;
+  final String picture;
+  final Map hours;
+  final String phone;
+  final List<String> premiumCoffees;
+  final DocumentReference reference;
+  final List<Category> addIns;
+  final List<Category> drinks;
+  final List<Category> food;
+  final List<dynamic> sizes;
+  final List<dynamic> discounts;
+  final String customStripeAccountId;
+  final bool needsVerificationUpdate;
 
-  CoffeeShop(
-      this.reference,
-      this.name,
-      this.address,
-      this.phone,
-      this.hours,
-      this.sizes,
-      this.blackCoffees,
-      this.createdAt,
-      this.description,
-      this.disabledReason,
-      this.premiumCoffees,
-      this.addIns,
-      this.updatedAt,
-      this.drinks,
-      this.food,
-      this.needsVerificationUpdate,
-      this.customStripeAccountId,
-      this.discounts,
-      this.currentDistance,
-      this.picture);
+  const CoffeeShop({
+    this.reference,
+    this.name,
+    this.address,
+    this.phone,
+    this.hours,
+    this.sizes,
+    this.blackCoffees,
+    this.createdAt,
+    this.description,
+    this.disabledReason,
+    this.premiumCoffees,
+    this.addIns,
+    this.updatedAt,
+    this.drinks,
+    this.food,
+    this.needsVerificationUpdate,
+    this.customStripeAccountId,
+    this.discounts,
+    this.picture,
+    this.id,
+  });
+
+  CoffeeShop copyWith(
+      {String id,
+      String name,
+      Map<dynamic, dynamic> address,
+      List<dynamic> blackCoffees,
+      String createdAt,
+      String updatedAt,
+      String description,
+      String disabledReason,
+      String picture,
+      Map hours,
+      String phone,
+      List<String> premiumCoffees,
+      DocumentReference reference,
+      List<Category> addIns,
+      List<Category> drinks,
+      List<Category> food,
+      List<dynamic> sizes,
+      List<dynamic> discounts,
+      String customStripeAccountId,
+      bool needsVerificationUpdate}) {
+    return CoffeeShop(
+        id: id ?? this.id,
+        reference: reference ?? this.reference,
+        name: name ?? this.name,
+        address: address ?? this.address,
+        hours: hours ?? this.hours,
+        sizes: sizes ?? this.sizes,
+        blackCoffees: blackCoffees ?? this.blackCoffees,
+        createdAt: createdAt ?? this.createdAt,
+        description: description ?? this.description,
+        disabledReason: disabledReason ?? this.disabledReason,
+        premiumCoffees: premiumCoffees ?? this.premiumCoffees,
+        addIns: addIns ?? this.addIns,
+        updatedAt: updatedAt ?? this.updatedAt,
+        drinks: drinks ?? this.drinks,
+        food: food ?? this.food,
+        needsVerificationUpdate:
+            needsVerificationUpdate ?? this.needsVerificationUpdate,
+        customStripeAccountId:
+            customStripeAccountId ?? this.customStripeAccountId,
+        discounts: discounts ?? this.discounts,
+        picture: picture ?? this.picture,
+        phone: phone ?? this.phone);
+  }
 
   CoffeeShop.fromSnapshot(dynamic snapshot)
       : this.fromData(snapshot.data(), reference: snapshot.ref);
 
-  CoffeeShop.fromData(Map<dynamic, dynamic> data, {this.reference}) {
-    this.id = reference.id;
-    this.name = data['name'];
-    this.drinks = drinksToObjects(data);
-    this.food = foodToObjects(data);
-    this.sizes = data['sizes'];
-    this.addIns = addInsToCategory(data);
-    this.customStripeAccountId = data["customStripeAccountId"];
-    this.discounts = data['discounts'] ?? [];
-    this.address = data['address'];
-    this.needsVerificationUpdate = data['needsVerificationUpdate'] ?? true;
-    List<dynamic> blacks = data['blackCoffees'];
-    this.blackCoffees = List<String>.from(blacks);
-    this.createdAt = data['createdAt'];
-    this.updatedAt = data['updatedAt'];
-    this.description = data['description'];
-    this.disabledReason = data['disabledReason'];
-    this.hours = data['hours'];
-    this.phone = data['phone'];
-    this.picture = data['picture'];
-    List<dynamic> premiums = data['premiumCoffees'];
-    this.premiumCoffees = List<String>.from(premiums);
-  }
+  /// Empty user which represents an uninitialized coffee Shop.
+  static const empty = const CoffeeShop();
+
+  CoffeeShop.fromData(Map<dynamic, dynamic> data, {this.reference})
+      : this.id = reference.id,
+        this.name = data['name'],
+        this.drinks = drinksToObjects(data),
+        this.food = foodToObjects(data),
+        this.sizes = data['sizes'],
+        this.addIns = addInsToCategory(data),
+        this.customStripeAccountId = data["customStripeAccountId"],
+        this.discounts = data['discounts'] ?? [],
+        this.address = data['address'],
+        this.needsVerificationUpdate = data['needsVerificationUpdate'] ?? true,
+        this.blackCoffees = List<String>.from(data['blackCoffees']),
+        this.createdAt = data['createdAt'],
+        this.updatedAt = data['updatedAt'],
+        this.description = data['description'],
+        this.disabledReason = data['disabledReason'],
+        this.hours = data['hours'],
+        this.phone = data['phone'],
+        this.picture = data['picture'],
+        this.premiumCoffees = List<String>.from(data['premiumCoffees']);
 
   Map<String, dynamic> toJson() {
     return {

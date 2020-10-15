@@ -1,18 +1,21 @@
 import 'dart:async';
 
+import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/payment/payment_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
-import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
 import 'package:cortado_admin_ios/src/ui/app.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flavor/flavor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:sentry/sentry.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   Flavor.create(
     Environment.production,
   );
@@ -28,18 +31,16 @@ void setupApp() async {
 
   runZoned(
       () => runApp(
-            ChangeNotifierProvider(
-              create: (BuildContext context) => CoffeeShopState(),
+            BlocProvider(
+              create: (BuildContext context) => CoffeeShopBloc(),
               child: MultiBlocProvider(providers: [
+                BlocProvider<AuthBloc>(create: (context) => AuthBloc()),
                 BlocProvider<UserManagementBloc>(
-                  create: (context) => UserManagementBloc(),
-                ),
-                BlocProvider<MenuBloc>(
-                  create: (context) => MenuBloc(),
-                ),
+                    create: (context) => UserManagementBloc()),
+                BlocProvider<MenuBloc>(create: (context) => MenuBloc()),
                 BlocProvider<PaymentBloc>(
-                  create: (context) => PaymentBloc(),
-                ),
+                    create: (context) =>
+                        PaymentBloc(BlocProvider.of<CoffeeShopBloc>(context))),
                 BlocProvider<OrdersBloc>(create: (context) => OrdersBloc())
               ], child: MyApp()),
             ),

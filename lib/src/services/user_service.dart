@@ -9,13 +9,15 @@ class UserService {
   CollectionReference get _usersCollection => _firestore.collection('users');
   CollectionReference get _adminsCollection => _firestore.collection('admins');
 
+
   Future<CortadoUser> saveUser(CortadoUser userData) async {
     DocumentReference docRef = _usersCollection.doc(userData.firebaseUser.uid);
-    userData.createdAt = DateTime.now();
+    //userData.createdAt = DateTime.now();
     Map<String, dynamic> userDataJson = userData.toJson();
     await docRef.set(userDataJson);
-    userData.reference = docRef;
-    return userData;
+    CortadoUser updatedUser = userData.copyWith(reference: docRef);
+
+    return updatedUser;
   }
 
   Future<bool> checkCortadoFullAdmin(CortadoUser user) async {

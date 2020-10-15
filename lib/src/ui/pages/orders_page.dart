@@ -2,14 +2,12 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
-import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
 import 'package:cortado_admin_ios/src/data/order.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/order_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 class OrdersPage extends StatefulWidget {
   OrdersPage({Key key}) : super(key: key);
@@ -33,10 +31,7 @@ class _OrdersPageState extends State<OrdersPage> {
   @override
   void initState() {
     super.initState();
-    _ordersBloc = Provider.of<OrdersBloc>(context, listen: false);
-    _coffeeShop =
-        Provider.of<CoffeeShopState>(context, listen: false).coffeeShop;
-
+    _ordersBloc = BlocProvider.of<OrdersBloc>(context);
     _ordersBloc.add(GetOrders(_coffeeShop.reference));
   }
 

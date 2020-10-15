@@ -1,5 +1,5 @@
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
-import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_input_field.dart';
@@ -34,7 +34,8 @@ class _BaristaDetailsDialogFormState extends State<BaristaDetailsDialogForm> {
     // ignore: close_sinks
     UserManagementBloc _userManagementBloc =
         Provider.of<UserManagementBloc>(context);
-    CoffeeShopState _coffeeShopState = Provider.of<CoffeeShopState>(context);
+    CoffeeShopState _coffeeShopState =
+        BlocProvider.of<CoffeeShopBloc>(context).state;
     return BlocListener(
       cubit: _userManagementBloc,
       listener: (BuildContext context, state) {

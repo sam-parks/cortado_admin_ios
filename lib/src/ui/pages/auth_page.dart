@@ -1,9 +1,9 @@
-import 'package:cortado_admin_ios/src/data/models/auth_state.dart';
+import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -16,8 +16,15 @@ class _AuthPageState extends State<AuthPage> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _passwordFocus = FocusNode();
-
   bool _justEmail = false;
+  // ignore: close_sinks
+  AuthBloc authBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    authBloc = BlocProvider.of<AuthBloc>(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,8 +101,14 @@ class _AuthPageState extends State<AuthPage> {
 
   Widget _buildForm() {
     return Container(
-      child: Consumer<AuthState>(
-        builder: (context, auth, child) => Form(
+      child: BlocConsumer(
+        cubit: authBloc,
+        listener: (context, AuthState state) {
+          if (state.status == AuthStatus.error) {
+            _showMessage(state.error);
+          }
+        },
+        builder: (context, AuthState state) => Form(
           key: _formKey,
           child: Container(
             constraints: BoxConstraints(maxWidth: 400),
@@ -133,7 +146,7 @@ class _AuthPageState extends State<AuthPage> {
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (val) {
-                    _signIn(auth);
+                    authBloc.add(SignInEmailPressed(_username, _password));
                   },
                   validator: (val) =>
                       _justEmail || val.isNotEmpty ? null : 'Password Required',
@@ -147,17 +160,17 @@ class _AuthPageState extends State<AuthPage> {
                     color: AppColors.caramel,
                     text: 'Log In',
                     onTap: () {
-                      _signIn(auth);
+                      authBloc.add(SignInEmailPressed(_username, _password));
                     },
                   ),
                 ),
                 //GoogleSignInButton(),
-                if (auth.isLoading) ...[
+                if (state.status == AuthStatus.loading) ...[
                   CircularProgressIndicator(
                       valueColor:
                           AlwaysStoppedAnimation<Color>(AppColors.caramel))
                 ],
-                if (auth.error.isNotEmpty) ...[
+                if (state.status == AuthStatus.error) ...[
                   Container(
                     padding: EdgeInsets.only(top: 20.0),
                     child: RaisedButton(
@@ -166,8 +179,9 @@ class _AuthPageState extends State<AuthPage> {
                         _justEmail = true;
                         if (_formKey.currentState.validate()) {
                           _formKey.currentState.save();
-                          await auth.sendForgotPassword(_username);
-                          _showMessage('Reset link sent to your email!');
+                          //TODO send forgot password email
+                          /* await auth.sendForgotPassword(_username);
+                          _showMessage('Reset link sent to your email!'); */
                         }
                       },
                     ),
@@ -179,17 +193,6 @@ class _AuthPageState extends State<AuthPage> {
         ),
       ),
     );
-  }
-
-  _signIn(AuthState authState) async {
-    _justEmail = false;
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
-      await authState.loginWithEmail(_username, _password);
-      if (authState.error.isNotEmpty) {
-        _showMessage(authState.error);
-      }
-    }
   }
 
   Widget _buildImage() {

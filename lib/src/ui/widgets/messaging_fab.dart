@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
-import 'package:cortado_admin_ios/src/data/models/auth_state.dart';
-import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
-import 'package:cortado_admin_ios/src/services/firebase_messaging_service.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
+import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -42,7 +43,6 @@ class _FancyFabState extends State<FancyFab>
   String groupChatId;
   String id;
   String peerId;
-  FBMessagingAndNotificationService _messaging;
 
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
@@ -119,12 +119,10 @@ class _FancyFabState extends State<FancyFab>
 
   @override
   Widget build(BuildContext context) {
-    AuthState authState = Provider.of<AuthState>(context);
-    CoffeeShopState coffeeShopState = Provider.of<CoffeeShopState>(context);
-    _messaging = Provider.of<FBMessagingAndNotificationService>(context);
-    _messaging.stream.listen((event) {
-      unseenMessage = true;
-    });
+    AuthState authState = Provider.of<AuthBloc>(context).state;
+    CoffeeShopState coffeeShopState =
+        BlocProvider.of<CoffeeShopBloc>(context).state;
+
     return Container(
       height: 400,
       width: 350,
@@ -133,7 +131,7 @@ class _FancyFabState extends State<FancyFab>
           Positioned(
               bottom: 0,
               right: 40,
-              child: toggle(authState.userType == UserType.superUser)),
+              child: toggle(authState.user.userType == UserType.superUser)),
           Positioned(
             bottom: 0,
             right: 40,
@@ -156,8 +154,9 @@ class _FancyFabState extends State<FancyFab>
                         children: [
                           buildHeader(),
                           buildListMessage(
-                              authState.userType == UserType.superUser),
-                          buildInput(authState.userType == UserType.superUser,
+                              authState.user.userType == UserType.superUser),
+                          buildInput(
+                              authState.user.userType == UserType.superUser,
                               coffeeShopState.coffeeShop)
                         ],
                       ),

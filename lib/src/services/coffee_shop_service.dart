@@ -9,6 +9,13 @@ class CoffeeShopService {
   CollectionReference get _shopsCollection =>
       _firestore.collection('coffee_shops');
 
+  Future<CoffeeShop> init(String id) async {
+    print("coffeeShopId: " + id);
+    DocumentReference ref = _shopsCollection.doc(id);
+    DocumentSnapshot snapshot = await ref.get();
+    return CoffeeShop.fromSnapshot(snapshot);
+  }
+
   Future<void> updateCoffeeShop(CoffeeShop coffeeShop) async {
     try {
       DocumentReference docRef = _shopsCollection.doc(coffeeShop.id);

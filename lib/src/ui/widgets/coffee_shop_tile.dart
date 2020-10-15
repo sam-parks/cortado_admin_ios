@@ -1,5 +1,5 @@
+import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
-import 'package:cortado_admin_ios/src/data/models/auth_state.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/chat_box.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +24,7 @@ class CoffeeShopTile extends StatefulWidget {
 class _CoffeeShopTileState extends State<CoffeeShopTile> {
   @override
   Widget build(BuildContext context) {
-    AuthState authState = Provider.of<AuthState>(context);
+    AuthState authState = Provider.of<AuthBloc>(context).state;
     return Padding(
         padding: const EdgeInsets.only(right: 6.0, left: 6.0),
         child: Container(

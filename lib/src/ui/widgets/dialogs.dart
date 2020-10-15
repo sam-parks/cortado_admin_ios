@@ -1,10 +1,9 @@
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/orders_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/orders_event.dart';
 import 'package:cortado_admin_ios/src/bloc/payment/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/payment/payment_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/payment/payment_event.dart';
-import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
-import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/barista_details_dialog_form.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
@@ -16,16 +15,16 @@ import 'package:cortado_admin_ios/src/ui/widgets/payout_details_dialog_form.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:provider/provider.dart';
 
 newOrderDialog(
     String title, BuildContext ctx, PageController dashboardController) {
   showDialog(
     context: ctx,
     builder: (context) {
-      CoffeeShop coffeeShop =
-          Provider.of<CoffeeShopState>(context, listen: false).coffeeShop;
-      BlocProvider.of<OrdersBloc>(context).add(GetOrders(coffeeShop.reference));
+      CoffeeShopState _coffeeShopState =
+          BlocProvider.of<CoffeeShopBloc>(context).state;
+      BlocProvider.of<OrdersBloc>(context)
+          .add(GetOrders(_coffeeShopState.coffeeShop.reference));
       return AlertDialog(
         backgroundColor: AppColors.dark,
         title: Text(

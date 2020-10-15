@@ -1,8 +1,9 @@
 import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
-import 'package:cortado_admin_ios/src/utils/navigation/navigator.dart';
 import 'package:cortado_admin_ios/src/services/navigation_service.dart';
 import 'package:cortado_admin_ios/src/ui/router.dart';
+import 'package:cortado_admin_ios/src/ui/pages/home_page.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/side_menu.dart';
 import 'package:flavor/flavor.dart';
 import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart' as fluro;
@@ -29,8 +30,8 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Cortado',
       theme: kCortadoTheme,
-      initialRoute: NavUtils.initialURL,
       onGenerateRoute: router.generator,
+      home: HomePage(screen: CortadoAdminScreen.dashboard),
       navigatorKey: NavigationService.navigatorKey,
     );
   }

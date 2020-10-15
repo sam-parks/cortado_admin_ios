@@ -1,18 +1,15 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:universal_html/prefer_universal/html.dart' as html;
+import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cortado_admin_ios/src/constants.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
-import 'package:cortado_admin_ios/src/data/models/auth_state.dart';
-import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
-import 'package:cortado_admin_ios/src/services/firebase_messaging_service.dart';
-import 'package:cortado_admin_ios/src/services/local_storage_service.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/charts/daily_users_bar_chart.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 
 class DashboardPage extends StatefulWidget {
   DashboardPage({Key key, this.coffeeShop}) : super(key: key);
@@ -252,76 +249,74 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    AuthState authState = Provider.of<AuthState>(context);
-    return Consumer<CoffeeShopState>(
-      builder: (context, CoffeeShopState coffeeShopState, _) {
-        _drinksAdded = coffeeShopState.coffeeShop.drinks.isNotEmpty;
-        _foodAdded = coffeeShopState.coffeeShop.food.isNotEmpty;
-        _payoutInfoComplete =
-            !coffeeShopState.coffeeShop.needsVerificationUpdate ?? false;
+    // ignore: close_sinks
+    AuthBloc authBloc = BlocProvider.of<AuthBloc>(context);
+    CoffeeShopState coffeeShopState =
+        BlocProvider.of<CoffeeShopBloc>(context).state;
 
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: Colors.transparent,
-          body: Center(
-            child: Scrollbar(
-              controller: _scrollController,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 130.0),
-                child: ListView(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 20.0, left: 30),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                AutoSizeText(
-                                  "Hello " + authState.user.displayName,
-                                  maxLines: 1,
-                                  style: TextStyles.kWelcomeTitleTextStyle,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: Text(
-                                    "Welcome to your individualized sales dashboard.",
-                                    style: TextStyles.kDefaultCaramelTextStyle,
-                                  ),
-                                )
-                              ],
+    _drinksAdded = coffeeShopState.coffeeShop.drinks.isNotEmpty;
+    _foodAdded = coffeeShopState.coffeeShop.food.isNotEmpty;
+    _payoutInfoComplete =
+        !coffeeShopState.coffeeShop.needsVerificationUpdate ?? false;
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
+      body: Center(
+        child: Scrollbar(
+          controller: _scrollController,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 130.0),
+            child: ListView(
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20.0, left: 30),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            AutoSizeText(
+                              "Hello " + authBloc.state.user.displayName,
+                              maxLines: 1,
+                              style: TextStyles.kWelcomeTitleTextStyle,
                             ),
-                            IconButton(
-                                color: AppColors.dark,
-                                tooltip: "Logout",
-                                icon: Icon(FontAwesomeIcons.signOutAlt),
-                                onPressed: () => signOut(
-                                    authState, coffeeShopState, context)),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                "Welcome to your individualized sales dashboard.",
+                                style: TextStyles.kDefaultCaramelTextStyle,
+                              ),
+                            )
                           ],
                         ),
-                      ),
+                        IconButton(
+                            color: AppColors.dark,
+                            tooltip: "Logout",
+                            icon: Icon(FontAwesomeIcons.signOutAlt),
+                            onPressed: () => authBloc.add(SignOut())),
+                      ],
                     ),
-                    Container(
-                      width: SizeConfig.screenWidth,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _signUpChecklistWidget(),
-                          _cortadUsersStatsWidget()
-                        ],
-                      ),
-                    ),
-                    _welcomeWidget()
-                  ],
+                  ),
                 ),
-              ),
+                Container(
+                  width: SizeConfig.screenWidth,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _signUpChecklistWidget(),
+                      _cortadUsersStatsWidget()
+                    ],
+                  ),
+                ),
+                _welcomeWidget()
+              ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -353,14 +348,4 @@ class _DashboardPageState extends State<DashboardPage> {
         return "December";
     }
   }
-}
-
-signOut(AuthState authState, CoffeeShopState coffeeShopState, context) async {
-  await Provider.of<LocalStorageService>(context, listen: false).clearStorage();
-  Provider.of<FBMessagingAndNotificationService>(context, listen: false)
-      .clearToken();
-  coffeeShopState.clearCoffeeShop();
-  coffeeShopState.initialized = false;
-  await authState.logoutApp();
-  html.window.location.reload();
 }

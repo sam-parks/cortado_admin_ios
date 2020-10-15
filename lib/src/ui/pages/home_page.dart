@@ -1,14 +1,12 @@
+import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
-import 'package:cortado_admin_ios/src/data/models/auth_state.dart';
-import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
-import 'package:cortado_admin_ios/src/services/firebase_messaging_service.dart';
-import 'package:cortado_admin_ios/src/services/local_storage_service.dart';
 import 'package:cortado_admin_ios/src/ui/pages/auth_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/side_menu.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatefulWidget {
   final CortadoAdminScreen screen;
@@ -20,79 +18,89 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
+  // ignore: close_sinks
+  AuthBloc _authBloc;
+  // ignore: close_sinks
+  CoffeeShopBloc _coffeeShopBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _authBloc = BlocProvider.of<AuthBloc>(context);
+    _coffeeShopBloc = BlocProvider.of<CoffeeShopBloc>(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    CortadoUser currentUser =
-        Provider.of<LocalStorageService>(context).getUser("currentUser");
 
     PageController dashboardController =
         PageController(initialPage: widget.screen.index ?? 0);
-    return StreamBuilder<auth.User>(
-        stream: _auth.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData && (!snapshot.data.isAnonymous)) {
-            return Consumer<AuthState>(builder: (context, auth, child) {
-              if (currentUser != null && auth.fbUser != null) {
-                {
-                  if (auth.fbUser.email == currentUser.email) {
-                    print(currentUser.email);
-                    auth.setCurrentUser(currentUser);
-                  }
-                }
-              }
-
-              if (auth.isLoading) {
-                return Container(
-                    alignment: Alignment.center,
-                    child: CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(AppColors.caramel)));
-              }
-              if (auth.isLoggedIn) {
-                print("${auth.user.email} is logged in");
-                if (Provider.of<FBMessagingAndNotificationService>(context)
-                        .token ==
-                    null) {
-                  Provider.of<FBMessagingAndNotificationService>(context)
-                      .init(auth.user.id, dashboardController);
-                }
-
-                Provider.of<LocalStorageService>(context)
-                    .saveUserToLocal(auth.user);
-
-                if (auth.userType == UserType.superUser) {
-                  return SideMenu(auth.user);
-                }
-                return Consumer<CoffeeShopState>(
-                  builder: (context, coffeeShopState, _) {
-                    if (!coffeeShopState.initialized) {
-                      coffeeShopState.init(auth.user.coffeeShopId);
+    return BlocConsumer(
+        cubit: _authBloc,
+        listener: (context, AuthState state) {
+          if (state.status == AuthStatus.error) {
+            Flushbar(
+              icon: Icon(
+                Icons.error_outline,
+                color: AppColors.light,
+              ),
+              message: state.error,
+              duration: Duration(seconds: 3),
+              isDismissible: true,
+              flushbarStyle: FlushbarStyle.FLOATING,
+              backgroundColor: AppColors.dark,
+            )..show(context);
+          }
+        },
+        builder: (context, AuthState authState) {
+          switch (authState.status) {
+            case AuthStatus.loading:
+              return Container(
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(AppColors.caramel)));
+              break;
+            case AuthStatus.authenticated:
+              if (authState.user.userType == UserType.superUser) {
+                return SideMenu(authState.user);
+              } else {
+                return BlocBuilder(
+                  cubit: _coffeeShopBloc,
+                  builder: (context, CoffeeShopState coffeeShopState) {
+                    switch (coffeeShopState.status) {
+                      case CoffeeShopStatus.loading:
+                        return Center(
+                          child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.caramel)),
+                        );
+                        break;
+                      case CoffeeShopStatus.initialized:
+                        return SideMenu(
+                          authState.user,
+                          reauth: widget.reauth,
+                          coffeeShop: coffeeShopState.coffeeShop,
+                          screen: widget.screen ?? CortadoAdminScreen.dashboard,
+                          dashboardController: dashboardController,
+                        );
+                        break;
+                      default:
+                        return AuthPage();
                     }
-                    if (coffeeShopState.coffeeShop != null)
-                      return SideMenu(
-                        auth.user,
-                        reauth: widget.reauth,
-                        coffeeShop: coffeeShopState.coffeeShop,
-                        screen: widget.screen ?? CortadoAdminScreen.dashboard,
-                        dashboardController: dashboardController,
-                      );
-
-                    return Center(
-                      child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(AppColors.caramel)),
-                    );
                   },
                 );
-              } else {
-                return AuthPage();
               }
-            });
-          } else {
-            return AuthPage();
+              break;
+            case AuthStatus.unauthenticated:
+              return AuthPage();
+            case AuthStatus.unknown:
+              return AuthPage();
+            case AuthStatus.error:
+              return AuthPage();
+            default:
+              return AuthPage();
           }
         });
   }

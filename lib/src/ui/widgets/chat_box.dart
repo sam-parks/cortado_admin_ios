@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
-import 'package:cortado_admin_ios/src/data/models/auth_state.dart';
-import 'package:cortado_admin_ios/src/services/firebase_messaging_service.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
+import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -25,7 +25,6 @@ class _ChatBoxState extends State<ChatBox> {
   String groupChatId;
   String id;
   String peerId;
-  FBMessagingAndNotificationService _messaging;
 
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
@@ -43,11 +42,7 @@ class _ChatBoxState extends State<ChatBox> {
 
   @override
   Widget build(BuildContext context) {
-    AuthState authState = Provider.of<AuthState>(context);
-    _messaging = Provider.of<FBMessagingAndNotificationService>(context);
-    _messaging.stream.listen((event) {
-      print(event);
-    });
+    AuthState authState = Provider.of<AuthBloc>(context).state;
     return Container(
       height: 400,
       width: 350,
@@ -59,8 +54,9 @@ class _ChatBoxState extends State<ChatBox> {
               child: Column(
                 children: [
                   buildHeader(widget.coffeeShopName, widget.adminName),
-                  buildListMessage(authState.userType == UserType.superUser),
-                  buildInput(authState.userType == UserType.superUser)
+                  buildListMessage(
+                      authState.user.userType == UserType.superUser),
+                  buildInput(authState.user.userType == UserType.superUser)
                 ],
               ),
               color: AppColors.light,

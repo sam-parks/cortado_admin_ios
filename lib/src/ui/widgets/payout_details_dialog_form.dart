@@ -1,5 +1,5 @@
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/payment/bloc.dart';
-import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_input_field.dart';
@@ -33,7 +33,8 @@ class _PayoutDetailsDialogFormState extends State<PayoutDetailsDialogForm> {
   Widget build(BuildContext context) {
     // ignore: close_sinks
     PaymentBloc _paymentBloc = Provider.of<PaymentBloc>(context);
-    CoffeeShopState _coffeeShopState = Provider.of<CoffeeShopState>(context);
+    CoffeeShopState _coffeeShopState =
+        BlocProvider.of<CoffeeShopBloc>(context).state;
     return BlocListener(
       cubit: _paymentBloc,
       listener: (BuildContext context, state) {
@@ -204,7 +205,7 @@ class _PayoutDetailsDialogFormState extends State<PayoutDetailsDialogForm> {
                             _accountHolderType,
                             _routingNumber,
                             _accountNumber,
-                            _coffeeShopState));
+                            _coffeeShopState.coffeeShop));
                       }
                     },
                   ),

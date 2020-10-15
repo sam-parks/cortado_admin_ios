@@ -207,7 +207,7 @@ List<Widget> _lowerExpanded(CortadoUser user) {
             Icons.redeem,
             color: AppColors.dark,
           )),
-      Container(
+     /*  Container(
         constraints: BoxConstraints(minWidth: 200),
         padding: EdgeInsets.only(left: 4),
         alignment: Alignment.centerLeft,
@@ -238,9 +238,9 @@ List<Widget> _lowerExpanded(CortadoUser user) {
               fontFamily: kFontFamilyNormal,
               color: AppColors.caramel,
               fontSize: 15,
-            ),
+            ),xe
           ),
-        ),
+        ), */
     ],
   ));
 

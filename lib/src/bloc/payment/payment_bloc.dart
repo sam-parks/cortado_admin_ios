@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/custom_account.dart';
 import 'package:cortado_admin_ios/src/locator.dart';
@@ -8,8 +9,9 @@ import 'package:cortado_admin_ios/src/services/stripe_service.dart';
 import 'bloc.dart';
 
 class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
-  PaymentBloc() : super(null);
+  PaymentBloc(this.coffeeShopBloc) : super(null);
 
+  CoffeeShopBloc coffeeShopBloc;
   StripeService get stripeService => locator.get();
   CoffeeShopService get coffeeShopService => locator.get();
 
@@ -19,16 +21,18 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   ) async* {
     if (event is CreateCustomAccount) {
       yield PaymentLoadingState();
-      CoffeeShop coffeeShop = event.coffeeShopState.coffeeShop;
+      CoffeeShop coffeeShop = event.coffeeShop;
       String account = await stripeService.createCustomAccount(
           event.businessEmail,
           event.accountHolderName,
           event.accountHolderType,
           event.routingNumber,
           event.accountNumber);
-      coffeeShop.customStripeAccountId = account;
-      await coffeeShopService.updateCoffeeShop(coffeeShop);
-      event.coffeeShopState.update(coffeeShop);
+      CoffeeShop updatedCoffeeShop =
+          coffeeShop.copyWith(customStripeAccountId: account);
+
+      await coffeeShopService.updateCoffeeShop(updatedCoffeeShop);
+      coffeeShopBloc.add(UpdateCoffeeShop(updatedCoffeeShop));
       yield CustomAccountCreated();
     }
 

@@ -1,14 +1,15 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
-import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/charts/daily_redemptions_bar_chart.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -35,64 +36,63 @@ class _MenuPageState extends State<MenuPage> {
   @override
   Widget build(BuildContext context) {
     _menuBloc = Provider.of<MenuBloc>(context);
+    CoffeeShopState coffeeShopState =
+        BlocProvider.of<CoffeeShopBloc>(context).state;
+
     ScrollController _scrollController = ScrollController();
-    return Consumer<CoffeeShopState>(
-      builder: (BuildContext context, CoffeeShopState coffeeShopState, _) {
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: Colors.transparent,
-          body: Center(
-            child: Scrollbar(
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
+      body: Center(
+        child: Scrollbar(
+          controller: _scrollController,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 100),
+            child: ListView(
               controller: _scrollController,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 100),
-                child: ListView(
-                  controller: _scrollController,
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 30, top: 20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            AutoSizeText(
-                              "Online Menu",
-                              maxLines: 1,
-                              style: TextStyles.kWelcomeTitleTextStyle,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Text(
-                                "Customize items available through Cortado!",
-                                style: TextStyles.kDefaultCaramelTextStyle,
-                              ),
-                            )
-                          ],
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 30, top: 20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        AutoSizeText(
+                          "Online Menu",
+                          maxLines: 1,
+                          style: TextStyles.kWelcomeTitleTextStyle,
                         ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _editMenuWidget(coffeeShopState),
-                        _mostOrderedItemsWidget()
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            "Customize items available through Cortado!",
+                            style: TextStyles.kDefaultCaramelTextStyle,
+                          ),
+                        )
                       ],
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _editDiscountsWidget(coffeeShopState),
-                        _currentDealsWidget(coffeeShopState)
-                      ],
-                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _editMenuWidget(coffeeShopState),
+                    _mostOrderedItemsWidget()
                   ],
                 ),
-              ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _editDiscountsWidget(coffeeShopState),
+                    _currentDealsWidget(coffeeShopState)
+                  ],
+                ),
+              ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -382,8 +382,8 @@ class _MenuPageState extends State<MenuPage> {
                                 onPressed: () {
                                   coffeeShopState.coffeeShop.drinks
                                       .removeAt(index);
-                                  coffeeShopState
-                                      .update(coffeeShopState.coffeeShop);
+                                  // coffeeShopState
+                                  //   .update(coffeeShopState.coffeeShop);
                                   _menuBloc.add(RemoveCategory(
                                       coffeeShopState.coffeeShop));
                                 },
@@ -513,8 +513,7 @@ class _MenuPageState extends State<MenuPage> {
                               ),
                               onPressed: () {
                                 selectedCategory.items.removeAt(index);
-                                coffeeShopState
-                                    .update(coffeeShopState.coffeeShop);
+
                                 _menuBloc.add(
                                     UpdateMenu(coffeeShopState.coffeeShop));
                               },
@@ -639,8 +638,7 @@ class _MenuPageState extends State<MenuPage> {
                               ),
                               onPressed: () {
                                 selectedCategory.items.removeAt(index);
-                                coffeeShopState
-                                    .update(coffeeShopState.coffeeShop);
+
                                 _menuBloc.add(
                                     UpdateMenu(coffeeShopState.coffeeShop));
                               },
@@ -766,8 +764,7 @@ class _MenuPageState extends State<MenuPage> {
                               ),
                               onPressed: () {
                                 selectedCategory.items.removeAt(index);
-                                coffeeShopState
-                                    .update(coffeeShopState.coffeeShop);
+
                                 _menuBloc.add(
                                     UpdateMenu(coffeeShopState.coffeeShop));
                               },
@@ -877,8 +874,7 @@ class _MenuPageState extends State<MenuPage> {
                                 onPressed: () {
                                   coffeeShopState.coffeeShop.food
                                       .removeAt(index);
-                                  coffeeShopState
-                                      .update(coffeeShopState.coffeeShop);
+
                                   _menuBloc.add(RemoveCategory(
                                       coffeeShopState.coffeeShop));
                                 },
@@ -989,8 +985,7 @@ class _MenuPageState extends State<MenuPage> {
                                 onPressed: () {
                                   coffeeShopState.coffeeShop.addIns
                                       .removeAt(index);
-                                  coffeeShopState
-                                      .update(coffeeShopState.coffeeShop);
+
                                   _menuBloc.add(RemoveCategory(
                                       coffeeShopState.coffeeShop));
                                 },
@@ -1094,7 +1089,7 @@ class _MenuPageState extends State<MenuPage> {
                     ),
                     onPressed: () {
                       coffeeShopState.coffeeShop.discounts.removeAt(index);
-                      coffeeShopState.update(coffeeShopState.coffeeShop);
+                      //  coffeeShopState.update(coffeeShopState.coffeeShop);
                       _menuBloc.add(RemoveCategory(coffeeShopState.coffeeShop));
                     },
                   )

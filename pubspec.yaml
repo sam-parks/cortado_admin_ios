@@ -64,6 +64,7 @@ dependencies:
   flavor: ^1.0.1
   flutter_masked_text: ^0.8.0
   get_it: ^3.1.0
+  equatable: ^1.2.5
 
 
   #BLOC and PROVIDER

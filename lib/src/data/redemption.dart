@@ -1,4 +1,6 @@
-import 'package:firebase/firestore.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Redemption {
   String type;
   String drinkTitle;

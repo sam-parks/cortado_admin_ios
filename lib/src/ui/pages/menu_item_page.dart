@@ -1,8 +1,8 @@
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
-import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
@@ -10,7 +10,6 @@ import 'package:cortado_admin_ios/src/utils/validate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:provider/provider.dart';
 
 class MenuItemPage extends StatefulWidget {
   MenuItemPage({
@@ -37,23 +36,22 @@ class _MenuItemPageState extends State<MenuItemPage> {
   @override
   Widget build(BuildContext context) {
     MenuBloc menuBloc = BlocProvider.of<MenuBloc>(context);
+    CoffeeShopState coffeeShopState =
+        BlocProvider.of<CoffeeShopBloc>(context).state;
 
-    return Consumer<CoffeeShopState>(builder:
-        (BuildContext context, CoffeeShopState coffeeShopState, Widget _) {
-      switch (widget.categoryType) {
-        case CategoryType.drink:
-          return _drinkItemForm(coffeeShopState, menuBloc);
-          break;
-        case CategoryType.food:
-          return _foodItemForm(coffeeShopState, menuBloc);
-          break;
-        case CategoryType.addIn:
-          return _addInItemForm(coffeeShopState, menuBloc);
-          break;
-        default:
-          return Container();
-      }
-    });
+    switch (widget.categoryType) {
+      case CategoryType.drink:
+        return _drinkItemForm(coffeeShopState, menuBloc);
+        break;
+      case CategoryType.food:
+        return _foodItemForm(coffeeShopState, menuBloc);
+        break;
+      case CategoryType.addIn:
+        return _addInItemForm(coffeeShopState, menuBloc);
+        break;
+      default:
+        return Container();
+    }
   }
 
   _drinkItemForm(CoffeeShopState coffeeShopState, MenuBloc menuBloc) {
