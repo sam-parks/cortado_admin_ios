@@ -4,6 +4,7 @@ import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:keyboard_avoider/keyboard_avoider.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -81,15 +82,18 @@ class _AuthPageState extends State<AuthPage> {
               width: 100,
             ),
           ),
-          Center(
-            child: Container(
-              padding: EdgeInsets.only(top: 40.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    _buildImage(),
-                    _buildForm(),
-                  ],
+          KeyboardAvoider(
+            autoScroll: true,
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.only(top: 40.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      _buildImage(),
+                      _buildForm(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -131,6 +135,11 @@ class _AuthPageState extends State<AuthPage> {
                   },
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.emailAddress,
+                  onChanged: (val) {
+                    setState(() {
+                      _username = val;
+                    });
+                  },
                   validator: (val) => val.isNotEmpty ? null : 'Email Required',
                   onSaved: (val) => _username = val,
                 ),
@@ -147,6 +156,11 @@ class _AuthPageState extends State<AuthPage> {
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (val) {
                     authBloc.add(SignInEmailPressed(_username, _password));
+                  },
+                  onChanged: (val) {
+                    setState(() {
+                      _password = val;
+                    });
                   },
                   validator: (val) =>
                       _justEmail || val.isNotEmpty ? null : 'Password Required',

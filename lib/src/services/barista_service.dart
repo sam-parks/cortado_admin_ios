@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
+import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/services/auth_service.dart';
 
 class BaristaService {
   final FirebaseFirestore _firestore;
-  final AuthService _authService;
+  AuthService get _authService => locator.get();
 
-  BaristaService(this._firestore, this._authService);
+  BaristaService(this._firestore);
 
   CollectionReference get _usersCollection => _firestore.collection('users');
   CollectionReference get _adminsCollection => _firestore.collection('admins');

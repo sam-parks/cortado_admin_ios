@@ -38,7 +38,7 @@ class CustomAccount {
       this.tosAcceptance,
       this.type});
 
-  CustomAccount.fromJson(Map<String, dynamic> json) {
+  CustomAccount.fromJson(Map<dynamic, dynamic> json) {
     id = json['id'];
     object = json['object'];
     businessProfile = json['business_profile'] != null
@@ -131,7 +131,7 @@ class BusinessProfile {
       this.supportUrl,
       this.url});
 
-  BusinessProfile.fromJson(Map<String, dynamic> json) {
+  BusinessProfile.fromJson(Map<dynamic, dynamic> json) {
     mcc = json['mcc'];
     name = json['name'];
     productDescription = json['product_description'];
@@ -143,7 +143,7 @@ class BusinessProfile {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
     data['mcc'] = this.mcc;
     data['name'] = this.name;
     data['product_description'] = this.productDescription;
@@ -162,13 +162,13 @@ class Capabilities {
 
   Capabilities({this.cardPayments, this.transfers});
 
-  Capabilities.fromJson(Map<String, dynamic> json) {
+  Capabilities.fromJson(Map<dynamic, dynamic> json) {
     cardPayments = json['card_payments'];
     transfers = json['transfers'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
     data['card_payments'] = this.cardPayments;
     data['transfers'] = this.transfers;
     return data;
@@ -181,9 +181,10 @@ class ExternalAccounts {
   bool hasMore;
   String url;
 
-  ExternalAccounts({this.object, this.externalAccounts, this.hasMore, this.url});
+  ExternalAccounts(
+      {this.object, this.externalAccounts, this.hasMore, this.url});
 
-  ExternalAccounts.fromJson(Map<String, dynamic> json) {
+  ExternalAccounts.fromJson(Map<dynamic, dynamic> json) {
     object = json['object'];
     if (json['data'] != null) {
       externalAccounts = new List<ExternalAccount>();
@@ -196,7 +197,7 @@ class ExternalAccounts {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
     data['object'] = this.object;
     if (this.externalAccounts != null) {
       data['data'] = this.externalAccounts.map((v) => v.toJson()).toList();
@@ -237,7 +238,7 @@ class ExternalAccount {
       this.routingNumber,
       this.status});
 
-  ExternalAccount.fromJson(Map<String, dynamic> json) {
+  ExternalAccount.fromJson(Map<dynamic, dynamic> json) {
     id = json['id'];
     object = json['object'];
     account = json['account'];
@@ -304,7 +305,7 @@ class Individual {
       this.ssnLast4Provided,
       this.verification});
 
-  Individual.fromJson(Map<String, dynamic> json) {
+  Individual.fromJson(Map<dynamic, dynamic> json) {
     id = json['id'];
     object = json['object'];
     account = json['account'];
@@ -329,7 +330,7 @@ class Individual {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
     data['id'] = this.id;
     data['object'] = this.object;
     data['account'] = this.account;
@@ -375,7 +376,7 @@ class Address {
       this.postalCode,
       this.state});
 
-  Address.fromJson(Map<String, dynamic> json) {
+  Address.fromJson(Map<dynamic, dynamic> json) {
     city = json['city'];
     country = json['country'];
     line1 = json['line1'];
@@ -385,7 +386,7 @@ class Address {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
     data['city'] = this.city;
     data['country'] = this.country;
     data['line1'] = this.line1;
@@ -403,14 +404,14 @@ class Dob {
 
   Dob({this.day, this.month, this.year});
 
-  Dob.fromJson(Map<String, dynamic> json) {
+  Dob.fromJson(Map<dynamic, dynamic> json) {
     day = json['day'];
     month = json['month'];
     year = json['year'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
     data['day'] = this.day;
     data['month'] = this.month;
     data['year'] = this.year;
@@ -434,7 +435,7 @@ class Relationship {
       this.representative,
       this.title});
 
-  Relationship.fromJson(Map<String, dynamic> json) {
+  Relationship.fromJson(Map<dynamic, dynamic> json) {
     director = json['director'];
     executive = json['executive'];
     owner = json['owner'];
@@ -469,7 +470,7 @@ class Requirements {
       this.pastDue,
       this.pendingVerification});
 
-  Requirements.fromJson(Map<String, dynamic> json) {
+  Requirements.fromJson(Map<dynamic, dynamic> json) {
     if (json['currently_due'] != null) {
       currentlyDue = new List<dynamic>();
       json['currently_due'].forEach((v) {
@@ -503,7 +504,7 @@ class Requirements {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
     // ignore: unrelated_type_equality_checks
     if (this.currentlyDue != dynamic) {
       data['currently_due'] = this.currentlyDue.map((v) => v.toJson()).toList();
@@ -544,7 +545,7 @@ class Verification {
       this.document,
       this.status});
 
-  Verification.fromJson(Map<String, dynamic> json) {
+  Verification.fromJson(Map<dynamic, dynamic> json) {
     additionalDocument = json['additional_document'] != null
         ? new AdditionalDocument.fromJson(json['additional_document'])
         : null;
@@ -557,7 +558,7 @@ class Verification {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
     if (this.additionalDocument != null) {
       data['additional_document'] = this.additionalDocument.toJson();
     }
@@ -579,7 +580,7 @@ class AdditionalDocument {
 
   AdditionalDocument({this.back, this.details, this.detailsCode, this.front});
 
-  AdditionalDocument.fromJson(Map<String, dynamic> json) {
+  AdditionalDocument.fromJson(Map<dynamic, dynamic> json) {
     back = json['back'];
     details = json['details'];
     detailsCode = json['details_code'];
@@ -610,7 +611,7 @@ class Settings {
       this.payments,
       this.payouts});
 
-  Settings.fromJson(Map<String, dynamic> json) {
+  Settings.fromJson(Map<dynamic, dynamic> json) {
     branding = json['branding'] != null
         ? new Branding.fromJson(json['branding'])
         : null;
@@ -628,7 +629,7 @@ class Settings {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
     if (this.branding != null) {
       data['branding'] = this.branding.toJson();
     }
@@ -656,7 +657,7 @@ class Branding {
 
   Branding({this.icon, this.logo, this.primaryColor, this.secondaryColor});
 
-  Branding.fromJson(Map<String, dynamic> json) {
+  Branding.fromJson(Map<dynamic, dynamic> json) {
     icon = json['icon'];
     logo = json['logo'];
     primaryColor = json['primary_color'];
@@ -664,7 +665,7 @@ class Branding {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
     data['icon'] = this.icon;
     data['logo'] = this.logo;
     data['primary_color'] = this.primaryColor;
@@ -679,7 +680,7 @@ class CardPayments {
 
   CardPayments({this.declineOn, this.statementDescriptorPrefix});
 
-  CardPayments.fromJson(Map<String, dynamic> json) {
+  CardPayments.fromJson(Map<dynamic, dynamic> json) {
     declineOn = json['decline_on'] != null
         ? new DeclineOn.fromJson(json['decline_on'])
         : null;
@@ -702,7 +703,7 @@ class DeclineOn {
 
   DeclineOn({this.avsFailure, this.cvcFailure});
 
-  DeclineOn.fromJson(Map<String, dynamic> json) {
+  DeclineOn.fromJson(Map<dynamic, dynamic> json) {
     avsFailure = json['avs_failure'];
     cvcFailure = json['cvc_failure'];
   }
@@ -721,13 +722,13 @@ class Dashboard {
 
   Dashboard({this.displayName, this.timezone});
 
-  Dashboard.fromJson(Map<String, dynamic> json) {
+  Dashboard.fromJson(Map<dynamic, dynamic> json) {
     displayName = json['display_name'];
     timezone = json['timezone'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
     data['display_name'] = this.displayName;
     data['timezone'] = this.timezone;
     return data;
@@ -744,14 +745,14 @@ class Payments {
       this.statementDescriptorKana,
       this.statementDescriptorKanji});
 
-  Payments.fromJson(Map<String, dynamic> json) {
+  Payments.fromJson(Map<dynamic, dynamic> json) {
     statementDescriptor = json['statement_descriptor'];
     statementDescriptorKana = json['statement_descriptor_kana'];
     statementDescriptorKanji = json['statement_descriptor_kanji'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
     data['statement_descriptor'] = this.statementDescriptor;
     data['statement_descriptor_kana'] = this.statementDescriptorKana;
     data['statement_descriptor_kanji'] = this.statementDescriptorKanji;
@@ -767,7 +768,7 @@ class Payouts {
   Payouts(
       {this.debitNegativeBalances, this.schedule, this.statementDescriptor});
 
-  Payouts.fromJson(Map<String, dynamic> json) {
+  Payouts.fromJson(Map<dynamic, dynamic> json) {
     debitNegativeBalances = json['debit_negative_balances'];
     schedule = json['schedule'] != null
         ? new Schedule.fromJson(json['schedule'])
@@ -792,13 +793,13 @@ class Schedule {
 
   Schedule({this.delayDays, this.interval});
 
-  Schedule.fromJson(Map<String, dynamic> json) {
+  Schedule.fromJson(Map<dynamic, dynamic> json) {
     delayDays = json['delay_days'];
     interval = json['interval'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
     data['delay_days'] = this.delayDays;
     data['interval'] = this.interval;
     return data;
@@ -812,14 +813,14 @@ class TosAcceptance {
 
   TosAcceptance({this.date, this.ip, this.userAgent});
 
-  TosAcceptance.fromJson(Map<String, dynamic> json) {
+  TosAcceptance.fromJson(Map<dynamic, dynamic> json) {
     date = json['date'];
     ip = json['ip'];
     userAgent = json['user_agent'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
     data['date'] = this.date;
     data['ip'] = this.ip;
     data['user_agent'] = this.userAgent;

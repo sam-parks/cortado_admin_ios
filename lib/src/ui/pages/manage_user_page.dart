@@ -6,7 +6,6 @@ import 'package:cortado_admin_ios/src/ui/widgets/charts/daily_redemptions_bar_ch
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
 import 'package:flutter/material.dart';
 
-
 class ManageUserPage extends StatefulWidget {
   ManageUserPage({Key key, this.coffeeShop}) : super(key: key);
   final CoffeeShop coffeeShop;
@@ -15,15 +14,6 @@ class ManageUserPage extends StatefulWidget {
 }
 
 class _ManageUserPageState extends State<ManageUserPage> {
-
-  StreamSubscription _usersStream;
-
-  @override
-  void dispose() {
-    super.dispose();
-    _usersStream.cancel();
-  }
-
   ScrollController _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {

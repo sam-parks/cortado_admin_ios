@@ -65,6 +65,7 @@ dependencies:
   flutter_masked_text: ^0.8.0
   get_it: ^3.1.0
   equatable: ^1.2.5
+  keyboard_avoider: ^0.1.2
 
 
   #BLOC and PROVIDER

@@ -12,7 +12,6 @@ import 'package:cortado_admin_ios/src/ui/pages/revenue_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 class SideMenu extends StatefulWidget {
   SideMenu(
@@ -45,7 +44,7 @@ class _SideMenuState extends State<SideMenu> {
   void initState() {
     super.initState();
     _pageController = widget.dashboardController;
-    _userType = Provider.of<AuthBloc>(context).state.user.userType;
+    _userType = BlocProvider.of<AuthBloc>(context).state.user.userType;
     switch (_userType) {
       case UserType.barista:
         _pages = [
@@ -61,11 +60,15 @@ class _SideMenuState extends State<SideMenu> {
           RevenuePage(),
           MenuPage(coffeeShop: widget.coffeeShop),
           ManageUserPage(coffeeShop: widget.coffeeShop),
-          ProfilePage(reauth: widget.reauth),
+          ProfilePage(widget.reauth ?? false),
         ];
         break;
       case UserType.superUser:
-        _pages = [CoffeeShopsPage(), ManageUserPage(), ProfilePage()];
+        _pages = [
+          CoffeeShopsPage(),
+          ManageUserPage(),
+          ProfilePage(widget.reauth ?? false)
+        ];
         break;
     }
   }

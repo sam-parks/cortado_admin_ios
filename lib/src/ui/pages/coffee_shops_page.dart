@@ -28,8 +28,6 @@ class _CoffeeShopsPageState extends State<CoffeeShopsPage> {
     _coffeeShopsStream.cancel();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Column(

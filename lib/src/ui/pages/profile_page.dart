@@ -20,7 +20,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dialogs.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({Key key, this.reauth}) : super(key: key);
+  ProfilePage(
+    this.reauth, {
+    Key key,
+  }) : super(key: key);
   final bool reauth;
 
   @override
@@ -61,7 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     _baristasLoading = true;
     _userManagementBloc.add(RetrieveBaristas(
-        Provider.of<CoffeeShopState>(context, listen: false).coffeeShop.id));
+        BlocProvider.of<CoffeeShopBloc>(context).state.coffeeShop.id));
     if (widget.reauth) {
       CoffeeShopState coffeeShopState =
           Provider.of<CoffeeShopState>(context, listen: false);
@@ -273,138 +276,128 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     ScrollController _scrollController = ScrollController();
+    CoffeeShopState coffeeShopState =
+        BlocProvider.of<CoffeeShopBloc>(context).state;
+    _customAccountId = coffeeShopState.coffeeShop.customStripeAccountId;
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener(
+              cubit: _userManagementBloc,
+              listener: (context, state) {
+                if (state is BaristasRetrieved) {
+                  setState(() {
+                    _baristas = state.baristas;
+                    _baristasLoading = false;
+                  });
+                }
+              }),
+          BlocListener(
+            cubit: _paymentBloc,
+            listener: (context, state) async {
+              if (state is PaymentLoadingState) {
+                setState(() {
+                  _loading = true;
+                });
+              }
 
-    return Consumer<CoffeeShopState>(
-      builder: (BuildContext context, CoffeeShopState coffeeShopState, _) {
-        _customAccountId = coffeeShopState.coffeeShop.customStripeAccountId;
+              if (state is CustomAccountCreated) {
+                setState(() {
+                  _loading = false;
+                });
+              }
 
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: Colors.transparent,
-          body: MultiBlocListener(
-            listeners: [
-              BlocListener(
-                  cubit: _userManagementBloc,
-                  listener: (context, state) {
-                    if (state is BaristasRetrieved) {
-                      setState(() {
-                        _baristas = state.baristas;
-                        _baristasLoading = false;
-                      });
-                    }
-                  }),
-              BlocListener(
-                cubit: _paymentBloc,
-                listener: (context, state) async {
-                  if (state is PaymentLoadingState) {
-                    setState(() {
-                      _loading = true;
-                    });
+              if (state is CustomAccountLinkCreated) {
+                setState(() {
+                  _loading = false;
+                });
+
+                await launch(state.url);
+              }
+              if (state is CustomAccountRetrieved) {
+                setState(() {
+                  _loading = false;
+                  _customAccount = state.customAccount;
+
+                  if (_customAccount
+                      .externalAccounts.externalAccounts.isEmpty) {
+                    return;
                   }
 
-                  if (state is CustomAccountCreated) {
-                    setState(() {
-                      _loading = false;
-                    });
-                  }
-
-                  if (state is CustomAccountLinkCreated) {
-                    setState(() {
-                      _loading = false;
-                    });
-
-                    await launch(state.url);
-                  }
-                  if (state is CustomAccountRetrieved) {
-                    setState(() {
-                      _loading = false;
-                      _customAccount = state.customAccount;
-
-                      if (_customAccount
-                          .externalAccounts.externalAccounts.isEmpty) {
-                        return;
-                      }
-
-                      _externalAccount = _customAccount
-                          .externalAccounts.externalAccounts.first;
-                    });
-                  }
-                },
-              )
-            ],
-            child: _loading
-                ? Container(
-                    alignment: Alignment.center,
-                    child: CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(AppColors.caramel)))
-                : Scrollbar(
+                  _externalAccount =
+                      _customAccount.externalAccounts.externalAccounts.first;
+                });
+              }
+            },
+          )
+        ],
+        child: _loading
+            ? Container(
+                alignment: Alignment.center,
+                child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(AppColors.caramel)))
+            : Scrollbar(
+                controller: _scrollController,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 130),
+                  child: ListView(
                     controller: _scrollController,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 130),
-                      child: ListView(
-                        controller: _scrollController,
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 30, top: 20.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 30, top: 20.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      AutoSizeText(
-                                        "Profile",
-                                        maxLines: 1,
-                                        style:
-                                            TextStyles.kWelcomeTitleTextStyle,
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 8.0),
-                                        child: Text(
-                                          "Edit your shop details and payout details.",
-                                          style: TextStyles
-                                              .kDefaultCaramelTextStyle,
-                                        ),
-                                      )
-                                    ],
+                                  AutoSizeText(
+                                    "Profile",
+                                    maxLines: 1,
+                                    style: TextStyles.kWelcomeTitleTextStyle,
                                   ),
-                                  IconButton(
-                                      color: AppColors.dark,
-                                      tooltip: "Logout",
-                                      icon: Icon(FontAwesomeIcons.signOutAlt),
-                                      onPressed: () =>
-                                          _authBloc.add(SignOut())),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Text(
+                                      "Edit your shop details and payout details.",
+                                      style:
+                                          TextStyles.kDefaultCaramelTextStyle,
+                                    ),
+                                  )
                                 ],
                               ),
-                            ),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              _shopDetailsWidget(coffeeShopState),
-                              Column(
-                                children: <Widget>[
-                                  _payoutWidget(coffeeShopState),
-                                  _baristaWidget(coffeeShopState)
-                                ],
-                              )
+                              IconButton(
+                                  color: AppColors.dark,
+                                  tooltip: "Logout",
+                                  icon: Icon(FontAwesomeIcons.signOutAlt),
+                                  onPressed: () => _authBloc.add(SignOut())),
                             ],
                           ),
+                        ),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _shopDetailsWidget(coffeeShopState),
+                          Column(
+                            children: <Widget>[
+                              _payoutWidget(coffeeShopState),
+                              _baristaWidget(coffeeShopState)
+                            ],
+                          )
                         ],
                       ),
-                    ),
+                    ],
                   ),
-          ),
-        );
-      },
+                ),
+              ),
+      ),
     );
   }
 

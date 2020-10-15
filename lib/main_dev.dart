@@ -36,7 +36,7 @@ void setupApp() async {
                 BlocProvider<UserManagementBloc>(
                     create: (context) => UserManagementBloc()),
                 BlocProvider<MenuBloc>(create: (context) => MenuBloc()),
-                BlocProvider<AuthBloc>(create: (context) => AuthBloc()),
+                BlocProvider<AuthBloc>(create: (context) => AuthBloc(BlocProvider.of<CoffeeShopBloc>(context))),
                 BlocProvider<PaymentBloc>(
                     create: (context) =>
                         PaymentBloc(BlocProvider.of<CoffeeShopBloc>(context))),

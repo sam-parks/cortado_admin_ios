@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/services/auth_service.dart';
@@ -16,8 +17,9 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc() : super(AuthState.unknown());
+  AuthBloc(this.coffeeShopBloc) : super(AuthState.unknown());
 
+  CoffeeShopBloc coffeeShopBloc;
   AuthService get _authService => locator.get();
   UserService get _userService => locator.get();
   NotificationService get _notificationService => locator.get();
@@ -36,6 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } else {
           CortadoUser user = await _userService.getUser(firebaseUser);
           if (firebaseUser != null && user != null) {
+            coffeeShopBloc.add(InitializeCoffeeShop(user.coffeeShopId));
             UserType userType = await getUserType(user);
 
             yield AuthState.authenticated(user.copyWith(userType: userType));

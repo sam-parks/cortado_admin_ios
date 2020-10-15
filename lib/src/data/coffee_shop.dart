@@ -113,7 +113,7 @@ class CoffeeShop {
   }
 
   CoffeeShop.fromSnapshot(dynamic snapshot)
-      : this.fromData(snapshot.data(), reference: snapshot.ref);
+      : this.fromData(snapshot.data(), reference: snapshot.reference);
 
   /// Empty user which represents an uninitialized coffee Shop.
   static const empty = const CoffeeShop();

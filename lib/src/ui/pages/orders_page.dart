@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
@@ -32,6 +33,7 @@ class _OrdersPageState extends State<OrdersPage> {
   void initState() {
     super.initState();
     _ordersBloc = BlocProvider.of<OrdersBloc>(context);
+    _coffeeShop = BlocProvider.of<CoffeeShopBloc>(context).state.coffeeShop;
     _ordersBloc.add(GetOrders(_coffeeShop.reference));
   }
 

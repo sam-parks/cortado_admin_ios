@@ -56,11 +56,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         builder: (context, AuthState authState) {
           switch (authState.status) {
             case AuthStatus.loading:
-              return Container(
-                  alignment: Alignment.center,
-                  child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(AppColors.caramel)));
+              return Scaffold(
+                body: Container(
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(AppColors.caramel))),
+              );
               break;
             case AuthStatus.authenticated:
               if (authState.user.userType == UserType.superUser) {
@@ -71,10 +73,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   builder: (context, CoffeeShopState coffeeShopState) {
                     switch (coffeeShopState.status) {
                       case CoffeeShopStatus.loading:
-                        return Center(
-                          child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppColors.caramel)),
+                        return Scaffold(
+                          body: Center(
+                            child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    AppColors.caramel)),
+                          ),
                         );
                         break;
                       case CoffeeShopStatus.initialized:
