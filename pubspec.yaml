@@ -1,0 +1,121 @@
+name: cortado_admin_ios
+description: A new Flutter project.
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core: ^0.5.0+1
+  firebase_analytics: ^5.0.2
+  firebase_auth: ^0.18.0+1
+  cloud_firestore: ^0.14.0+2
+  firebase_messaging: ^7.0.0
+  cloud_functions: ^0.6.0
+
+  #Utilities
+  intl: any
+  charts_flutter: ^0.9.0
+  googleapis_auth: ^0.2.11+1
+  service_worker: ^0.2.3
+  auto_size_text: ^2.1.0
+  flutter_selectable_text: 0.3.1
+  http: ^0.12.0+4
+  url_launcher: 5.4.2
+  file_picker: ^1.4.3+2
+  mime_type: ^0.2.7
+  esys_flutter_share: ^1.0.2
+  image_picker_web: ^1.0.8
+  universal_html: ^1.2.2
+  cached_network_image: ^2.0.0
+  image_picker_saver: ^0.3.0
+  flutter_web_image_picker: ^0.0.2
+  google_sign_in: ^4.5.1
+  flutter_auth_buttons: ^0.8.0
+  flutter_svg: ^0.17.4
+  flushbar: ^1.10.4
+  flutter_email_sender: ^3.0.1
+  path_provider: ^1.6.11
+  path: ^1.7.0
+  localstorage: ^3.0.2+5
+  uuid: ^2.2.0
+  fluro: ^1.6.3
+  sentry: ^3.0.1
+  mask_text_input_formatter: ^1.1.0
+  font_awesome_flutter: ^8.8.1
+  flavor: ^1.0.1
+  flutter_masked_text: ^0.8.0
+
+
+  #BLOC and PROVIDER
+  flutter_bloc: ^6.0.0
+  provider: ^4.0.4
+  rxdart: ^0.23.1
+  sortedmap: ^0.4.2+1
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+    
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - images/
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware.
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  fonts:
+      - family: Mermaid
+        fonts:
+          - asset: fonts/Mermaid-Bold-700.ttf
+            weight: 700
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages

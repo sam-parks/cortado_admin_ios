@@ -1,0 +1,145 @@
+import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
+import 'package:cortado_admin_ios/src/data/models/coffee_shop_state.dart';
+import 'package:cortado_admin_ios/src/ui/style.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/cortado_input_field.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/loading_state_button.dart';
+import 'package:cortado_admin_ios/src/utils/validate.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+
+class BaristaDetailsDialogForm extends StatefulWidget {
+  BaristaDetailsDialogForm({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _BaristaDetailsDialogFormState createState() =>
+      _BaristaDetailsDialogFormState();
+}
+
+class _BaristaDetailsDialogFormState extends State<BaristaDetailsDialogForm> {
+  FocusNode _emaiFocus = FocusNode();
+
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String _email;
+  String _firstName;
+  String _lastName;
+  String _password;
+
+  @override
+  Widget build(BuildContext context) {
+    // ignore: close_sinks
+    UserManagementBloc _userManagementBloc =
+        Provider.of<UserManagementBloc>(context);
+    CoffeeShopState _coffeeShopState = Provider.of<CoffeeShopState>(context);
+    return BlocListener(
+      cubit: _userManagementBloc,
+      listener: (BuildContext context, state) {
+        if (state is BaristaCreated) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: DashboardCard(
+        height: SizeConfig.screenHeight * .7,
+        title: "Add a Barista to Your Account",
+        content: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CortadoInputField(
+                    textCapitalization: TextCapitalization.sentences,
+                    isPassword: false,
+                    autofocus: true,
+                    enabled: true,
+                    label: "First Name",
+                    validator: (value) {
+                      return Validate.requiredField(
+                          value, "Field cannot be empty.");
+                    },
+                    onChanged: (value) {
+                      _firstName = value.trim();
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CortadoInputField(
+                    textCapitalization: TextCapitalization.sentences,
+                    isPassword: false,
+                    autofocus: true,
+                    enabled: true,
+                    label: "Last Name",
+                    validator: (value) {
+                      return Validate.requiredField(
+                          value, "Field cannot be empty.");
+                    },
+                    onChanged: (value) {
+                      _lastName = value.trim();
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CortadoInputField(
+                    textCapitalization: TextCapitalization.sentences,
+                    focusNode: _emaiFocus,
+                    isPassword: false,
+                    autofocus: true,
+                    enabled: true,
+                    label: "Email",
+                    validator: (value) {
+                      return Validate.validateEmail(value);
+                    },
+                    onChanged: (value) {
+                      _email = value.trim();
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CortadoInputField(
+                    textCapitalization: TextCapitalization.sentences,
+                    isPassword: true,
+                    autofocus: true,
+                    enabled: true,
+                    label: "Password For Login",
+                    validator: (value) {
+                      return Validate.requiredField(
+                          value, "Field cannot be empty.");
+                    },
+                    onChanged: (value) {
+                      _password = value.trim();
+                    },
+                  ),
+                ),
+                Spacer(),
+                LoadingStateButton<UserManagementLoadingState>(
+                  bloc: _userManagementBloc,
+                  button: CortadoButton(
+                    text: "Submit",
+                    color: AppColors.caramel,
+                    fontSize: 30,
+                    lineWidth: 120,
+                    onTap: () {
+                      if (_formKey.currentState.validate()) {
+                        _userManagementBloc.add(CreateBarista(
+                            _email,
+                            _firstName,
+                            _lastName,
+                            _password,
+                            _coffeeShopState.coffeeShop.id));
+                      }
+                    },
+                  ),
+                )
+              ],
+            )),
+      ),
+    );
+  }
+}
