@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:cortado_admin_ios/src/ui/pages/coffee_shops_page.dart';
@@ -20,9 +21,8 @@ class SideMenu extends StatefulWidget {
     this.coffeeShop,
     this.screen,
     this.reauth,
-    this.dashboardController,
   }) : super(key: key);
-  final PageController dashboardController;
+
   final CoffeeShop coffeeShop;
   final CortadoUser user;
   final bool reauth;
@@ -34,16 +34,13 @@ class SideMenu extends StatefulWidget {
 class _SideMenuState extends State<SideMenu> {
   UserType _userType;
   double _navRatio = .03;
-  bool _hovering = false;
   bool _titleVisible = false;
   bool _openDrawerWithIcon = false;
-  final initalScreenWidth = SizeConfig.screenWidth;
   List<Widget> _pages;
-  PageController _pageController;
+
   @override
   void initState() {
     super.initState();
-    _pageController = widget.dashboardController;
     _userType = BlocProvider.of<AuthBloc>(context).state.user.userType;
     switch (_userType) {
       case UserType.barista:
@@ -94,7 +91,8 @@ class _SideMenuState extends State<SideMenu> {
               width: MediaQuery.of(context).size.width,
               child: PageView(
                 physics: NeverScrollableScrollPhysics(),
-                controller: _pageController,
+                controller:
+                    BlocProvider.of<NavigationBloc>(context).dashboardContoller,
                 children: _pages,
               ),
             ),
@@ -112,11 +110,11 @@ class _SideMenuState extends State<SideMenu> {
                 )),
             AnimatedContainer(
               height: MediaQuery.of(context).size.height,
-              width: initalScreenWidth * _navRatio < 60
+              width: SizeConfig.screenWidth * _navRatio < 60
                   ? 60
-                  : initalScreenWidth * _navRatio,
+                  : SizeConfig.screenWidth * _navRatio,
               onEnd: () {
-                if (_hovering == false && _openDrawerWithIcon == false) {
+                if (_openDrawerWithIcon == false) {
                   setState(() {
                     _titleVisible = false;
                   });
@@ -128,15 +126,10 @@ class _SideMenuState extends State<SideMenu> {
               },
               duration: Duration(milliseconds: 300),
               curve: Curves.ease,
-              child: MouseRegion(
-                child: DynamicDrawer(
-                    closeNav: _closeNav,
-                    pageController: _pageController,
-                    titlesVisible: _titleVisible,
-                    currentScreen: widget.screen),
-                onEnter: (e) => _mouseEnter(true),
-                onExit: (e) => _mouseEnter(false),
-              ),
+              child: DynamicDrawer(
+                  closeNav: _closeNav,
+                  titlesVisible: _titleVisible,
+                  currentScreen: widget.screen),
             ),
           ],
         ),
@@ -146,39 +139,16 @@ class _SideMenuState extends State<SideMenu> {
           : FancyFab(widget.user.id, "scKHm6EgXqTDgaaoMv0lvxWrpBx2"), */
     );
   }
-
-  void _mouseEnter(bool hover) {
-    if (MediaQuery.of(context).size.width < 300) {
-      return;
-    }
-    setState(() {
-      _titleVisible = false;
-    });
-
-    if (hover) {
-      setState(() {
-        _navRatio = .17;
-        _hovering = true;
-      });
-    } else {
-      setState(() {
-        _hovering = false;
-        _titleVisible = false;
-        _navRatio = .03;
-      });
-    }
-  }
 }
 
 class DynamicDrawer extends StatefulWidget {
   DynamicDrawer({
     Key key,
     this.titlesVisible,
-    this.pageController,
     this.currentScreen,
     this.closeNav,
   }) : super(key: key);
-  final PageController pageController;
+
   final bool titlesVisible;
   final CortadoAdminScreen currentScreen;
   final Function closeNav;
@@ -187,36 +157,31 @@ class DynamicDrawer extends StatefulWidget {
 }
 
 class _DynamicDrawerState extends State<DynamicDrawer> {
-  MenuItem _selectedMenuItem;
-  List<MenuItem> _menuItems;
   List<Widget> _menuOptionWidgets = [];
-  AuthState _authState;
+  NavigationBloc _navigationBloc;
 
   @override
   initState() {
     super.initState();
-    _authState = BlocProvider.of<AuthBloc>(context).state;
-    _menuItems = createMenuItems(_authState.user.userType);
-    _selectedMenuItem = _menuItems[widget.currentScreen.index];
+    _navigationBloc = BlocProvider.of<NavigationBloc>(context);
   }
 
   @override
   Widget build(BuildContext context) {
     _menuOptionWidgets = [];
 
-    for (var menuItem in _menuItems) {
+    for (var menuItem
+        in BlocProvider.of<NavigationBloc>(context).state.menuItems) {
       _menuOptionWidgets.add(GestureDetector(
         onTap: () {
-          widget.pageController.jumpToPage(menuItem.index);
+          _navigationBloc.add(
+              ChangeDashboardPage(screenFromString(menuItem.title), menuItem));
           widget.closeNav();
-          setState(() {
-            _selectedMenuItem = menuItem;
-          });
         },
         child: Container(
             height: 50,
             decoration: BoxDecoration(
-                color: menuItem == _selectedMenuItem
+                color: menuItem == _navigationBloc.state.currentMenuItem
                     ? AppColors.caramel
                     : AppColors.dark),
             child: Row(
@@ -231,14 +196,15 @@ class _DynamicDrawerState extends State<DynamicDrawer> {
                     child: Container(
                       child: AutoSizeText(menuItem.title,
                           maxLines: 1,
-                          style: menuItem == _selectedMenuItem
-                              ? TextStyles.kCoffeeNavSelectedTextStyle
-                              : TextStyles.kCoffeeNavTextStyle),
+                          style:
+                              menuItem == _navigationBloc.state.currentMenuItem
+                                  ? TextStyles.kCoffeeNavSelectedTextStyle
+                                  : TextStyles.kCoffeeNavTextStyle),
                     ),
                   ),
                 ),
                 Spacer(),
-                _selectedMenuItem == menuItem
+                menuItem == _navigationBloc.state.currentMenuItem
                     ? Container(
                         width: 3,
                         color: AppColors.cream,
@@ -274,92 +240,5 @@ class _DynamicDrawerState extends State<DynamicDrawer> {
         ),
       ),
     );
-  }
-
-  List<MenuItem> createMenuItems(UserType userType) {
-    var menuItems;
-    switch (userType) {
-      case UserType.barista:
-        menuItems = [
-          MenuItem("Dashboard", Icon(Icons.dashboard, color: AppColors.cream),
-              AppColors.light, 0),
-          MenuItem("Orders", Icon(Icons.list, color: AppColors.cream),
-              AppColors.light, 1),
-          MenuItem("Menu", Icon(Icons.local_drink, color: AppColors.cream),
-              AppColors.light, 2),
-        ];
-        break;
-      case UserType.owner:
-        menuItems = [
-          MenuItem("Dashboard", Icon(Icons.dashboard, color: AppColors.cream),
-              AppColors.light, 0),
-          MenuItem("Orders", Icon(Icons.list, color: AppColors.cream),
-              AppColors.light, 1),
-          MenuItem("Revenue", Icon(Icons.attach_money, color: AppColors.cream),
-              AppColors.light, 2),
-          MenuItem("Menu", Icon(Icons.local_drink, color: AppColors.cream),
-              AppColors.light, 3),
-          MenuItem(
-              "Customers",
-              Icon(Icons.people_outline, color: AppColors.cream),
-              AppColors.light,
-              4),
-          MenuItem("Profile", Icon(Icons.person, color: AppColors.cream),
-              AppColors.light, 5)
-        ];
-        break;
-      case UserType.superUser:
-        menuItems = [
-          MenuItem("Payments", Icon(Icons.payment, color: AppColors.cream),
-              AppColors.light, 0),
-          MenuItem("Coffee Shops", Icon(Icons.home, color: AppColors.cream),
-              AppColors.light, 1),
-          MenuItem(
-              "Customers",
-              Icon(Icons.people_outline, color: AppColors.cream),
-              AppColors.light,
-              2),
-          MenuItem("Profile", Icon(Icons.person, color: AppColors.cream),
-              AppColors.light, 3)
-        ];
-        break;
-    }
-
-    return menuItems;
-  }
-}
-
-class MenuItem {
-  String title;
-  Widget icon;
-  Color color;
-  int index;
-
-  MenuItem(this.title, this.icon, this.color, this.index);
-}
-
-enum CortadoAdminScreen { dashboard, revenue, menu, users, profile }
-
-extension CortadoAdminScreensIndexing on CortadoAdminScreen {
-  int get index {
-    switch (this) {
-      case CortadoAdminScreen.dashboard:
-        return 0;
-        break;
-      case CortadoAdminScreen.revenue:
-        return 1;
-        break;
-      case CortadoAdminScreen.menu:
-        return 2;
-        break;
-      case CortadoAdminScreen.users:
-        return 3;
-        break;
-      case CortadoAdminScreen.profile:
-        return 4;
-        break;
-      default:
-        return 1;
-    }
   }
 }

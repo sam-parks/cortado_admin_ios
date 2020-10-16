@@ -1,9 +1,9 @@
+import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/ui/pages/home_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/category_list_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/item_list_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_item_page.dart';
-import 'package:cortado_admin_ios/src/ui/widgets/side_menu.dart';
 import 'package:fluro/fluro.dart' as fluro;
 import 'package:flutter/material.dart';
 

@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/services/auth_service.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
+import 'package:cortado_admin_ios/src/services/navigation_service.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/dialogs.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -54,6 +56,13 @@ class NotificationService {
         case _orderType:
           break;
       }
+    }
+  }
+
+  handleNotification(String type, String title) {
+    var currentState = NavigationService.navigatorKey?.currentState;
+    if (type == "newOrder") {
+      newOrderDialog(title, currentState.overlay.context);
     }
   }
 

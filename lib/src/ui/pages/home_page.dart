@@ -1,5 +1,6 @@
 import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:cortado_admin_ios/src/ui/pages/auth_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
@@ -34,8 +35,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
 
-    PageController dashboardController =
-        PageController(initialPage: widget.screen.index ?? 0);
     return BlocConsumer(
         cubit: _authBloc,
         listener: (context, AuthState state) {
@@ -54,58 +53,84 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           }
         },
         builder: (context, AuthState authState) {
-          switch (authState.status) {
-            case AuthStatus.loading:
-              return Scaffold(
-                body: Container(
-                    alignment: Alignment.center,
-                    child: CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(AppColors.caramel))),
-              );
-              break;
-            case AuthStatus.authenticated:
-              if (authState.user.userType == UserType.superUser) {
-                return SideMenu(authState.user);
-              } else {
-                return BlocBuilder(
-                  cubit: _coffeeShopBloc,
-                  builder: (context, CoffeeShopState coffeeShopState) {
-                    switch (coffeeShopState.status) {
-                      case CoffeeShopStatus.loading:
-                        return Scaffold(
-                          body: Center(
-                            child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppColors.caramel)),
-                          ),
-                        );
-                        break;
-                      case CoffeeShopStatus.initialized:
-                        return SideMenu(
-                          authState.user,
-                          reauth: widget.reauth,
-                          coffeeShop: coffeeShopState.coffeeShop,
-                          screen: widget.screen ?? CortadoAdminScreen.dashboard,
-                          dashboardController: dashboardController,
-                        );
-                        break;
-                      default:
-                        return AuthPage();
-                    }
-                  },
-                );
-              }
-              break;
-            case AuthStatus.unauthenticated:
-              return AuthPage();
-            case AuthStatus.unknown:
-              return AuthPage();
-            case AuthStatus.error:
-              return AuthPage();
-            default:
-              return AuthPage();
-          }
+          return BlocProvider(
+            create: (_) => NavigationBloc(
+              PageController(initialPage: widget.screen.index ?? 0),
+              getMenuItems(authState.user.userType),
+            ),
+            child: _body(authState),
+          );
         });
+  }
+
+  _body(AuthState authState) {
+    print(authState.status);
+    switch (authState.status) {
+      case AuthStatus.loading:
+        return Scaffold(
+          body: Container(
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(AppColors.caramel))),
+        );
+        break;
+      case AuthStatus.authenticated:
+        if (authState.user.userType == UserType.superUser) {
+          return SideMenu(authState.user);
+        } else {
+          return BlocBuilder(
+            cubit: _coffeeShopBloc,
+            builder: (context, CoffeeShopState coffeeShopState) {
+              switch (coffeeShopState.status) {
+                case CoffeeShopStatus.loading:
+                  return Scaffold(
+                    body: Center(
+                      child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(AppColors.caramel)),
+                    ),
+                  );
+                  break;
+                case CoffeeShopStatus.initialized:
+                  return SideMenu(
+                    authState.user,
+                    reauth: widget.reauth,
+                    coffeeShop: coffeeShopState.coffeeShop,
+                    screen: widget.screen ?? CortadoAdminScreen.dashboard,
+                  );
+                  break;
+                default:
+                  return AuthPage();
+              }
+            },
+          );
+        }
+        break;
+      case AuthStatus.unauthenticated:
+        return AuthPage();
+      case AuthStatus.unknown:
+        return AuthPage();
+      case AuthStatus.error:
+        return AuthPage();
+      default:
+        return AuthPage();
+    }
+  }
+
+  List<MenuItem> getMenuItems(UserType userType) {
+    switch (userType) {
+      case UserType.barista:
+        return baristaMenuItems;
+        break;
+      case UserType.owner:
+        return ownerMenuItems;
+        break;
+      case UserType.superUser:
+        return superUserMenuItems;
+        break;
+      default:
+        return baristaMenuItems;
+    }
   }
 }

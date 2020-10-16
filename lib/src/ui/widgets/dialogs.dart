@@ -1,4 +1,5 @@
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/orders_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/orders_event.dart';
 import 'package:cortado_admin_ios/src/bloc/payment/bloc.dart';
@@ -16,8 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-newOrderDialog(
-    String title, BuildContext ctx, PageController dashboardController) {
+newOrderDialog(String title, BuildContext ctx) {
   showDialog(
     context: ctx,
     builder: (context) {
@@ -25,6 +25,8 @@ newOrderDialog(
           BlocProvider.of<CoffeeShopBloc>(context).state;
       BlocProvider.of<OrdersBloc>(context)
           .add(GetOrders(_coffeeShopState.coffeeShop.reference));
+      // ignore: close_sinks
+      NavigationBloc navigationBloc = BlocProvider.of<NavigationBloc>(context);
       return AlertDialog(
         backgroundColor: AppColors.dark,
         title: Text(
@@ -55,7 +57,13 @@ newOrderDialog(
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
-                    dashboardController.jumpToPage(1);
+
+                    navigationBloc.add(
+                      ChangeDashboardPage(
+                          CortadoAdminScreen.orders,
+                          navigationBloc.state.menuItems.firstWhere(
+                              (menuItem) => menuItem.title == "Orders")),
+                    );
                   },
                 ),
               ),

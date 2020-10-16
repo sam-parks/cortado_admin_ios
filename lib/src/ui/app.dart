@@ -1,9 +1,9 @@
+import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/services/navigation_service.dart';
 import 'package:cortado_admin_ios/src/ui/router.dart';
 import 'package:cortado_admin_ios/src/ui/pages/home_page.dart';
-import 'package:cortado_admin_ios/src/ui/widgets/side_menu.dart';
 import 'package:flavor/flavor.dart';
 import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart' as fluro;
