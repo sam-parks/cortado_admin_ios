@@ -621,7 +621,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
           backgroundColor: AppColors.light,
           resizeToAvoidBottomInset: false,
           body: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 300),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -633,6 +632,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                   ),
                 ),
                 Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
                   child: TextFormField(
                     validator: (value) {
                       return Validate.requiredField(value, "Required field");
@@ -666,6 +666,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                 ),
                 SizedBox(height: 5),
                 Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
                   child: TextFormField(
                     maxLines: 6,
                     keyboardType: TextInputType.multiline,
@@ -698,17 +699,15 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                 ),
                 Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 100, vertical: 16.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Center(
-                            child: Text(
-                              "Drinks",
-                              style: TextStyles.kDefaultLargeDarkTextStyle,
-                            ),
+                        Center(
+                          child: Text(
+                            "Drinks",
+                            style: TextStyles.kDefaultLargeDarkTextStyle,
                           ),
                         ),
                         Spacer(),
@@ -746,104 +745,105 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                     ),
                   ),
                 ),
-                Container(
-                  height: SizeConfig.screenHeight * .4,
-                  child: Scrollbar(
-                    controller: _scrollController,
-                    child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 5),
-                        scrollDirection: Axis.vertical,
-                        controller: _scrollController,
-                        itemCount: drinks.length,
-                        itemBuilder: (context, index) {
-                          if (drinks[index].name == null) {
-                            return Container();
-                          }
-                          return Container(
-                            margin: const EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
-                              color: AppColors.dark,
-                            ),
-                            height: 50,
-                            width: 170,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.topLeft,
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.cancel,
-                                          color: AppColors.light,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            drinks.removeAt(index);
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.topRight,
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.edit,
-                                          color: AppColors.light,
-                                        ),
-                                        onPressed: () async {
-                                          var drink =
-                                              await Navigator.of(context)
-                                                  .pushNamed(
-                                                      '/menu/category/item',
-                                                      arguments: [
-                                                CategoryType.drink,
-                                                widget.category,
-                                                drinks[index],
-                                                widget.newCategory,
-                                                true
-                                              ]);
-                                          if (drink != null) {
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: Scrollbar(
+                      controller: _scrollController,
+                      child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 5),
+                          scrollDirection: Axis.vertical,
+                          controller: _scrollController,
+                          itemCount: drinks.length,
+                          itemBuilder: (context, index) {
+                            if (drinks[index].name == null) {
+                              return Container();
+                            }
+                            return Container(
+                              margin: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: AppColors.dark,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.topLeft,
+                                        child: IconButton(
+                                          icon: Icon(
+                                            Icons.cancel,
+                                            color: AppColors.light,
+                                          ),
+                                          onPressed: () {
                                             setState(() {
                                               drinks.removeAt(index);
-                                              drinks.insert(index, drink);
                                             });
-                                          }
-                                        },
+                                          },
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: IconButton(
+                                          icon: Icon(
+                                            Icons.edit,
+                                            color: AppColors.light,
+                                          ),
+                                          onPressed: () async {
+                                            var drink =
+                                                await Navigator.of(context)
+                                                    .pushNamed(
+                                                        '/menu/category/item',
+                                                        arguments: [
+                                                  CategoryType.drink,
+                                                  widget.category,
+                                                  drinks[index],
+                                                  widget.newCategory,
+                                                  true
+                                                ]);
+                                            if (drink != null) {
+                                              setState(() {
+                                                drinks.removeAt(index);
+                                                drinks.insert(index, drink);
+                                              });
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: AutoSizeText(
+                                      drinks[index].name,
+                                      style: TextStyles.kDefaultLightTextStyle,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  if (drinks[index].redeemableType !=
+                                      RedeemableType.none)
+                                    Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Image.asset(
+                                          'images/coffee_bean.png',
+                                          color: AppColors.cream,
+                                          height: 25,
+                                        ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: AutoSizeText(
-                                    drinks[index].name,
-                                    style: TextStyles.kDefaultLightTextStyle,
-                                  ),
-                                ),
-                                Spacer(),
-                                if (drinks[index].redeemableType !=
-                                    RedeemableType.none)
-                                  Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Image.asset(
-                                        'images/coffee_bean.png',
-                                        color: AppColors.cream,
-                                        height: 25,
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          );
-                        }),
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
                   ),
                 )
               ],
@@ -890,7 +890,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             Category(Uuid().v4(), drinks, title, description);
 
                         coffeeShopState.coffeeShop.drinks.add(category);
-                       // coffeeShopState.update(coffeeShopState.coffeeShop);
+                        // coffeeShopState.update(coffeeShopState.coffeeShop);
                         menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
 
                         Navigator.of(context).pop();

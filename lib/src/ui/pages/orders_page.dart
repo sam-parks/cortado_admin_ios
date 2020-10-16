@@ -51,7 +51,7 @@ class _OrdersPageState extends State<OrdersPage> {
       body: Scrollbar(
         controller: _scrollController,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 130),
+         padding: const EdgeInsets.only(left: 130.0, right: 20),
           child: Center(
             child: ListView(
               children: [

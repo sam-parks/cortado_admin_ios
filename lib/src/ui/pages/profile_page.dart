@@ -342,7 +342,7 @@ class _ProfilePageState extends State<ProfilePage> {
             : Scrollbar(
                 controller: _scrollController,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 130),
+                  padding: const EdgeInsets.only(left: 130.0, right: 20),
                   child: ListView(
                     controller: _scrollController,
                     children: [
@@ -491,12 +491,14 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ],
         ),
-        CortadoFatButton(
-            width: SizeConfig.screenWidth * .17,
-            backgroundColor: AppColors.dark,
-            text: "Update Account Info",
-            onTap: () => _paymentBloc.add(CreateCustomAccountUpdateLink(
-                coffeeShopState.coffeeShop.customStripeAccountId)))
+        Flexible(
+          child: CortadoFatButton(
+              width: SizeConfig.screenWidth * .17,
+              backgroundColor: AppColors.dark,
+              text: "Update Account Information",
+              onTap: () => _paymentBloc.add(CreateCustomAccountUpdateLink(
+                  coffeeShopState.coffeeShop.customStripeAccountId))),
+        )
       ],
     );
   }

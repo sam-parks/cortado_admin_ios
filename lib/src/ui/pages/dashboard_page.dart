@@ -235,7 +235,7 @@ class _DashboardPageState extends State<DashboardPage> {
               children: <Widget>[
                 Expanded(
                   flex: 2,
-                  child: Text(
+                  child: AutoSizeText(
                     welcomeText,
                     style: TextStyles.kDefaultLightTextStyle,
                   ),
@@ -265,7 +265,7 @@ class _DashboardPageState extends State<DashboardPage> {
         child: Scrollbar(
           controller: _scrollController,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 130.0),
+            padding: const EdgeInsets.only(left: 130.0, right: 20),
             child: ListView(
               children: [
                 Align(

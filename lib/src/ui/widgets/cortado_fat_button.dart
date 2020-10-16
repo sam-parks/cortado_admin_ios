@@ -42,7 +42,8 @@ class CortadoFatButton extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: AutoSizeText(
                       text,
-                      maxLines: 2,
+                      maxLines: 3,
+                      textAlign: TextAlign.center,
                       style: textStyle ??
                           TextStyle(
                             fontFamily: kFontFamilyNormal,

@@ -17,7 +17,9 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc(this.coffeeShopBloc) : super(AuthState.unknown());
+  AuthBloc(this.coffeeShopBloc) : super(AuthState.unknown()) {
+    this.add(AppStarted());
+  }
 
   CoffeeShopBloc coffeeShopBloc;
   AuthService get _authService => locator.get();
@@ -28,6 +30,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Stream<AuthState> mapEventToState(
     AuthEvent event,
   ) async* {
+    if (event is AppStarted) {
+      yield AuthState.loading();
+      try {
+        var firebaseUser = await _authService.getCurrentFBUser();
+
+        if (firebaseUser != null) {
+          CortadoUser user = await _userService.getUser(firebaseUser);
+          UserType userType = await getUserType(user);
+          if (user != null) {
+            coffeeShopBloc.add(InitializeCoffeeShop(user.coffeeShopId));
+            await _notificationService.start();
+            yield AuthState.authenticated(user.copyWith(userType: userType));
+          } else {
+            yield AuthState.unauthenticated();
+          }
+        } else {
+          yield AuthState.unauthenticated();
+        }
+      } catch (error) {
+        await _authService.signOut();
+        yield AuthState.unauthenticated();
+      }
+    }
+
     if (event is SignInEmailPressed) {
       yield AuthState.loading();
       try {
@@ -39,6 +65,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           CortadoUser user = await _userService.getUser(firebaseUser);
           if (firebaseUser != null && user != null) {
             coffeeShopBloc.add(InitializeCoffeeShop(user.coffeeShopId));
+            await _notificationService.start();
             UserType userType = await getUserType(user);
 
             yield AuthState.authenticated(user.copyWith(userType: userType));

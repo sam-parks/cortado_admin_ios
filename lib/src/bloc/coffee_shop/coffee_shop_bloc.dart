@@ -20,6 +20,7 @@ class CoffeeShopBloc extends Bloc<CoffeeShopEvent, CoffeeShopState> {
     CoffeeShopEvent event,
   ) async* {
     if (event is InitializeCoffeeShop) {
+      yield CoffeeShopState.loading();
       CoffeeShop coffeeShop = await _coffeeShopService.init(event.id);
       yield CoffeeShopState.initialized(coffeeShop);
     }

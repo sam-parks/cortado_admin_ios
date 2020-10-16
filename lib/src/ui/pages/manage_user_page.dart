@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
@@ -24,7 +23,7 @@ class _ManageUserPageState extends State<ManageUserPage> {
         child: Scrollbar(
           controller: _scrollController,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 130),
+            padding: const EdgeInsets.only(left: 130.0, right: 20),
             child: ListView(
               children: [
                 Align(

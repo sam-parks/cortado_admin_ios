@@ -3,7 +3,7 @@ import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:cortado_admin_ios/src/ui/pages/coffee_shops_page.dart';
-import 'package:cortado_admin_ios/src/ui/pages/menu_page.dart';
+import 'package:cortado_admin_ios/src/ui/pages/menu/menu_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/manage_user_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/orders_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/profile_page.dart';
