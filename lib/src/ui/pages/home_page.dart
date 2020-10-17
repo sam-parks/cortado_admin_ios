@@ -54,10 +54,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         },
         builder: (context, AuthState authState) {
           return BlocProvider(
-            create: (_) => NavigationBloc(
-              PageController(initialPage: widget.screen.index ?? 0),
-              getMenuItems(authState.user.userType),
-            ),
+            create: (_) =>
+                NavigationBloc(getMenuItems(authState.user.userType)),
             child: _body(authState),
           );
         });

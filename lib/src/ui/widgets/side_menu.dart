@@ -3,6 +3,7 @@ import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
+import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/ui/pages/coffee_shops_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/manage_user_page.dart';
@@ -11,6 +12,7 @@ import 'package:cortado_admin_ios/src/ui/pages/profile_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/dashboard_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/revenue_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
+import 'package:cortado_admin_ios/src/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -38,36 +40,13 @@ class _SideMenuState extends State<SideMenu> {
   bool _openDrawerWithIcon = false;
   List<Widget> _pages;
 
+  NavigationService get _navigationService => locator.get();
+
   @override
   void initState() {
     super.initState();
     _userType = BlocProvider.of<AuthBloc>(context).state.user.userType;
-    switch (_userType) {
-      case UserType.barista:
-        _pages = [
-          DashboardPage(coffeeShop: widget.coffeeShop),
-          OrdersPage(),
-          MenuPage(coffeeShop: widget.coffeeShop),
-        ];
-        break;
-      case UserType.owner:
-        _pages = [
-          DashboardPage(coffeeShop: widget.coffeeShop),
-          OrdersPage(),
-          RevenuePage(),
-          MenuPage(coffeeShop: widget.coffeeShop),
-          ManageUserPage(coffeeShop: widget.coffeeShop),
-          ProfilePage(widget.reauth ?? false),
-        ];
-        break;
-      case UserType.superUser:
-        _pages = [
-          CoffeeShopsPage(),
-          ManageUserPage(),
-          ProfilePage(widget.reauth ?? false)
-        ];
-        break;
-    }
+    _pages = pagesForUserType(_userType);
   }
 
   _closeNav() {
@@ -91,8 +70,7 @@ class _SideMenuState extends State<SideMenu> {
               width: MediaQuery.of(context).size.width,
               child: PageView(
                 physics: NeverScrollableScrollPhysics(),
-                controller:
-                    BlocProvider.of<NavigationBloc>(context).dashboardContoller,
+                controller: _navigationService.pageController,
                 children: _pages,
               ),
             ),
@@ -138,6 +116,35 @@ class _SideMenuState extends State<SideMenu> {
           ? Container()
           : FancyFab(widget.user.id, "scKHm6EgXqTDgaaoMv0lvxWrpBx2"), */
     );
+  }
+
+  pagesForUserType(UserType type) {
+    switch (_userType) {
+      case UserType.barista:
+        return [
+          DashboardPage(coffeeShop: widget.coffeeShop),
+          OrdersPage(),
+          MenuPage(coffeeShop: widget.coffeeShop),
+        ];
+        break;
+      case UserType.owner:
+        return [
+          DashboardPage(coffeeShop: widget.coffeeShop),
+          OrdersPage(),
+          RevenuePage(),
+          MenuPage(coffeeShop: widget.coffeeShop),
+          ManageUserPage(coffeeShop: widget.coffeeShop),
+          ProfilePage(widget.reauth ?? false),
+        ];
+        break;
+      case UserType.superUser:
+        return [
+          CoffeeShopsPage(),
+          ManageUserPage(),
+          ProfilePage(widget.reauth ?? false)
+        ];
+        break;
+    }
   }
 }
 
