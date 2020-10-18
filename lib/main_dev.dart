@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/payment/payment_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
@@ -12,8 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sentry/sentry.dart';
 
-void main()async  {
-   WidgetsFlutterBinding.ensureInitialized();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   Flavor.create(
     Environment.dev,
@@ -36,11 +37,14 @@ void setupApp() async {
                 BlocProvider<UserManagementBloc>(
                     create: (context) => UserManagementBloc()),
                 BlocProvider<MenuBloc>(create: (context) => MenuBloc()),
-                BlocProvider<AuthBloc>(create: (context) => AuthBloc(BlocProvider.of<CoffeeShopBloc>(context))),
+                BlocProvider<AuthBloc>(
+                    create: (context) =>
+                        AuthBloc(BlocProvider.of<CoffeeShopBloc>(context))),
                 BlocProvider<PaymentBloc>(
                     create: (context) =>
                         PaymentBloc(BlocProvider.of<CoffeeShopBloc>(context))),
-                BlocProvider<OrdersBloc>(create: (context) => OrdersBloc())
+                BlocProvider<OrdersBloc>(create: (context) => OrdersBloc()),
+                BlocProvider<NavigationBloc>(create: (_) => NavigationBloc())
               ], child: MyApp()),
             ),
           ), onError: (Object error, StackTrace stackTrace) {

@@ -1,21 +1,32 @@
 part of 'navigation_bloc.dart';
 
+enum NavigationStatus { initial, userTypeKnown }
+
 class NavigationState extends Equatable {
-  const NavigationState(
-      this.cortadoAdminScreen, this.currentMenuItem, this.menuItems);
+  const NavigationState._(
+      {this.cortadoAdminScreen,
+      this.currentMenuItem,
+      this.menuItems,
+      this.navigationStatus});
+
+  const NavigationState.initial()
+      : this._(navigationStatus: NavigationStatus.initial);
+  const NavigationState.userTypeKnown(CortadoAdminScreen cortadoAdminScreen,
+      MenuItem selectedMenuItem, List<MenuItem> menuItems)
+      : this._(
+            cortadoAdminScreen: cortadoAdminScreen,
+            currentMenuItem: selectedMenuItem,
+            menuItems: menuItems,
+            navigationStatus: NavigationStatus.userTypeKnown);
 
   final CortadoAdminScreen cortadoAdminScreen;
+  final NavigationStatus navigationStatus;
   final MenuItem currentMenuItem;
   final List<MenuItem> menuItems;
 
   @override
-  List<Object> get props => [cortadoAdminScreen, currentMenuItem];
-}
-
-class NavigationInitial extends NavigationState {
-  NavigationInitial(CortadoAdminScreen cortadoAdminScreen,
-      MenuItem selectedMenuItem, List<MenuItem> menuItems)
-      : super(cortadoAdminScreen, selectedMenuItem, menuItems);
+  List<Object> get props =>
+      [cortadoAdminScreen, currentMenuItem, navigationStatus];
 }
 
 enum CortadoAdminScreen { dashboard, orders, revenue, menu, customers, profile }

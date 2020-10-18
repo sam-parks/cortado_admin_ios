@@ -53,15 +53,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           }
         },
         builder: (context, AuthState authState) {
-          return BlocProvider(
-            create: (_) =>
-                NavigationBloc(getMenuItems(authState.user.userType)),
-            child: _body(authState),
-          );
+          return _body(authState);
         });
   }
 
   _body(AuthState authState) {
+    // ignore: close_sinks
+    NavigationBloc navigationBloc = BlocProvider.of<NavigationBloc>(context);
+
     switch (authState.status) {
       case AuthStatus.loading:
         return Scaffold(
@@ -73,33 +72,48 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         );
         break;
       case AuthStatus.authenticated:
+        navigationBloc.add(InitializeUserType(authState.user.userType));
         if (authState.user.userType == UserType.superUser) {
           return SideMenu(authState.user);
         } else {
           return BlocBuilder(
-            cubit: _coffeeShopBloc,
-            builder: (context, CoffeeShopState coffeeShopState) {
-              switch (coffeeShopState.status) {
-                case CoffeeShopStatus.loading:
-                  return Scaffold(
-                    body: Center(
-                      child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(AppColors.caramel)),
-                    ),
-                  );
-                  break;
-                case CoffeeShopStatus.initialized:
-                  return SideMenu(
-                    authState.user,
-                    reauth: widget.reauth,
-                    coffeeShop: coffeeShopState.coffeeShop,
-                    screen: widget.screen ?? CortadoAdminScreen.dashboard,
-                  );
-                  break;
-                default:
-                  return AuthPage();
+            cubit: navigationBloc,
+            builder: (BuildContext context, state) {
+              if (state.navigationStatus == NavigationStatus.initial) {
+                return Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(AppColors.caramel)),
+                  ),
+                );
               }
+              return BlocBuilder(
+                cubit: _coffeeShopBloc,
+                builder: (context, CoffeeShopState coffeeShopState) {
+                  switch (coffeeShopState.status) {
+                    case CoffeeShopStatus.loading:
+                      return Scaffold(
+                        body: Center(
+                          child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.caramel)),
+                        ),
+                      );
+                      break;
+                    case CoffeeShopStatus.initialized:
+                      return SideMenu(
+                        authState.user,
+                        reauth: widget.reauth,
+                        coffeeShop: coffeeShopState.coffeeShop,
+                        screen: widget.screen ?? CortadoAdminScreen.dashboard,
+                      );
+                      break;
+                    default:
+                      return AuthPage();
+                  }
+                },
+              );
             },
           );
         }
@@ -112,22 +126,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         return AuthPage();
       default:
         return AuthPage();
-    }
-  }
-
-  List<MenuItem> getMenuItems(UserType userType) {
-    switch (userType) {
-      case UserType.barista:
-        return baristaMenuItems;
-        break;
-      case UserType.owner:
-        return ownerMenuItems;
-        break;
-      case UserType.superUser:
-        return superUserMenuItems;
-        break;
-      default:
-        return baristaMenuItems;
     }
   }
 }

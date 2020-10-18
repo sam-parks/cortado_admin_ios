@@ -7,6 +7,12 @@ abstract class NavigationEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class InitializeUserType extends NavigationEvent {
+  final UserType userType;
+
+  InitializeUserType(this.userType);
+}
+
 class ChangeDashboardPage extends NavigationEvent {
   final CortadoAdminScreen cortadoAdminScreen;
   final MenuItem menuItem;
