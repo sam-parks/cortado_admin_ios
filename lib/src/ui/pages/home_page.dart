@@ -62,7 +62,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   _body(AuthState authState) {
-    print(authState.status);
     switch (authState.status) {
       case AuthStatus.loading:
         return Scaffold(

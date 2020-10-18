@@ -14,8 +14,6 @@ class LoadingStateButton<LoadingState> extends StatelessWidget {
       cubit: bloc,
       builder: (context, state) {
         if (state is LoadingState) {
-          print("Loading Button State");
-          print(state);
           return Center(
             child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(AppColors.caramel)),

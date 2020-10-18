@@ -38,8 +38,6 @@ class Order {
     drinks = List.generate(json['drinks'].length, (index) {
       Map<dynamic, dynamic> drinkMap = json['drinks'][index];
 
-      print(drinkMap);
-
       return drinkMap != null ? drinkFromData(drinkMap) : [];
     });
     json['food'] = json['food'] ?? [];

@@ -46,7 +46,6 @@ class CoffeeShopService {
     var remoteSnapshots = adminsQuery.docs;
     for (var snapshot in remoteSnapshots) {
       List<dynamic> users = snapshot.data()['users'];
-      print(users);
       List<DocumentReference> adminUsers = List.castFrom(users);
       adminUsers.forEach((ref) async {
         DocumentSnapshot snap = await ref.get();

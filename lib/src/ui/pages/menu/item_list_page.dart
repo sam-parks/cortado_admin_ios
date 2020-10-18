@@ -386,7 +386,7 @@ class _ItemListPageState extends State<ItemListPage> {
                                 color: AppColors.caramel,
                               ),
                               onPressed: () async {
-                                print("creating add in");
+                        
                                 var addIn = await Navigator.of(context)
                                     .pushNamed('/menu/category/item',
                                         arguments: [

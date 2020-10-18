@@ -523,7 +523,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                               widget.newCategory,
                                               true
                                             ]);
-                                        print(foodItem);
+
                                         if (foodItem != null) {
                                           setState(() {
                                             food.removeAt(index);
