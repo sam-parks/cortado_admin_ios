@@ -18,7 +18,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     if (event is GetOrders) {
       List<Order> orders;
       yield OrdersLoadingState();
-      orders = await _orderService.ordersForShop(event.coffeeShopName);
+      orders = await _orderService.ordersForShop(event.coffeeShop);
       yield OrdersRetrieved(orders);
     }
 

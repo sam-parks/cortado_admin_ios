@@ -10,6 +10,7 @@ class Drink extends Item {
   String id;
   String name;
   String description;
+  int quantity;
   RedeemableType redeemableType;
   SizeInOunces redeemableSize;
   Map sizePriceMap;
@@ -21,6 +22,7 @@ class Drink extends Item {
       {this.id,
       this.name,
       this.size,
+      this.quantity,
       this.sizePriceMap,
       this.addIns,
       this.servedIced,
@@ -35,6 +37,7 @@ class Drink extends Item {
       'sizePriceMap': sizePriceMap ?? [],
       'description': description,
       'size': size,
+      'quantity': quantity,
       'servedIced': servedIced,
       'redeemableSize': redeemableSize.statusToString(),
       'redeemableType': redeemableType.statusToString(),
@@ -53,14 +56,22 @@ class Food extends Item {
   String price;
   String description;
   String notes;
+  int quantity;
 
-  Food({this.id, this.name, this.price, this.notes, this.description});
+  Food(
+      {this.id,
+      this.name,
+      this.price,
+      this.notes,
+      this.description,
+      this.quantity});
 
   toJson() {
     return {
       'id': id,
       'name': name,
       'price': price,
+      'quantity': quantity,
       'notes': notes,
       'description': description,
     };

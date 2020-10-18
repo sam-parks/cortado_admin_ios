@@ -24,11 +24,11 @@ class _OrderCardState extends State<OrderCard> {
     return Card(
       elevation: 2.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      color: AppColors.cream,
+      color: AppColors.caramel,
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.caramel, width: 3)),
+            border: Border.all(color: AppColors.cream, width: 3)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,12 +38,12 @@ class _OrderCardState extends State<OrderCard> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: AutoSizeText(
-                    widget.customer ?? "",
+                    "Customer:  " + widget.customer ?? "",
                     maxLines: 1,
                     style: TextStyle(
                       fontFamily: kFontFamilyNormal,
                       fontSize: 26,
-                      color: AppColors.caramel,
+                      color: AppColors.cream,
                     ),
                   ),
                 ),
@@ -56,7 +56,7 @@ class _OrderCardState extends State<OrderCard> {
                         style: TextStyle(
                           fontFamily: kFontFamilyNormal,
                           fontSize: 18,
-                          color: AppColors.caramel,
+                          color: AppColors.cream,
                         ),
                       ),
                     ),
@@ -68,7 +68,7 @@ class _OrderCardState extends State<OrderCard> {
                         style: TextStyle(
                           fontFamily: kFontFamilyNormal,
                           fontSize: 18,
-                          color: AppColors.caramel,
+                          color: AppColors.cream,
                         ),
                       ),
                     ),
@@ -100,13 +100,15 @@ class _OrderCardState extends State<OrderCard> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  AutoSizeText(
-                                    drink.name,
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                      fontFamily: kFontFamilyNormal,
-                                      fontSize: 26,
-                                      color: AppColors.caramel,
+                                  Flexible(
+                                    child: AutoSizeText(
+                                      drink.name,
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                        fontFamily: kFontFamilyNormal,
+                                        fontSize: 26,
+                                        color: AppColors.dark,
+                                      ),
                                     ),
                                   ),
                                   AutoSizeText(
@@ -115,7 +117,7 @@ class _OrderCardState extends State<OrderCard> {
                                     style: TextStyle(
                                       fontFamily: kFontFamilyNormal,
                                       fontSize: 26,
-                                      color: AppColors.caramel,
+                                      color: AppColors.dark,
                                     ),
                                   ),
                                 ],

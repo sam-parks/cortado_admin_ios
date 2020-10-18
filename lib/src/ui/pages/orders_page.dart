@@ -6,7 +6,6 @@ import 'package:cortado_admin_ios/src/data/item.dart';
 import 'package:cortado_admin_ios/src/data/order.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
-import 'package:cortado_admin_ios/src/ui/widgets/cortado_raised_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/order_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,7 +35,7 @@ class _OrdersPageState extends State<OrdersPage> {
     super.initState();
     _ordersBloc = BlocProvider.of<OrdersBloc>(context);
     _coffeeShop = BlocProvider.of<CoffeeShopBloc>(context).state.coffeeShop;
-    _ordersBloc.add(GetOrders(_coffeeShop.name));
+    _ordersBloc.add(GetOrders(_coffeeShop.reference));
   }
 
   @override
@@ -214,42 +213,66 @@ class _OrdersPageState extends State<OrdersPage> {
                                           color: AppColors.dark,
                                         ),
                                       ),
-                                      color: AppColors.tan,
+                                      color: AppColors.light,
                                     ),
                                   ),
                                 )
                               : status == OrderStatus.started
                                   ? Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: CortadoFatButton(
-                                        text: "Ready For Pickup",
-                                        width: 300,
-                                        onTap: () {
-                                          Provider.of<OrdersBloc>(context,
-                                                  listen: false)
-                                              .add(ReadyForPickup(
-                                                  _currentOrders[index]
-                                                      .orderRef));
-                                        },
-                                        backgroundColor: AppColors.caramel,
-                                        color: AppColors.light,
+                                      child: ButtonTheme(
+                                        minWidth: 250,
+                                        height: 40,
+                                        child: RaisedButton(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8)),
+                                          child: Text(
+                                            "Ready For Pickup",
+                                            style: TextStyle(
+                                              fontFamily: kFontFamilyNormal,
+                                              fontSize: 20,
+                                              color: AppColors.caramel,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Provider.of<OrdersBloc>(context,
+                                                    listen: false)
+                                                .add(ReadyForPickup(
+                                                    _currentOrders[index]
+                                                        .orderRef));
+                                          },
+                                          color: AppColors.cream,
+                                        ),
                                       ),
                                     )
                                   : status == OrderStatus.readyForPickup
                                       ? Padding(
                                           padding: const EdgeInsets.all(8.0),
-                                          child: CortadoFatButton(
-                                            text: "Complete",
-                                            width: 300,
-                                            onTap: () {
-                                              Provider.of<OrdersBloc>(context,
-                                                      listen: false)
-                                                  .add(CompleteOrder(
-                                                      _currentOrders[index]
-                                                          .orderRef));
-                                            },
-                                            backgroundColor: AppColors.dark,
-                                            color: AppColors.light,
+                                          child: ButtonTheme(
+                                            minWidth: 250,
+                                            height: 40,
+                                            child: RaisedButton(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8)),
+                                              child: Text(
+                                                "Complete",
+                                                style: TextStyle(
+                                                  fontFamily: kFontFamilyNormal,
+                                                  fontSize: 20,
+                                                  color: AppColors.light,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Provider.of<OrdersBloc>(context,
+                                                        listen: false)
+                                                    .add(CompleteOrder(
+                                                        _currentOrders[index]
+                                                            .orderRef));
+                                              },
+                                              color: AppColors.dark,
+                                            ),
                                           ))
                                       : Container(),
                         )
