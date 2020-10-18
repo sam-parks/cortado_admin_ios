@@ -18,7 +18,7 @@ class NavigationInitial extends NavigationState {
       : super(cortadoAdminScreen, selectedMenuItem, menuItems);
 }
 
-enum CortadoAdminScreen { dashboard, orders, menu, users, profile }
+enum CortadoAdminScreen { dashboard, orders, revenue, menu, customers, profile }
 
 extension CortadoAdminScreenExtension on CortadoAdminScreen {
   String get name {
@@ -29,11 +29,14 @@ extension CortadoAdminScreenExtension on CortadoAdminScreen {
       case CortadoAdminScreen.orders:
         return "Orders";
         break;
+      case CortadoAdminScreen.revenue:
+        return "Revenue";
+        break;
       case CortadoAdminScreen.menu:
         return "Menu";
         break;
-      case CortadoAdminScreen.users:
-        return "Users";
+      case CortadoAdminScreen.customers:
+        return "Customers";
         break;
       case CortadoAdminScreen.profile:
         return "Profile";
@@ -52,11 +55,14 @@ CortadoAdminScreen screenFromString(String name) {
     case "Orders":
       return CortadoAdminScreen.orders;
       break;
+    case "Revenue":
+      return CortadoAdminScreen.revenue;
+      break;
     case "Menu":
       return CortadoAdminScreen.menu;
       break;
-    case "Users":
-      return CortadoAdminScreen.users;
+    case "Customers":
+      return CortadoAdminScreen.customers;
       break;
     case "Profile":
       return CortadoAdminScreen.profile;

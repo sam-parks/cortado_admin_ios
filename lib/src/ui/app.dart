@@ -7,6 +7,7 @@ import 'package:cortado_admin_ios/src/ui/pages/home_page.dart';
 import 'package:flavor/flavor.dart';
 import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart' as fluro;
+import 'package:flutter/services.dart';
 
 class MyApp extends StatefulWidget {
   MyApp({Key key}) : super(key: key);
@@ -22,6 +23,16 @@ class _MyAppState extends State<MyApp> {
     Routes.configureRoutes(router);
     super.initState();
     registerLocatorItems(Flavor.instance.environment == Environment.production);
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.black,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ));
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
   }
 
   @override

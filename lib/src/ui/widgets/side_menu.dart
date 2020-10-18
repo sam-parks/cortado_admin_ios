@@ -119,6 +119,7 @@ class _SideMenuState extends State<SideMenu> {
   }
 
   pagesForUserType(UserType type) {
+    print(type);
     switch (_userType) {
       case UserType.barista:
         return [
@@ -181,6 +182,7 @@ class _DynamicDrawerState extends State<DynamicDrawer> {
         in BlocProvider.of<NavigationBloc>(context).state.menuItems) {
       _menuOptionWidgets.add(GestureDetector(
         onTap: () {
+          print(menuItem.title);
           _navigationBloc.add(
               ChangeDashboardPage(screenFromString(menuItem.title), menuItem));
           widget.closeNav();
