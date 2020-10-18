@@ -17,7 +17,7 @@ const String kFontFamilyNormal = 'Mermaid';
 class AppColors {
   AppColors._();
   static const Color light = Color(0xFFFFF6EE);
-  static const Color cream = Color(0xFFEDCAA6);
+  static const Color cream = Color(0xFFFFE0BF);
   static const Color dark = Color(0xFF421F00);
   static const Color dark_low_opacity = Color(0xFF421F00);
   static const Color light_caramel = Color(0xFF7C431C);

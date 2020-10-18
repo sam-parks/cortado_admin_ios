@@ -6,6 +6,7 @@ import 'package:cortado_admin_ios/src/data/item.dart';
 import 'package:cortado_admin_ios/src/data/order.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/cortado_raised_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/order_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,91 +50,92 @@ class _OrdersPageState extends State<OrdersPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.transparent,
-      body: Scrollbar(
-        controller: _scrollController,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 130.0, right: 20),
-          child: Center(
-            child: ListView(
-              children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 30, top: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            AutoSizeText(
-                              "Orders",
-                              maxLines: 1,
-                              style: TextStyles.kWelcomeTitleTextStyle,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Text(
-                                "View daily current or past orders from customers.",
-                                style: TextStyles.kDefaultCaramelTextStyle,
+      body: BlocListener(
+        cubit: _ordersBloc,
+        listener: (BuildContext context, state) {
+          if (state is OrdersLoadingState) {
+            setState(() {
+              _loading = true;
+            });
+          }
+          if (state is OrdersRetrieved) {
+            setState(() {
+              _loading = false;
+              _allOrders = state.orders;
+            });
+          }
+
+          if (state is OrderStarted) {
+            _updateStatusOfOrder(state.id, OrderStatus.started);
+          }
+
+          if (state is ReadyForPickupState) {
+            _updateStatusOfOrder(state.id, OrderStatus.readyForPickup);
+          }
+
+          if (state is OrderCompleted) {
+            _updateStatusOfOrder(state.id, OrderStatus.completed);
+          }
+        },
+        child: Scrollbar(
+          controller: _scrollController,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 130.0, right: 20),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 30, top: 20.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              AutoSizeText(
+                                "Orders",
+                                maxLines: 1,
+                                style: TextStyles.kWelcomeTitleTextStyle,
                               ),
-                            )
-                          ],
-                        ),
-                        CortadoFatButton(
-                          text: !_viewCurrentOrders
-                              ? "View Current Orders"
-                              : "View Past Orders",
-                          backgroundColor: AppColors.dark,
-                          textStyle: TextStyles.kDefaultCreamTextStyle,
-                          onTap: () {
-                            setState(() {
-                              _viewCurrentOrders = !_viewCurrentOrders;
-                            });
-                          },
-                        )
-                      ],
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  "View daily current or past orders from customers.",
+                                  style: TextStyles.kDefaultCaramelTextStyle,
+                                ),
+                              )
+                            ],
+                          ),
+                          CortadoFatButton(
+                            text: !_viewCurrentOrders
+                                ? "View Current Orders"
+                                : "View Past Orders",
+                            backgroundColor: AppColors.dark,
+                            textStyle: TextStyles.kDefaultCreamTextStyle,
+                            onTap: () {
+                              setState(() {
+                                _viewCurrentOrders = !_viewCurrentOrders;
+                              });
+                            },
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                BlocListener(
-                    cubit: _ordersBloc,
-                    listener: (BuildContext context, state) {
-                      if (state is OrdersLoadingState) {
-                        setState(() {
-                          _loading = true;
-                        });
-                      }
-                      if (state is OrdersRetrieved) {
-                        setState(() {
-                          _loading = false;
-                          _allOrders = state.orders;
-                        });
-                      }
-
-                      if (state is OrderStarted) {
-                        _updateStatusOfOrder(state.id, OrderStatus.started);
-                      }
-
-                      if (state is ReadyForPickupState) {
-                        _updateStatusOfOrder(
-                            state.id, OrderStatus.readyForPickup);
-                      }
-
-                      if (state is OrderCompleted) {
-                        _updateStatusOfOrder(state.id, OrderStatus.completed);
-                      }
-                    },
-                    child: _loading
-                        ? Container(
-                            alignment: Alignment.center,
-                            child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppColors.caramel)))
-                        : _viewCurrentOrders
-                            ? _currentOrdersGrid()
-                            : _pastOrdersGrid())
-              ],
+                  _loading
+                      ? Container(
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.caramel)))
+                      : _viewCurrentOrders
+                          ? _currentOrdersGrid()
+                          : _pastOrdersGrid()
+                ],
+              ),
             ),
           ),
         ),
@@ -190,25 +192,38 @@ class _OrdersPageState extends State<OrdersPage> {
                           child: status == OrderStatus.ordered
                               ? Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: CortadoFatButton(
-                                    width: 300,
-                                    text: "Start Order",
-                                    onTap: () {
-                                      Provider.of<OrdersBloc>(context,
-                                              listen: false)
-                                          .add(StartOrder(
-                                              _currentOrders[index].orderRef));
-                                    },
-                                    backgroundColor: AppColors.cream,
-                                    color: AppColors.dark,
+                                  child: ButtonTheme(
+                                    minWidth: 250,
+                                    height: 40,
+                                    child: RaisedButton(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
+                                      onPressed: () {
+                                        Provider.of<OrdersBloc>(context,
+                                                listen: false)
+                                            .add(StartOrder(
+                                                _currentOrders[index]
+                                                    .orderRef));
+                                      },
+                                      child: Text(
+                                        "Start Order",
+                                        style: TextStyle(
+                                          fontFamily: kFontFamilyNormal,
+                                          fontSize: 20,
+                                          color: AppColors.dark,
+                                        ),
+                                      ),
+                                      color: AppColors.tan,
+                                    ),
                                   ),
                                 )
                               : status == OrderStatus.started
                                   ? Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: CortadoFatButton(
-                                        width: SizeConfig.screenWidth * .2,
                                         text: "Ready For Pickup",
+                                        width: 300,
                                         onTap: () {
                                           Provider.of<OrdersBloc>(context,
                                                   listen: false)
@@ -224,8 +239,8 @@ class _OrdersPageState extends State<OrdersPage> {
                                       ? Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: CortadoFatButton(
-                                            width: SizeConfig.screenWidth * .2,
                                             text: "Complete",
+                                            width: 300,
                                             onTap: () {
                                               Provider.of<OrdersBloc>(context,
                                                       listen: false)

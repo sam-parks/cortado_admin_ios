@@ -21,13 +21,16 @@ class _OrderCardState extends State<OrderCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      child: Card(
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        color: AppColors.light,
+    return Card(
+      elevation: 2.0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      color: AppColors.cream,
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: AppColors.caramel, width: 3)),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Column(
@@ -73,134 +76,139 @@ class _OrderCardState extends State<OrderCard> {
                 )
               ],
             ),
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: widget.items.length,
-                itemBuilder: (context, index) {
-                  if (widget.items[index] is Drink) {
-                    Drink drink = widget.items[index];
+            Expanded(
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.items.length,
+                  itemBuilder: (context, index) {
+                    if (widget.items[index] is Drink) {
+                      Drink drink = widget.items[index];
 
+                      return Container(
+                        height: 160,
+                        margin: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                            color: AppColors.cream,
+                            border: Border.all(color: AppColors.dark, width: 3),
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  AutoSizeText(
+                                    drink.name,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontFamily: kFontFamilyNormal,
+                                      fontSize: 26,
+                                      color: AppColors.caramel,
+                                    ),
+                                  ),
+                                  AutoSizeText(
+                                    drink.size ?? "12 oz",
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontFamily: kFontFamilyNormal,
+                                      fontSize: 26,
+                                      color: AppColors.caramel,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (drink.addIns != null && drink.addIns.isNotEmpty)
+                              Container(
+                                width: 250,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        "Add-Ins",
+                                        style: TextStyles
+                                            .kDefaultSmallTextDarkStyleUnderline,
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 80,
+                                      width: 250,
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: GridView.count(
+                                          padding: EdgeInsets.zero,
+                                          scrollDirection: Axis.horizontal,
+                                          crossAxisCount: 3,
+                                          crossAxisSpacing: 1,
+                                          childAspectRatio: 1 / 4,
+                                          children: List.generate(
+                                              drink.addIns.length, (index) {
+                                            return Container(
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    child: Image.asset(
+                                                      'images/coffee_bean.png',
+                                                      color: AppColors.dark,
+                                                      width: 15,
+                                                    ),
+                                                  ),
+                                                  Flexible(
+                                                    child: AutoSizeText(
+                                                      drink.addIns[index].name,
+                                                      maxLines: 1,
+                                                      style: TextStyle(
+                                                          color:
+                                                              AppColors.caramel,
+                                                          fontFamily:
+                                                              kFontFamilyNormal),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          })),
+                                    ),
+                                  ],
+                                ),
+                              )
+                          ],
+                        ),
+                      );
+                    }
+                    Food food = widget.items[index];
                     return Container(
-                      height: 160,
+                      height: 140,
                       margin: const EdgeInsets.all(8.0),
                       decoration: BoxDecoration(
-                          color: AppColors.tan,
+                          border: Border.all(color: AppColors.dark, width: 3),
+                          color: AppColors.cream,
                           borderRadius: BorderRadius.circular(8)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                AutoSizeText(
-                                  drink.name,
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    fontFamily: kFontFamilyNormal,
-                                    fontSize: 26,
-                                    color: AppColors.caramel,
-                                  ),
-                                ),
-                                AutoSizeText(
-                                  drink.size ?? "12 oz",
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    fontFamily: kFontFamilyNormal,
-                                    fontSize: 26,
-                                    color: AppColors.caramel,
-                                  ),
-                                ),
-                              ],
+                            child: Text(
+                              food.name,
+                              style: TextStyle(
+                                fontFamily: kFontFamilyNormal,
+                                fontSize: 26,
+                                color: AppColors.caramel,
+                              ),
                             ),
                           ),
-                          if (drink.addIns != null && drink.addIns.isNotEmpty)
-                            Container(
-                              width: 250,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      "Add-Ins",
-                                      style: TextStyles
-                                          .kDefaultSmallTextDarkStyleUnderline,
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 80,
-                                    width: 250,
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: GridView.count(
-                                        padding: EdgeInsets.zero,
-                                        scrollDirection: Axis.horizontal,
-                                        crossAxisCount: 3,
-                                        crossAxisSpacing: 1,
-                                        childAspectRatio: 1 / 4,
-                                        children: List.generate(
-                                            drink.addIns.length, (index) {
-                                          return Container(
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  padding:
-                                                      const EdgeInsets.all(8),
-                                                  child: Image.asset(
-                                                    'images/coffee_bean.png',
-                                                    color: AppColors.dark,
-                                                    width: 15,
-                                                  ),
-                                                ),
-                                                Flexible(
-                                                  child: AutoSizeText(
-                                                    drink.addIns[index].name,
-                                                    maxLines: 1,
-                                                    style: TextStyle(
-                                                        color:
-                                                            AppColors.caramel,
-                                                        fontFamily:
-                                                            kFontFamilyNormal),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        })),
-                                  ),
-                                ],
-                              ),
-                            )
                         ],
                       ),
                     );
-                  }
-                  Food food = widget.items[index];
-                  return Container(
-                    height: 140,
-                    margin: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                        color: AppColors.cream,
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            food.name,
-                            style: TextStyle(
-                              fontFamily: kFontFamilyNormal,
-                              fontSize: 26,
-                              color: AppColors.caramel,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
+                  }),
+            ),
           ],
         ),
       ),
