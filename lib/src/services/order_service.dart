@@ -7,13 +7,13 @@ class OrderService {
 
   CollectionReference get _ordersCollection => _firestore.collection("orders");
 
-  Future<List<Order>> ordersForShop(DocumentReference coffeeShop) async {
+  Future<List<Order>> ordersForShop(String coffeeShop) async {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
 
     List<Order> orders = [];
     QuerySnapshot query = await _ordersCollection
-        .where('coffeeShop', isEqualTo: coffeeShop, isGreaterThan: today)
+        .where('coffeeShopName', isEqualTo: coffeeShop)
         .get();
     var remoteSnapshots = query.docs;
     for (var orderSnap in remoteSnapshots) {

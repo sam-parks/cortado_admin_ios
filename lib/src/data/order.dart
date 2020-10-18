@@ -33,7 +33,9 @@ class Order {
     coffeeShop = json['coffeeShop'];
     customer = json['customer'];
     customerName = json['customerName'];
-    createdAt = json['createdAt'];
+    Timestamp createdAtTimestamp = json['createdAt'];
+    createdAt = DateTime.fromMillisecondsSinceEpoch(
+        createdAtTimestamp.millisecondsSinceEpoch);
     json['drinks'] = json['drinks'] ?? [];
     drinks = List.generate(json['drinks'].length, (index) {
       Map<dynamic, dynamic> drinkMap = json['drinks'][index];

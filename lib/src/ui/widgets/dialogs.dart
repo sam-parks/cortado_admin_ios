@@ -24,7 +24,7 @@ newOrderDialog(String title, BuildContext ctx) {
       CoffeeShopState _coffeeShopState =
           BlocProvider.of<CoffeeShopBloc>(context).state;
       BlocProvider.of<OrdersBloc>(context)
-          .add(GetOrders(_coffeeShopState.coffeeShop.reference));
+          .add(GetOrders(_coffeeShopState.coffeeShop.name));
       // ignore: close_sinks
       NavigationBloc navigationBloc = BlocProvider.of<NavigationBloc>(context);
       return AlertDialog(

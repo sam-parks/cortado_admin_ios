@@ -1,30 +1,17 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cortado_admin_ios/src/bloc/orders/bloc.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
-import 'package:cortado_admin_ios/src/data/order.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
-import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class OrderCard extends StatefulWidget {
   OrderCard(
-      {Key key,
-      this.items,
-      this.customer,
-      this.orderRef,
-      this.orderStatus,
-      this.createdAt,
-      this.orderNumber})
+      {Key key, this.items, this.customer, this.createdAt, this.orderNumber})
       : super(key: key);
   final String orderNumber;
-  final DocumentReference orderRef;
   final DateTime createdAt;
   final String customer;
   final List<Item> items;
-  final OrderStatus orderStatus;
   @override
   _OrderCardState createState() => _OrderCardState();
 }
@@ -35,7 +22,6 @@ class _OrderCardState extends State<OrderCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 300,
       height: MediaQuery.of(context).size.height,
       child: Card(
         elevation: 0,
@@ -215,53 +201,6 @@ class _OrderCardState extends State<OrderCard> {
                     ),
                   );
                 }),
-            Spacer(),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: widget.orderStatus == OrderStatus.ordered
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CortadoFatButton(
-                        width: SizeConfig.screenWidth * .2,
-                        text: "Start Order",
-                        onTap: () {
-                          Provider.of<OrdersBloc>(context, listen: false)
-                              .add(StartOrder(widget.orderRef));
-                        },
-                        backgroundColor: AppColors.cream,
-                        color: AppColors.dark,
-                      ),
-                    )
-                  : widget.orderStatus == OrderStatus.started
-                      ? Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: CortadoFatButton(
-                            width: SizeConfig.screenWidth * .2,
-                            text: "Ready For Pickup",
-                            onTap: () {
-                              Provider.of<OrdersBloc>(context, listen: false)
-                                  .add(ReadyForPickup(widget.orderRef));
-                            },
-                            backgroundColor: AppColors.caramel,
-                            color: AppColors.light,
-                          ),
-                        )
-                      : widget.orderStatus == OrderStatus.readyForPickup
-                          ? Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: CortadoFatButton(
-                                width: SizeConfig.screenWidth * .2,
-                                text: "Complete",
-                                onTap: () {
-                                  Provider.of<OrdersBloc>(context,
-                                          listen: false)
-                                      .add(CompleteOrder(widget.orderRef));
-                                },
-                                backgroundColor: AppColors.dark,
-                                color: AppColors.light,
-                              ))
-                          : Container(),
-            )
           ],
         ),
       ),

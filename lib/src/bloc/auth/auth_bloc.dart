@@ -40,7 +40,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           UserType userType = await getUserType(user);
           if (user != null) {
             coffeeShopBloc.add(InitializeCoffeeShop(user.coffeeShopId));
-            //await _notificationService.start();
+            await _notificationService.start();
             yield AuthState.authenticated(user.copyWith(userType: userType));
           } else {
             yield AuthState.unauthenticated();
@@ -65,7 +65,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           CortadoUser user = await _userService.getUser(firebaseUser);
           if (firebaseUser != null && user != null) {
             coffeeShopBloc.add(InitializeCoffeeShop(user.coffeeShopId));
-            //await _notificationService.start();
+            await _notificationService.start();
             UserType userType = await getUserType(user);
 
             yield AuthState.authenticated(user.copyWith(userType: userType));

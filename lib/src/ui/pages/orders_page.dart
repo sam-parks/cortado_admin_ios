@@ -9,6 +9,7 @@ import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/order_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 class OrdersPage extends StatefulWidget {
   OrdersPage({Key key}) : super(key: key);
@@ -34,7 +35,7 @@ class _OrdersPageState extends State<OrdersPage> {
     super.initState();
     _ordersBloc = BlocProvider.of<OrdersBloc>(context);
     _coffeeShop = BlocProvider.of<CoffeeShopBloc>(context).state.coffeeShop;
-    _ordersBloc.add(GetOrders(_coffeeShop.reference));
+    _ordersBloc.add(GetOrders(_coffeeShop.name));
   }
 
   @override
@@ -51,7 +52,7 @@ class _OrdersPageState extends State<OrdersPage> {
       body: Scrollbar(
         controller: _scrollController,
         child: Padding(
-         padding: const EdgeInsets.only(left: 130.0, right: 20),
+          padding: const EdgeInsets.only(left: 130.0, right: 20),
           child: Center(
             child: ListView(
               children: [
@@ -156,6 +157,7 @@ class _OrdersPageState extends State<OrdersPage> {
       decoration: BoxDecoration(
           color: AppColors.dark, borderRadius: BorderRadius.circular(8)),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -172,13 +174,73 @@ class _OrdersPageState extends State<OrdersPage> {
                   List<Item> items = [];
                   items.addAll(_currentOrders[index].food);
                   items.addAll(_currentOrders[index].drinks);
-                  return OrderCard(
-                      orderNumber: _currentOrders[index].orderNumber,
-                      createdAt: _currentOrders[index].createdAt,
-                      orderStatus: _currentOrders[index].status,
-                      orderRef: _currentOrders[index].orderRef,
-                      customer: _currentOrders[index].customerName,
-                      items: items);
+
+                  OrderStatus status = _currentOrders[index].status;
+                  return Container(
+                    width: 300,
+                    child: Stack(
+                      children: [
+                        OrderCard(
+                            orderNumber: _currentOrders[index].orderNumber,
+                            createdAt: _currentOrders[index].createdAt,
+                            customer: _currentOrders[index].customerName,
+                            items: items),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: status == OrderStatus.ordered
+                              ? Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: CortadoFatButton(
+                                    width: 300,
+                                    text: "Start Order",
+                                    onTap: () {
+                                      Provider.of<OrdersBloc>(context,
+                                              listen: false)
+                                          .add(StartOrder(
+                                              _currentOrders[index].orderRef));
+                                    },
+                                    backgroundColor: AppColors.cream,
+                                    color: AppColors.dark,
+                                  ),
+                                )
+                              : status == OrderStatus.started
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: CortadoFatButton(
+                                        width: SizeConfig.screenWidth * .2,
+                                        text: "Ready For Pickup",
+                                        onTap: () {
+                                          Provider.of<OrdersBloc>(context,
+                                                  listen: false)
+                                              .add(ReadyForPickup(
+                                                  _currentOrders[index]
+                                                      .orderRef));
+                                        },
+                                        backgroundColor: AppColors.caramel,
+                                        color: AppColors.light,
+                                      ),
+                                    )
+                                  : status == OrderStatus.readyForPickup
+                                      ? Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: CortadoFatButton(
+                                            width: SizeConfig.screenWidth * .2,
+                                            text: "Complete",
+                                            onTap: () {
+                                              Provider.of<OrdersBloc>(context,
+                                                      listen: false)
+                                                  .add(CompleteOrder(
+                                                      _currentOrders[index]
+                                                          .orderRef));
+                                            },
+                                            backgroundColor: AppColors.dark,
+                                            color: AppColors.light,
+                                          ))
+                                      : Container(),
+                        )
+                      ],
+                    ),
+                  );
                 }),
           ),
         ],
@@ -202,8 +264,6 @@ class _OrdersPageState extends State<OrdersPage> {
             return OrderCard(
                 orderNumber: _pastOrders[index].orderNumber,
                 createdAt: _pastOrders[index].createdAt,
-                orderStatus: _pastOrders[index].status,
-                orderRef: _pastOrders[index].orderRef,
                 customer: _pastOrders[index].customerName,
                 items: items);
           }),

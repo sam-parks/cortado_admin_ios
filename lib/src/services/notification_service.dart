@@ -10,7 +10,7 @@ import 'package:cortado_admin_ios/src/ui/widgets/dialogs.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-const String _orderType = "order";
+const String _orderType = "newOrder";
 
 class NotificationService {
   FirebaseMessaging _fcm = FirebaseMessaging();
@@ -51,9 +51,9 @@ class NotificationService {
     if (user == null) return;
     if (message.containsKey('type')) {
       String type = message['type'];
-      //var currentState = NavigationService.navigatorKey?.currentState;
       switch (type) {
         case _orderType:
+          handleNotification(type, message['notification']['title']);
           break;
       }
     }
@@ -72,9 +72,10 @@ class NotificationService {
     if (user == null) return;
     if (message.containsKey('type')) {
       String type = message['type'];
-      //var currentState = NavigationService.navigatorKey?.currentState;
+
       switch (type) {
         case _orderType:
+          handleNotification(type, message['notification']['title']);
           break;
       }
     }

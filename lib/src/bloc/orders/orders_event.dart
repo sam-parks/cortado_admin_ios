@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 abstract class OrdersEvent {}
 
 class GetOrders extends OrdersEvent {
-  final DocumentReference coffeeShop;
+  final String coffeeShopName;
 
-  GetOrders(this.coffeeShop);
+  GetOrders(this.coffeeShopName);
 }
 
 class StartOrder extends OrdersEvent {
