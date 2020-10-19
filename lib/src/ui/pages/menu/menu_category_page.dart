@@ -6,7 +6,6 @@ import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
 import 'package:cortado_admin_ios/src/ui/router.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
-import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
 import 'package:cortado_admin_ios/src/utils/validate.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
 import 'package:flutter/material.dart';
@@ -181,6 +180,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             onTap: () async {
                               var addIn = await Navigator.of(context)
                                   .pushNamed(kItemRoute, arguments: [
+                                    false,
                                 CategoryType.addIn,
                                 widget.category,
                                 AddIn(
@@ -256,6 +256,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                               await Navigator.of(context)
                                                   .pushNamed(kItemRoute,
                                                       arguments: [
+                                                        true,
                                                 CategoryType.addIn,
                                                 widget.category,
                                                 addIns[index],
@@ -284,10 +285,11 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
           floatingActionButton: !widget.editing
               ? Padding(
                   padding: const EdgeInsets.all(30),
-                  child: CortadoButton(
+                  child: CortadoFatButton(
                     text: "Finish Editing",
-                    textStyle: TextStyles.kLargeCaramelTextStyle,
-                    color: AppColors.caramel,
+                    textStyle: TextStyles.kDefaultLightTextStyle,
+                    backgroundColor: AppColors.caramel,
+                    width: 300,
                     onTap: () {
                       if (_formKey.currentState.validate()) {
                         String title = titleController.text;
@@ -308,7 +310,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                     text: "Create Category",
                     width: 300,
                     textStyle: TextStyles.kDefaultLightTextStyle,
-                    backgroundColor: AppColors.dark,
+                           backgroundColor: AppColors.caramel,
                     onTap: () {
                       if (_formKey.currentState.validate()) {
                         String title = titleController.text;
@@ -437,6 +439,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             onTap: () async {
                               var foodItem = await Navigator.of(context)
                                   .pushNamed(kItemRoute, arguments: [
+                                     false,
                                 CategoryType.food,
                                 widget.category,
                                 Food(
@@ -514,6 +517,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                             await Navigator.of(context)
                                                 .pushNamed(kItemRoute,
                                                     arguments: [
+                                                      true,
                                               CategoryType.food,
                                               widget.category,
                                               food[index],
@@ -550,10 +554,11 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
           floatingActionButton: widget.editing
               ? Padding(
                   padding: const EdgeInsets.all(30),
-                  child: CortadoButton(
+                  child: CortadoFatButton(
                     text: "Finish Editing",
-                    textStyle: TextStyles.kLargeCaramelTextStyle,
-                    color: AppColors.caramel,
+                    textStyle: TextStyles.kDefaultLightTextStyle,
+                    backgroundColor: AppColors.caramel,
+                    width: 300,
                     onTap: () {
                       if (_formKey.currentState.validate()) {
                         String title = titleController.text;
@@ -574,7 +579,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                     text: "Create Category",
                     width: 300,
                     textStyle: TextStyles.kDefaultLightTextStyle,
-                    backgroundColor: AppColors.dark,
+                          backgroundColor: AppColors.caramel,
                     onTap: () {
                       if (_formKey.currentState.validate()) {
                         String title = titleController.text;
@@ -702,6 +707,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             onTap: () async {
                               var drink = await Navigator.of(context)
                                   .pushNamed(kItemRoute, arguments: [
+                                     false,
                                 CategoryType.drink,
                                 widget.category,
                                 Drink(
@@ -785,6 +791,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                 await Navigator.of(context)
                                                     .pushNamed(kItemRoute,
                                                         arguments: [
+                                                          true,
                                                   CategoryType.drink,
                                                   widget.category,
                                                   drinks[index],
@@ -834,9 +841,11 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
           floatingActionButton: widget.editing
               ? Padding(
                   padding: const EdgeInsets.all(30),
-                  child: CortadoButton(
+                  child: CortadoFatButton(
                     text: "Finish Editing",
-                    textStyle: TextStyles.kLargeCaramelTextStyle,
+                    textStyle: TextStyles.kDefaultLightTextStyle,
+                    backgroundColor: AppColors.caramel,
+                    width: 300,
                     color: AppColors.caramel,
                     onTap: () {
                       if (_formKey.currentState.validate()) {
@@ -858,7 +867,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                     text: "Create Category",
                     width: 300,
                     textStyle: TextStyles.kDefaultLightTextStyle,
-                    backgroundColor: AppColors.dark,
+                     backgroundColor: AppColors.caramel,
                     onTap: () {
                       if (_formKey.currentState.validate()) {
                         String title = titleController.text;

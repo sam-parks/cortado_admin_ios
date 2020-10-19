@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
-import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/router.dart';
