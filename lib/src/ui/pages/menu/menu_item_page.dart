@@ -12,13 +12,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 
 class MenuItemPage extends StatefulWidget {
-  MenuItemPage({
+  MenuItemPage(
+    this.editing, {
     Key key,
     this.newCategory,
     this.item,
     this.category,
     this.categoryType,
-    this.editing,
   }) : super(key: key);
   final CategoryType categoryType;
   final bool newCategory;

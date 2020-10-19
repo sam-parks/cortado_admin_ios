@@ -10,7 +10,7 @@ part 'category_event.dart';
 part 'category_state.dart';
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
-  CategoryBloc() : super(CategoryInitial());
+  CategoryBloc() : super(CategoryInitial(null));
 
   @override
   Stream<CategoryState> mapEventToState(
@@ -20,16 +20,21 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       CoffeeShop updatedCoffeeShop =
           addCategoryToCoffeeShop(event.type, event.category, event.coffeeShop);
 
-      yield CategoriesUpdated(updatedCoffeeShop);
+      yield CategoryAdded(updatedCoffeeShop);
     }
     if (event is RemoveCategory) {
       CoffeeShop updatedCoffeeShop = removeCategoryFromCoffeeShop(
           event.type, event.category, event.coffeeShop);
-      yield CategoriesUpdated(updatedCoffeeShop);
+      yield CategoryRemoved(updatedCoffeeShop);
+    }
+
+    if (event is UpdateCategory) {
+      CoffeeShop updatedCoffeeShop = updateCategoryForCoffeeShop(
+          event.type, event.category, event.coffeeShop);
+      yield CategoryUpdated(updatedCoffeeShop);
     }
   }
 
-  // ignore: missing_return
   CoffeeShop addCategoryToCoffeeShop(
       CategoryType categoryType, Category category, CoffeeShop coffeeShop) {
     switch (categoryType) {
@@ -43,10 +48,9 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         coffeeShop.addIns.add(category);
         break;
     }
-    return coffeeShop;
+    return coffeeShop.copy(coffeeShop);
   }
 
-  // ignore: missing_return
   CoffeeShop removeCategoryFromCoffeeShop(
       CategoryType categoryType, Category category, CoffeeShop coffeeShop) {
     switch (categoryType) {
@@ -60,6 +64,37 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         coffeeShop.addIns.remove(category);
         break;
     }
-    return coffeeShop;
+    return coffeeShop.copy(coffeeShop);
+  }
+
+  CoffeeShop updateCategoryForCoffeeShop(CategoryType categoryType,
+      Category updatedCategory, CoffeeShop coffeeShop) {
+    switch (categoryType) {
+      case CategoryType.drink:
+        coffeeShop.drinks.forEach((category) {
+          if (category.id == updatedCategory.id) {
+            coffeeShop.drinks.remove(category);
+            coffeeShop.drinks.add(updatedCategory);
+          }
+        });
+        break;
+      case CategoryType.food:
+        coffeeShop.food.forEach((category) {
+          if (category.id == updatedCategory.id) {
+            coffeeShop.food.remove(category);
+            coffeeShop.food.add(updatedCategory);
+          }
+        });
+        break;
+      case CategoryType.addIn:
+        coffeeShop.addIns.forEach((category) {
+          if (category.id == updatedCategory.id) {
+            coffeeShop.addIns.remove(category);
+            coffeeShop.addIns.add(updatedCategory);
+          }
+        });
+        break;
+    }
+    return coffeeShop.copy(coffeeShop);
   }
 }

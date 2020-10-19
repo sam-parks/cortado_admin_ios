@@ -15,6 +15,15 @@ class AddCategory extends CategoryEvent {
   AddCategory(this.type, this.category, this.coffeeShop);
 }
 
+class UpdateCategory extends CategoryEvent {
+  final CategoryType type;
+  final Category category;
+
+  final CoffeeShop coffeeShop;
+
+  UpdateCategory(this.type, this.category, this.coffeeShop);
+}
+
 class RemoveCategory extends CategoryEvent {
   final CategoryType type;
   final Category category;

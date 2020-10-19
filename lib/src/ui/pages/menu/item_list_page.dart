@@ -1,5 +1,6 @@
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
+import 'package:cortado_admin_ios/src/ui/router.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
@@ -62,9 +63,10 @@ class _ItemListPageState extends State<ItemListPage> {
             GestureDetector(
                 onTap: () async {
                   var drink = await Navigator.of(context)
-                      .pushNamed('/menu/category/item', arguments: [
+                      .pushNamed(kItemRoute, arguments: [
+                    false,
                     CategoryType.drink,
-                    null,
+                    widget.category,
                     Drink(
                         servedIced: false,
                         id: Uuid().v4(),
@@ -72,12 +74,6 @@ class _ItemListPageState extends State<ItemListPage> {
                         redeemableSize: SizeInOunces.none,
                         sizePriceMap: {"8 oz": '', '12 oz': '', '16 oz': ''}),
                   ]);
-                  if (drink != null) {
-                    setState(() {
-                      widget.category.items.add(drink);
-                      //  _menuBloc.add(UpdateMenu(coffeeShop));
-                    });
-                  }
                 },
                 child: Row(
                   children: [
@@ -130,21 +126,12 @@ class _ItemListPageState extends State<ItemListPage> {
                               ),
                               onPressed: () async {
                                 var drink = await Navigator.of(context)
-                                    .pushNamed('/menu/category/item',
-                                        arguments: [
-                                      CategoryType.drink,
-                                      widget.category,
-                                      drinks[index]
-                                    ]);
-
-                                if (drink != null) {
-                                  setState(() {
-                                    drinks.removeAt(index);
-                                    drinks.insert(index, drink);
-                                    widget.category.items = drinks;
-                                    // _menuBloc.add(UpdateMenu(coffeeShop));
-                                  });
-                                }
+                                    .pushNamed(kItemRoute, arguments: [
+                                  true,
+                                  CategoryType.drink,
+                                  widget.category,
+                                  drinks[index]
+                                ]);
                               },
                             ),
                             IconButton(
@@ -185,7 +172,8 @@ class _ItemListPageState extends State<ItemListPage> {
             GestureDetector(
                 onTap: () async {
                   var foodItem = await Navigator.of(context)
-                      .pushNamed('/menu/category/item', arguments: [
+                      .pushNamed(kItemRoute, arguments: [
+                    false,
                     CategoryType.food,
                     widget.category,
                     Food(
@@ -250,20 +238,12 @@ class _ItemListPageState extends State<ItemListPage> {
                               ),
                               onPressed: () async {
                                 var foodItem = await Navigator.of(context)
-                                    .pushNamed('/menu/category/item',
-                                        arguments: [
-                                      CategoryType.food,
-                                      widget.category,
-                                      food[index],
-                                    ]);
-                                if (foodItem != null) {
-                                  setState(() {
-                                    food.removeAt(index);
-                                    food.insert(index, foodItem);
-                                    widget.category.items = food;
-                                    //   _menuBloc.add(UpdateMenu(coffeeShop));
-                                  });
-                                }
+                                    .pushNamed(kItemRoute, arguments: [
+                                  true,
+                                  CategoryType.food,
+                                  widget.category,
+                                  food[index],
+                                ]);
                               },
                             ),
                             IconButton(
@@ -271,11 +251,7 @@ class _ItemListPageState extends State<ItemListPage> {
                                 Icons.delete,
                                 color: AppColors.caramel,
                               ),
-                              onPressed: () {
-                                widget.category.items.removeAt(index);
-
-                                // _menuBloc.add(UpdateMenu(coffeeShop));
-                              },
+                              onPressed: () {},
                             )
                           ],
                         )
@@ -304,19 +280,14 @@ class _ItemListPageState extends State<ItemListPage> {
             GestureDetector(
                 onTap: () async {
                   var addIn = await Navigator.of(context)
-                      .pushNamed('/menu/category/item', arguments: [
+                      .pushNamed(kItemRoute, arguments: [
+                    false,
                     CategoryType.addIn,
                     widget.category,
                     AddIn(
                       id: Uuid().v4(),
                     ),
                   ]);
-                  if (addIn != null) {
-                    setState(() {
-                      widget.category.items.add(addIn);
-                      //   _menuBloc.add(UpdateMenu(coffeeShop));
-                    });
-                  }
                 },
                 child: Row(
                   children: [
@@ -368,21 +339,13 @@ class _ItemListPageState extends State<ItemListPage> {
                                 color: AppColors.caramel,
                               ),
                               onPressed: () async {
-                                /*    var addIn = await Navigator.of(context)
+                                var addIn = await Navigator.of(context)
                                     .pushNamed('/menu/category/item',
                                         arguments: [
                                       CategoryType.addIn,
                                       widget.category,
                                       addIns[index],
                                     ]);
-                                if (addIn != null) {
-                                  setState(() {
-                                    addIns.removeAt(index);
-                                    addIns.insert(index, addIn);
-                                    widget.category.items = addIns;
-                                    _menuBloc.add(UpdateMenu(coffeeShop));
-                                  });
-                                } */
                               },
                             ),
                             IconButton(
@@ -391,8 +354,6 @@ class _ItemListPageState extends State<ItemListPage> {
                                 color: AppColors.caramel,
                               ),
                               onPressed: () {
-                                widget.category.items.removeAt(index);
-
                                 //     _menuBloc.add(UpdateMenu(coffeeShop));
                               },
                             )

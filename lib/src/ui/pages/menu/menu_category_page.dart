@@ -1,7 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
+import 'package:cortado_admin_ios/src/ui/router.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
 import 'package:cortado_admin_ios/src/utils/validate.dart';
@@ -12,39 +15,60 @@ import 'package:uuid/uuid.dart';
 
 class MenuCategoryPage extends StatefulWidget {
   MenuCategoryPage(
-      {Key key, this.categoryType, this.category, this.newCategory})
-      : super(key: key);
+    this.editing, {
+    Key key,
+    this.categoryType,
+    this.category,
+  }) : super(key: key);
   final CategoryType categoryType;
   final Category category;
-  final bool newCategory;
+  final bool editing;
 
   @override
   _MenuCategoryPageState createState() => _MenuCategoryPageState();
 }
 
 class _MenuCategoryPageState extends State<MenuCategoryPage> {
-  ScrollController _scrollController = ScrollController();
+  // ignore: close_sinks
+  CategoryBloc _categoryBloc;
+  // ignore: close_sinks
+  CoffeeShopBloc _coffeeShopBloc;
 
+  ScrollController _scrollController = ScrollController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+    _categoryBloc = BlocProvider.of<CategoryBloc>(context);
+    _coffeeShopBloc = BlocProvider.of<CoffeeShopBloc>(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder(
-      
-      builder: (BuildContext context, state) {  },);
-    switch (widget.categoryType) {
-      case CategoryType.drink:
-        return _drinkForm();
-        break;
-      case CategoryType.food:
-        return _foodform();
-        break;
-      case CategoryType.addIn:
-        return _addInForm();
-        break;
-      default:
-        return Container();
-    }
+    return BlocConsumer(
+      cubit: _categoryBloc,
+      listener: (context, state) {
+        if (state is CategoryAdded || state is CategoryUpdated) {
+          Navigator.of(context).pop();
+        }
+      },
+      builder: (BuildContext context, CategoryState state) {
+        switch (widget.categoryType) {
+          case CategoryType.drink:
+            return _drinkForm();
+            break;
+          case CategoryType.food:
+            return _foodform();
+            break;
+          case CategoryType.addIn:
+            return _addInForm();
+            break;
+          default:
+            return Container();
+        }
+      },
+    );
   }
 
   _addInForm() {
@@ -156,7 +180,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         GestureDetector(
                             onTap: () async {
                               var addIn = await Navigator.of(context)
-                                  .pushNamed('/menu/category/item', arguments: [
+                                  .pushNamed(kItemRoute, arguments: [
                                 CategoryType.addIn,
                                 widget.category,
                                 AddIn(
@@ -230,8 +254,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                         onPressed: () async {
                                           var addIn =
                                               await Navigator.of(context)
-                                                  .pushNamed(
-                                                      '/menu/category/item',
+                                                  .pushNamed(kItemRoute,
                                                       arguments: [
                                                 CategoryType.addIn,
                                                 widget.category,
@@ -258,7 +281,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
               ],
             ),
           ),
-          floatingActionButton: !widget.newCategory
+          floatingActionButton: !widget.editing
               ? Padding(
                   padding: const EdgeInsets.all(30),
                   child: CortadoButton(
@@ -273,7 +296,8 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         Category category =
                             Category(id, addIns, title, description);
 
-                        Navigator.of(context).pop();
+                        _categoryBloc.add(UpdateCategory(CategoryType.addIn,
+                            category, _coffeeShopBloc.state.coffeeShop));
                       }
                     },
                   ),
@@ -291,6 +315,9 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         String description = descriptionController.text;
                         Category category =
                             Category(Uuid().v4(), addIns, title, description);
+
+                        _categoryBloc.add(AddCategory(CategoryType.addIn,
+                            category, _coffeeShopBloc.state.coffeeShop));
                       }
                     },
                   ),
@@ -409,7 +436,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         GestureDetector(
                             onTap: () async {
                               var foodItem = await Navigator.of(context)
-                                  .pushNamed('/menu/category/item', arguments: [
+                                  .pushNamed(kItemRoute, arguments: [
                                 CategoryType.food,
                                 widget.category,
                                 Food(
@@ -485,8 +512,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                       onPressed: () async {
                                         var foodItem =
                                             await Navigator.of(context)
-                                                .pushNamed(
-                                                    '/menu/category/item',
+                                                .pushNamed(kItemRoute,
                                                     arguments: [
                                               CategoryType.food,
                                               widget.category,
@@ -521,7 +547,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
               ],
             ),
           ),
-          floatingActionButton: !widget.newCategory
+          floatingActionButton: widget.editing
               ? Padding(
                   padding: const EdgeInsets.all(30),
                   child: CortadoButton(
@@ -536,9 +562,8 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         Category category =
                             Category(id, food, title, description);
 
-                        // menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
-
-                        Navigator.of(context).pop();
+                        _categoryBloc.add(UpdateCategory(CategoryType.food,
+                            category, _coffeeShopBloc.state.coffeeShop));
                       }
                     },
                   ),
@@ -557,7 +582,8 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         Category category =
                             Category(Uuid().v4(), food, title, description);
 
-                        Navigator.of(context).pop();
+                        _categoryBloc.add(AddCategory(CategoryType.food,
+                            category, _coffeeShopBloc.state.coffeeShop));
                       }
                     },
                   ),
@@ -675,7 +701,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         GestureDetector(
                             onTap: () async {
                               var drink = await Navigator.of(context)
-                                  .pushNamed('/menu/category/item', arguments: [
+                                  .pushNamed(kItemRoute, arguments: [
                                 CategoryType.drink,
                                 widget.category,
                                 Drink(
@@ -757,8 +783,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                           onPressed: () async {
                                             var drink =
                                                 await Navigator.of(context)
-                                                    .pushNamed(
-                                                        '/menu/category/item',
+                                                    .pushNamed(kItemRoute,
                                                         arguments: [
                                                   CategoryType.drink,
                                                   widget.category,
@@ -806,7 +831,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
               ],
             ),
           ),
-          floatingActionButton: !widget.newCategory
+          floatingActionButton: widget.editing
               ? Padding(
                   padding: const EdgeInsets.all(30),
                   child: CortadoButton(
@@ -821,7 +846,8 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         Category category =
                             Category(id, drinks, title, description);
 
-                        Navigator.of(context).pop();
+                        _categoryBloc.add(UpdateCategory(CategoryType.drink,
+                            category, _coffeeShopBloc.state.coffeeShop));
                       }
                     },
                   ),
@@ -840,10 +866,8 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         Category category =
                             Category(Uuid().v4(), drinks, title, description);
 
-                        // coffeeShopState.update(coffeeShopState.coffeeShop);
-                        //menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
-
-                        Navigator.of(context).pop();
+                        _categoryBloc.add(AddCategory(CategoryType.drink,
+                            category, _coffeeShopBloc.state.coffeeShop));
                       }
                     },
                   ),

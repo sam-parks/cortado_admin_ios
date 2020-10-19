@@ -1,8 +1,9 @@
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
+import 'package:cortado_admin_ios/src/ui/router.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
-import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
@@ -18,43 +19,50 @@ class CategoryListPage extends StatefulWidget {
 class _CategoryListPageState extends State<CategoryListPage> {
   CategoryBloc _categoryBloc;
   // ignore: close_sinks
-  MenuBloc _menuBloc;
+  CoffeeShopBloc _coffeeShopBloc;
 
   @override
   void initState() {
     super.initState();
     _categoryBloc = BlocProvider.of<CategoryBloc>(context);
-    _menuBloc = BlocProvider.of<MenuBloc>(context);
+    _coffeeShopBloc = BlocProvider.of<CoffeeShopBloc>(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.caramel,
-        title: Text(
-          _categoryTitleText(),
-          style: TextStyle(
-              color: AppColors.light,
-              fontFamily: kFontFamilyNormal,
-              fontSize: 40),
-        ),
-        actions: [_createCategory()],
-      ),
-      body: _categoryListBody(),
+    return BlocBuilder(
+      cubit: _coffeeShopBloc,
+      builder: (BuildContext context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: AppColors.caramel,
+            title: Text(
+              _categoryTitleText(),
+              style: TextStyle(
+                  color: AppColors.light,
+                  fontFamily: kFontFamilyNormal,
+                  fontSize: 40),
+            ),
+            actions: [_createCategory()],
+          ),
+          body: _categoryListBody(),
+        );
+      },
     );
   }
 
   Widget _categoryListBody() {
     switch (widget.categoryType) {
       case CategoryType.drink:
-        return Center(child: _drinkList(_menuBloc.state.coffeeShop.drinks));
+        return Center(
+            child: _drinkList(_coffeeShopBloc.state.coffeeShop.drinks));
         break;
       case CategoryType.food:
-        return Center(child: _foodList(_menuBloc.state.coffeeShop.food));
+        return Center(child: _foodList(_coffeeShopBloc.state.coffeeShop.food));
         break;
       case CategoryType.addIn:
-        return Center(child: _addInList(_menuBloc.state.coffeeShop.addIns));
+        return Center(
+            child: _addInList(_coffeeShopBloc.state.coffeeShop.addIns));
         break;
       default:
         return Container();
@@ -78,7 +86,8 @@ class _CategoryListPageState extends State<CategoryListPage> {
   _createCategory() {
     return GestureDetector(
         onTap: () {
-          Navigator.of(context).pushNamed('/menu/category', arguments: [
+          Navigator.of(context).pushNamed(kCategoryRoute, arguments: [
+            false,
             Category(Uuid().v4(), [], '', ''),
             widget.categoryType
           ]);
@@ -138,12 +147,12 @@ class _CategoryListPageState extends State<CategoryListPage> {
                                     color: AppColors.light,
                                   ),
                                   onPressed: () async {
-                                    Navigator.of(context).pushNamed(
-                                        '/menu/category',
-                                        arguments: [
-                                          drinks[index],
-                                          CategoryType.drink,
-                                        ]);
+                                    Navigator.of(context)
+                                        .pushNamed(kCategoryRoute, arguments: [
+                                      true,
+                                      drinks[index],
+                                      CategoryType.drink,
+                                    ]);
                                   },
                                 ),
                                 IconButton(
@@ -155,7 +164,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
                                     _categoryBloc.add(RemoveCategory(
                                         CategoryType.drink,
                                         drinks[index],
-                                        _menuBloc.state.coffeeShop));
+                                        _coffeeShopBloc.state.coffeeShop));
                                   },
                                 )
                               ],
@@ -187,7 +196,8 @@ class _CategoryListPageState extends State<CategoryListPage> {
             Spacer(),
             GestureDetector(
                 onTap: () async {
-                  Navigator.of(context).pushNamed('/menu/category', arguments: [
+                  Navigator.of(context).pushNamed(kCategoryRoute, arguments: [
+                    false,
                     Category(Uuid().v4(), [], '', ''),
                     CategoryType.food,
                   ]);
@@ -246,7 +256,8 @@ class _CategoryListPageState extends State<CategoryListPage> {
                                 ),
                                 onPressed: () async {
                                   Navigator.of(context)
-                                      .pushNamed('/menu/category', arguments: [
+                                      .pushNamed(kCategoryRoute, arguments: [
+                                    true,
                                     food[index],
                                     CategoryType.food
                                   ]);
@@ -262,7 +273,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
                                     RemoveCategory(
                                         CategoryType.food,
                                         food[index],
-                                        _menuBloc.state.coffeeShop),
+                                        _coffeeShopBloc.state.coffeeShop),
                                   );
                                 },
                               )
@@ -294,7 +305,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
             Spacer(),
             GestureDetector(
                 onTap: () async {
-                  Navigator.of(context).pushNamed('/menu/category', arguments: [
+                  Navigator.of(context).pushNamed(kCategoryRoute, arguments: [
                     Category(Uuid().v4(), [], '', ''),
                     CategoryType.addIn
                   ]);
@@ -353,10 +364,10 @@ class _CategoryListPageState extends State<CategoryListPage> {
                                 ),
                                 onPressed: () async {
                                   Navigator.of(context)
-                                      .pushNamed('/menu/category', arguments: [
+                                      .pushNamed(kCategoryRoute, arguments: [
+                                    true,
                                     addIns[index],
                                     CategoryType.addIn,
-                                    false
                                   ]);
                                 },
                               ),
@@ -369,7 +380,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
                                   _categoryBloc.add(RemoveCategory(
                                       CategoryType.addIn,
                                       addIns[index],
-                                      _menuBloc.state.coffeeShop));
+                                      _coffeeShopBloc.state.coffeeShop));
                                 },
                               )
                             ],

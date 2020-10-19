@@ -5,15 +5,15 @@ enum MenuStatus { initialized, loading, updated }
 
 @immutable
 class MenuState {
-  const MenuState._({this.coffeeShop = CoffeeShop.empty, this.status});
+  const MenuState._({this.status, this.coffeeShop = CoffeeShop.empty});
 
   const MenuState.loading() : this._(status: MenuStatus.loading);
 
   const MenuState.initialized(coffeeShop)
-      : this._(coffeeShop: coffeeShop, status: MenuStatus.initialized);
+      : this._(status: MenuStatus.initialized);
 
   const MenuState.updated(coffeeShop)
-      : this._(coffeeShop: coffeeShop, status: MenuStatus.updated);
+      : this._(status: MenuStatus.updated, coffeeShop: coffeeShop);
 
   final CoffeeShop coffeeShop;
   final MenuStatus status;

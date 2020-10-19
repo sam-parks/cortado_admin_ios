@@ -1,10 +1,16 @@
 import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/ui/pages/home_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/category_list_page.dart';
+import 'package:cortado_admin_ios/src/ui/pages/menu/item_list_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_item_page.dart';
 import 'package:fluro/fluro.dart' as fluro;
 import 'package:flutter/material.dart';
+
+const String kItemListRoute = '/menu/category-list/item-list';
+const String kCategoryListRoute = '/menu/category-list';
+const String kCategoryRoute = '/menu/category-list/category';
+const String kItemRoute = '/menu/category-list/category/item';
 
 class Routes {
   static void configureRoutes(fluro.Router router) {
@@ -48,11 +54,10 @@ class Routes {
             screen: CortadoAdminScreen.profile,
           ),
         ));
-    router.define('/menu/category-list', handler: _menuCategoryListHandler);
-    router.define('/menu/category-list/category',
-        handler: _menuCategoryHandler);
-    router.define('/menu/category-list/category/item',
-        handler: _menuItemHandler);
+    router.define(kItemListRoute, handler: _menuItemListHandler);
+    router.define(kCategoryListRoute, handler: _menuCategoryListHandler);
+    router.define(kCategoryRoute, handler: _menuCategoryHandler);
+    router.define(kItemRoute, handler: _menuItemHandler);
   }
 
   static fluro.Handler _menuCategoryHandler = fluro.Handler(
@@ -60,8 +65,9 @@ class Routes {
     List args = ModalRoute.of(context).settings.arguments;
 
     return MenuCategoryPage(
-      category: args[0],
-      categoryType: args[1],
+      args[0],
+      category: args[1],
+      categoryType: args[2],
     );
   });
 
@@ -72,14 +78,24 @@ class Routes {
     );
   });
 
+  static fluro.Handler _menuItemListHandler = fluro.Handler(
+      handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    List args = ModalRoute.of(context).settings.arguments;
+    return ItemListPage(
+      categoryType: args[0],
+      category: args[1],
+    );
+  });
+
   static fluro.Handler _menuItemHandler = fluro.Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     List args = ModalRoute.of(context).settings.arguments;
 
     return MenuItemPage(
-      categoryType: args[0],
-      category: args[1],
-      item: args[2],
+      args[0],
+      categoryType: args[1],
+      category: args[2],
+      item: args[3],
     );
   });
 }

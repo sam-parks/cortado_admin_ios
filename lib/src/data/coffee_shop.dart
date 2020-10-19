@@ -112,6 +112,32 @@ class CoffeeShop {
         phone: phone ?? this.phone);
   }
 
+  CoffeeShop copy(CoffeeShop coffeeShop) {
+    return CoffeeShop(
+        id: coffeeShop.id ?? this.id,
+        reference: coffeeShop.reference ?? this.reference,
+        name: coffeeShop.name ?? this.name,
+        address: coffeeShop.address ?? this.address,
+        hours: coffeeShop.hours ?? this.hours,
+        sizes: coffeeShop.sizes ?? this.sizes,
+        blackCoffees: coffeeShop.blackCoffees ?? this.blackCoffees,
+        createdAt: coffeeShop.createdAt ?? this.createdAt,
+        description: coffeeShop.description ?? this.description,
+        disabledReason: coffeeShop.disabledReason ?? this.disabledReason,
+        premiumCoffees: coffeeShop.premiumCoffees ?? this.premiumCoffees,
+        addIns: coffeeShop.addIns ?? this.addIns,
+        updatedAt: coffeeShop.updatedAt ?? this.updatedAt,
+        drinks: coffeeShop.drinks ?? this.drinks,
+        food: coffeeShop.food ?? this.food,
+        needsVerificationUpdate:
+            coffeeShop.needsVerificationUpdate ?? this.needsVerificationUpdate,
+        customStripeAccountId:
+            coffeeShop.customStripeAccountId ?? this.customStripeAccountId,
+        discounts: coffeeShop.discounts ?? this.discounts,
+        picture: coffeeShop.picture ?? this.picture,
+        phone: coffeeShop.phone ?? this.phone);
+  }
+
   CoffeeShop.fromSnapshot(dynamic snapshot)
       : this.fromData(snapshot.data(), reference: snapshot.reference);
 

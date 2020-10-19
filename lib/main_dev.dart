@@ -30,29 +30,35 @@ void setupApp() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ignore: close_sinks
-  final CategoryBloc categoryBloc = CategoryBloc();
-  // ignore: close_sinks
-  final MenuBloc menuBloc = MenuBloc(categoryBloc: categoryBloc);
-
   runZoned(
       () => runApp(
-            BlocProvider(
-              create: (_) => CoffeeShopBloc(menuBloc: menuBloc),
-              child: MultiBlocProvider(providers: [
-                BlocProvider<UserManagementBloc>(
-                    create: (context) => UserManagementBloc()),
-                BlocProvider<MenuBloc>(create: (context) => menuBloc),
-                  BlocProvider<CategoryBloc>(create: (context) => categoryBloc),
-                BlocProvider<AuthBloc>(
-                    create: (context) =>
-                        AuthBloc(BlocProvider.of<CoffeeShopBloc>(context))),
-                BlocProvider<PaymentBloc>(
-                    create: (context) =>
-                        PaymentBloc(BlocProvider.of<CoffeeShopBloc>(context))),
-                BlocProvider<OrdersBloc>(create: (context) => OrdersBloc()),
-                BlocProvider<NavigationBloc>(create: (_) => NavigationBloc())
-              ], child: MyApp()),
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => CategoryBloc(),
+                ),
+              ],
+              child: BlocProvider(
+                create: (context) => MenuBloc(
+                    categoryBloc: BlocProvider.of<CategoryBloc>(context)),
+                child: BlocProvider(
+                  create: (context) => CoffeeShopBloc(
+                      menuBloc: BlocProvider.of<MenuBloc>(context)),
+                  child: MultiBlocProvider(providers: [
+                    BlocProvider<UserManagementBloc>(
+                        create: (context) => UserManagementBloc()),
+                    BlocProvider<AuthBloc>(
+                        create: (context) =>
+                            AuthBloc(BlocProvider.of<CoffeeShopBloc>(context))),
+                    BlocProvider<PaymentBloc>(
+                        create: (context) => PaymentBloc(
+                            BlocProvider.of<CoffeeShopBloc>(context))),
+                    BlocProvider<OrdersBloc>(create: (context) => OrdersBloc()),
+                    BlocProvider<NavigationBloc>(
+                        create: (_) => NavigationBloc())
+                  ], child: MyApp()),
+                ),
+              ),
             ),
           ), onError: (Object error, StackTrace stackTrace) {
     try {

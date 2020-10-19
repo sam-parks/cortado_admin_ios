@@ -1,7 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
+import 'package:cortado_admin_ios/src/ui/router.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/charts/daily_redemptions_bar_chart.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
@@ -119,7 +121,7 @@ class _MenuPageState extends State<MenuPage> {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pushNamed('/menu/category-list',
+                    Navigator.of(context).pushNamed(kCategoryListRoute,
                         arguments: CategoryType.drink);
                   },
                   child: Container(
@@ -150,7 +152,7 @@ class _MenuPageState extends State<MenuPage> {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pushNamed('/menu/category-list',
+                    Navigator.of(context).pushNamed(kCategoryListRoute,
                         arguments: CategoryType.food);
                   },
                   child: Container(
@@ -179,8 +181,8 @@ class _MenuPageState extends State<MenuPage> {
         ),
         GestureDetector(
           onTap: () {
-            Navigator.of(context).pushNamed('/menu/category-list',
-                arguments: CategoryType.addIn);
+            Navigator.of(context)
+                .pushNamed(kCategoryListRoute, arguments: CategoryType.addIn);
           },
           child: Container(
             margin: const EdgeInsets.only(top: 8),

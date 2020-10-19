@@ -21,7 +21,7 @@ class CoffeeShopBloc extends Bloc<CoffeeShopEvent, CoffeeShopState> {
     _menuStateSubscription = menuBloc.listen((menuState) {
       if (menuState.status == MenuStatus.updated) {
         print("updating coffee shop from menu");
-        this.add(UpdateCoffeeShop(menuState.coffeeShop));
+        this.add(UpdateCoffeeShop(state.coffeeShop));
       }
     });
   }
@@ -41,7 +41,9 @@ class CoffeeShopBloc extends Bloc<CoffeeShopEvent, CoffeeShopState> {
     }
 
     if (event is UpdateCoffeeShop) {
-      yield CoffeeShopState.initialized(event.coffeeShop);
+      CoffeeShop coffeeShop = event.coffeeShop.copy(event.coffeeShop);
+
+      yield CoffeeShopState.initialized(coffeeShop);
     }
   }
 

@@ -1,16 +1,31 @@
 part of 'category_bloc.dart';
 
 abstract class CategoryState extends Equatable {
-  const CategoryState();
-
-  @override
-  List<Object> get props => [];
-}
-
-class CategoryInitial extends CategoryState {}
-
-class CategoriesUpdated extends CategoryState {
+  const CategoryState(this.coffeeShop);
   final CoffeeShop coffeeShop;
 
-  CategoriesUpdated(this.coffeeShop);
+  @override
+  List<Object> get props => [coffeeShop];
+}
+
+class CategoryInitial extends CategoryState {
+  CategoryInitial(CoffeeShop coffeeShop) : super(coffeeShop);
+}
+
+class CategoryAdded extends CategoryState {
+  final CoffeeShop coffeeShop;
+
+  CategoryAdded(this.coffeeShop) : super(coffeeShop);
+}
+
+class CategoryRemoved extends CategoryState {
+  final CoffeeShop coffeeShop;
+
+  CategoryRemoved(this.coffeeShop) : super(coffeeShop);
+}
+
+class CategoryUpdated extends CategoryState {
+  final CoffeeShop coffeeShop;
+
+  CategoryUpdated(this.coffeeShop) : super(coffeeShop);
 }

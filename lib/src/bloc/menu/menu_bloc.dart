@@ -11,9 +11,11 @@ import 'package:flutter/material.dart';
 class MenuBloc extends Bloc<MenuEvent, MenuState> {
   MenuBloc({@required this.categoryBloc}) : super(MenuState.loading()) {
     _categoryStateSubscription = categoryBloc.listen((categoryState) {
-      if (CategoryState is CategoriesUpdated) {
-        this.add(
-            UpdateMenu((categoryBloc.state as CategoriesUpdated).coffeeShop));
+      print(categoryState);
+      if (categoryState is CategoryAdded ||
+          categoryState is CategoryRemoved ||
+          categoryState is CategoryUpdated) {
+        this.add(UpdateMenu(categoryBloc.state.coffeeShop));
       }
     });
   }
@@ -32,6 +34,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     }
 
     if (event is UpdateMenu) {
+      yield MenuState.loading();
       _coffeeShopService.updateCoffeeShop(event.coffeeShop);
       yield MenuState.updated(event.coffeeShop);
     }
@@ -39,6 +42,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
   @override
   Future<void> close() {
+    print("close called");
     _categoryStateSubscription.cancel();
     return super.close();
   }
