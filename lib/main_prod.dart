@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/payment/payment_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
@@ -29,17 +30,23 @@ void setupApp() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
+  // ignore: close_sinks
+  final CategoryBloc categoryBloc = CategoryBloc();
+  // ignore: close_sinks
+  final MenuBloc menuBloc = MenuBloc(categoryBloc: categoryBloc);
   runZoned(
       () => runApp(
             BlocProvider(
-              create: (BuildContext context) => CoffeeShopBloc(),
+              create: (BuildContext context) =>
+                  CoffeeShopBloc(menuBloc: menuBloc),
               child: MultiBlocProvider(providers: [
                 BlocProvider<AuthBloc>(
                     create: (context) =>
                         AuthBloc(BlocProvider.of<CoffeeShopBloc>(context))),
                 BlocProvider<UserManagementBloc>(
                     create: (context) => UserManagementBloc()),
-                BlocProvider<MenuBloc>(create: (context) => MenuBloc()),
+                BlocProvider<MenuBloc>(create: (context) => menuBloc),
+                BlocProvider<CategoryBloc>(create: (context) => categoryBloc),
                 BlocProvider<PaymentBloc>(
                     create: (context) =>
                         PaymentBloc(BlocProvider.of<CoffeeShopBloc>(context))),

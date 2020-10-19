@@ -1,15 +1,14 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
-import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/charts/daily_redemptions_bar_chart.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
+import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
 
 class MenuPage extends StatefulWidget {
   MenuPage({Key key, this.coffeeShop}) : super(key: key);
@@ -20,11 +19,17 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
+  // ignore: close_sinks
   MenuBloc _menuBloc;
 
   @override
+  void initState() {
+    super.initState();
+    _menuBloc = BlocProvider.of<MenuBloc>(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    _menuBloc = Provider.of<MenuBloc>(context);
     CoffeeShopState coffeeShopState =
         BlocProvider.of<CoffeeShopBloc>(context).state;
 
@@ -33,58 +38,67 @@ class _MenuPageState extends State<MenuPage> {
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.transparent,
       body: Center(
-        child: Scrollbar(
-          controller: _scrollController,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 130.0, right: 20),
-            child: ListView(
+        child: BlocBuilder(
+          cubit: _menuBloc,
+          builder: (BuildContext context, MenuState state) {
+            if (state.status == MenuStatus.loading) {
+              return CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.caramel));
+            }
+            return Scrollbar(
               controller: _scrollController,
-              children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 30, top: 20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        AutoSizeText(
-                          "Online Menu",
-                          maxLines: 1,
-                          style: TextStyles.kWelcomeTitleTextStyle,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 130.0, right: 20),
+                child: ListView(
+                  controller: _scrollController,
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 30, top: 20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            AutoSizeText(
+                              "Online Menu",
+                              maxLines: 1,
+                              style: TextStyles.kWelcomeTitleTextStyle,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                "Customize items available through Cortado!",
+                                style: TextStyles.kDefaultCaramelTextStyle,
+                              ),
+                            )
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            "Customize items available through Cortado!",
-                            style: TextStyles.kDefaultCaramelTextStyle,
-                          ),
-                        )
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _editMenuWidget(),
                       ],
                     ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _editMenuWidget(coffeeShopState),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _editDiscountsWidget(coffeeShopState),
+                        _mostOrderedItemsWidget()
+                      ],
+                    ),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _editDiscountsWidget(coffeeShopState),
-                    _mostOrderedItemsWidget()
-                  ],
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
-  _editMenuWidget(CoffeeShopState coffeeShopState) {
+  _editMenuWidget() {
     return Expanded(
       child: DashboardCard(
           innerColor: Colors.transparent,
@@ -276,11 +290,7 @@ class _MenuPageState extends State<MenuPage> {
                       Icons.delete,
                       color: AppColors.caramel,
                     ),
-                    onPressed: () {
-                      coffeeShopState.coffeeShop.discounts.removeAt(index);
-                      //  coffeeShopState.update(coffeeShopState.coffeeShop);
-                      _menuBloc.add(RemoveCategory(coffeeShopState.coffeeShop));
-                    },
+                    onPressed: () {},
                   )
                 ],
               )

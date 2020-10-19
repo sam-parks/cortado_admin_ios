@@ -1,12 +1,9 @@
-import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
-import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 
 class ItemListPage extends StatefulWidget {
@@ -18,12 +15,9 @@ class ItemListPage extends StatefulWidget {
 }
 
 class _ItemListPageState extends State<ItemListPage> {
-  MenuBloc _menuBloc;
-
   @override
   void initState() {
     super.initState();
-    _menuBloc = BlocProvider.of<MenuBloc>(context);
   }
 
   @override
@@ -37,24 +31,22 @@ class _ItemListPageState extends State<ItemListPage> {
   }
 
   Widget _categoryListBody() {
-    CoffeeShop coffeeShop =
-        BlocProvider.of<CoffeeShopBloc>(context).state.coffeeShop;
     switch (widget.categoryType) {
       case CategoryType.drink:
-        return _drinkItemList(coffeeShop);
+        return _drinkItemList();
         break;
       case CategoryType.food:
-        return _foodItemList(coffeeShop);
+        return _foodItemList();
         break;
       case CategoryType.addIn:
-        return _addInItemList(coffeeShop);
+        return _addInItemList();
         break;
       default:
         return Container();
     }
   }
 
-  _drinkItemList(CoffeeShop coffeeShop) {
+  _drinkItemList() {
     ScrollController scrollController = ScrollController();
 
     return Column(
@@ -79,13 +71,11 @@ class _ItemListPageState extends State<ItemListPage> {
                         redeemableType: RedeemableType.none,
                         redeemableSize: SizeInOunces.none,
                         sizePriceMap: {"8 oz": '', '12 oz': '', '16 oz': ''}),
-                    true,
-                    false
                   ]);
                   if (drink != null) {
                     setState(() {
                       widget.category.items.add(drink);
-                      _menuBloc.add(UpdateMenu(coffeeShop));
+                      //  _menuBloc.add(UpdateMenu(coffeeShop));
                     });
                   }
                 },
@@ -144,9 +134,7 @@ class _ItemListPageState extends State<ItemListPage> {
                                         arguments: [
                                       CategoryType.drink,
                                       widget.category,
-                                      drinks[index],
-                                      false,
-                                      true
+                                      drinks[index]
                                     ]);
 
                                 if (drink != null) {
@@ -154,7 +142,7 @@ class _ItemListPageState extends State<ItemListPage> {
                                     drinks.removeAt(index);
                                     drinks.insert(index, drink);
                                     widget.category.items = drinks;
-                                    _menuBloc.add(UpdateMenu(coffeeShop));
+                                    // _menuBloc.add(UpdateMenu(coffeeShop));
                                   });
                                 }
                               },
@@ -167,7 +155,7 @@ class _ItemListPageState extends State<ItemListPage> {
                               onPressed: () {
                                 widget.category.items.removeAt(index);
 
-                                _menuBloc.add(UpdateMenu(coffeeShop));
+                                // _menuBloc.add(UpdateMenu(coffeeShop));
                               },
                             )
                           ],
@@ -182,7 +170,7 @@ class _ItemListPageState extends State<ItemListPage> {
     );
   }
 
-  _foodItemList(CoffeeShop coffeeShop) {
+  _foodItemList() {
     ScrollController scrollController = ScrollController();
     return Column(
       children: <Widget>[
@@ -203,13 +191,11 @@ class _ItemListPageState extends State<ItemListPage> {
                     Food(
                       id: Uuid().v4(),
                     ),
-                    true,
-                    false
                   ]);
                   if (foodItem != null) {
                     setState(() {
                       widget.category.items.add(foodItem);
-                      _menuBloc.add(UpdateMenu(coffeeShop));
+                      // _menuBloc.add(UpdateMenu(coffeeShop));
                     });
                   }
                 },
@@ -269,15 +255,13 @@ class _ItemListPageState extends State<ItemListPage> {
                                       CategoryType.food,
                                       widget.category,
                                       food[index],
-                                      false,
-                                      true
                                     ]);
                                 if (foodItem != null) {
                                   setState(() {
                                     food.removeAt(index);
                                     food.insert(index, foodItem);
                                     widget.category.items = food;
-                                    _menuBloc.add(UpdateMenu(coffeeShop));
+                                    //   _menuBloc.add(UpdateMenu(coffeeShop));
                                   });
                                 }
                               },
@@ -290,7 +274,7 @@ class _ItemListPageState extends State<ItemListPage> {
                               onPressed: () {
                                 widget.category.items.removeAt(index);
 
-                                _menuBloc.add(UpdateMenu(coffeeShop));
+                                // _menuBloc.add(UpdateMenu(coffeeShop));
                               },
                             )
                           ],
@@ -305,7 +289,7 @@ class _ItemListPageState extends State<ItemListPage> {
     );
   }
 
-  _addInItemList(CoffeeShop coffeeShop) {
+  _addInItemList() {
     ScrollController scrollController = ScrollController();
     return Column(
       children: <Widget>[
@@ -326,13 +310,11 @@ class _ItemListPageState extends State<ItemListPage> {
                     AddIn(
                       id: Uuid().v4(),
                     ),
-                    true,
-                    false
                   ]);
                   if (addIn != null) {
                     setState(() {
                       widget.category.items.add(addIn);
-                      _menuBloc.add(UpdateMenu(coffeeShop));
+                      //   _menuBloc.add(UpdateMenu(coffeeShop));
                     });
                   }
                 },
@@ -386,15 +368,12 @@ class _ItemListPageState extends State<ItemListPage> {
                                 color: AppColors.caramel,
                               ),
                               onPressed: () async {
-                        
-                                var addIn = await Navigator.of(context)
+                                /*    var addIn = await Navigator.of(context)
                                     .pushNamed('/menu/category/item',
                                         arguments: [
                                       CategoryType.addIn,
                                       widget.category,
                                       addIns[index],
-                                      false,
-                                      true
                                     ]);
                                 if (addIn != null) {
                                   setState(() {
@@ -403,7 +382,7 @@ class _ItemListPageState extends State<ItemListPage> {
                                     widget.category.items = addIns;
                                     _menuBloc.add(UpdateMenu(coffeeShop));
                                   });
-                                }
+                                } */
                               },
                             ),
                             IconButton(
@@ -414,7 +393,7 @@ class _ItemListPageState extends State<ItemListPage> {
                               onPressed: () {
                                 widget.category.items.removeAt(index);
 
-                                _menuBloc.add(UpdateMenu(coffeeShop));
+                                //     _menuBloc.add(UpdateMenu(coffeeShop));
                               },
                             )
                           ],

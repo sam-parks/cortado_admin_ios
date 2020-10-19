@@ -1,7 +1,6 @@
 import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/ui/pages/home_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/category_list_page.dart';
-import 'package:cortado_admin_ios/src/ui/pages/menu/item_list_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_item_page.dart';
 import 'package:fluro/fluro.dart' as fluro;
@@ -50,10 +49,10 @@ class Routes {
           ),
         ));
     router.define('/menu/category-list', handler: _menuCategoryListHandler);
-    router.define('/menu/category-list/item-list',
-        handler: _menuItemListHandler);
-    router.define('/menu/category', handler: _menuCategoryHandler);
-    router.define('/menu/category/item', handler: _menuItemHandler);
+    router.define('/menu/category-list/category',
+        handler: _menuCategoryHandler);
+    router.define('/menu/category-list/category/item',
+        handler: _menuItemHandler);
   }
 
   static fluro.Handler _menuCategoryHandler = fluro.Handler(
@@ -63,7 +62,6 @@ class Routes {
     return MenuCategoryPage(
       category: args[0],
       categoryType: args[1],
-      newCategory: args[2],
     );
   });
 
@@ -71,15 +69,6 @@ class Routes {
       handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return CategoryListPage(
       categoryType: ModalRoute.of(context).settings.arguments,
-    );
-  });
-
-  static fluro.Handler _menuItemListHandler = fluro.Handler(
-      handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    List args = ModalRoute.of(context).settings.arguments;
-    return ItemListPage(
-      categoryType: args[0],
-      category: args[1],
     );
   });
 
@@ -91,8 +80,6 @@ class Routes {
       categoryType: args[0],
       category: args[1],
       item: args[2],
-      newCategory: args[3],
-      editing: args[4],
     );
   });
 }

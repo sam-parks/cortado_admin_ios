@@ -677,7 +677,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
           padding: const EdgeInsets.all(30),
           child: CortadoFatButton(
             text: widget.editing ? "Update Drink" : "Create Drink",
-            textStyle: TextStyles.kLargeCaramelTextStyle,
+            textStyle: TextStyles.kDefaultLightTextStyle,
             color: AppColors.light,
             backgroundColor: AppColors.dark,
             width: 300,
@@ -836,8 +836,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
           padding: const EdgeInsets.all(30),
           child: CortadoFatButton(
             text: widget.editing ? "Update Food Item" : "Create Food Item",
-            textStyle: TextStyles.kLargeCaramelTextStyle,
-            color: AppColors.light,
+            textStyle: TextStyles.kDefaultLightTextStyle,
             backgroundColor: AppColors.dark,
             width: 300,
             onTap: () {
@@ -993,8 +992,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
           padding: const EdgeInsets.all(30),
           child: CortadoFatButton(
             text: widget.editing ? "Update Add In" : "Create Add In",
-            textStyle: TextStyles.kLargeCaramelTextStyle,
-            color: AppColors.light,
+            textStyle: TextStyles.kDefaultLightTextStyle,
             backgroundColor: AppColors.dark,
             width: 300,
             onTap: () {

@@ -78,8 +78,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         } else {
           return BlocBuilder(
             cubit: navigationBloc,
-            builder: (BuildContext context, state) {
-              if (state.navigationStatus == NavigationStatus.initial) {
+            builder: (BuildContext context, navigationState) {
+              if (navigationState.navigationStatus ==
+                  NavigationStatus.initial) {
                 return Scaffold(
                   body: Center(
                     child: CircularProgressIndicator(

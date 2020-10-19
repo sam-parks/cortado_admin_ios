@@ -1,12 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
-import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
 import 'package:cortado_admin_ios/src/utils/validate.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
@@ -30,26 +29,25 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    MenuBloc menuBloc = BlocProvider.of<MenuBloc>(context);
-    // ignore: close_sinks
-    CoffeeShopBloc coffeeShopBloc = BlocProvider.of<CoffeeShopBloc>(context);
-    CoffeeShopState coffeeShopState = coffeeShopBloc.state;
+    return BlocBuilder(
+      
+      builder: (BuildContext context, state) {  },);
     switch (widget.categoryType) {
       case CategoryType.drink:
-        return _drinkForm(coffeeShopState, menuBloc);
+        return _drinkForm();
         break;
       case CategoryType.food:
-        return _foodform(coffeeShopState, menuBloc);
+        return _foodform();
         break;
       case CategoryType.addIn:
-        return _addInForm(coffeeShopState, menuBloc);
+        return _addInForm();
         break;
       default:
         return Container();
     }
   }
 
-  _addInForm(CoffeeShopState coffeeShopState, MenuBloc menuBloc) {
+  _addInForm() {
     List<AddIn> addIns = List.castFrom<Item, AddIn>(widget.category.items);
     TextEditingController titleController =
         TextEditingController(text: widget.category.title);
@@ -164,8 +162,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                 AddIn(
                                   id: Uuid().v4(),
                                 ),
-                                widget.newCategory,
-                                false
                               ]);
                               if (addIn != null) {
                                 setState(() {
@@ -240,17 +236,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                 CategoryType.addIn,
                                                 widget.category,
                                                 addIns[index],
-                                                widget.newCategory,
-                                                true
                                               ]);
-                                          if (addIn != null) {
-                                            setState(() {
-                                              addIns.removeAt(index);
-                                              addIns.insert(index, addIn);
-                                            });
-                                          }
-                                          menuBloc.add(UpdateMenu(
-                                              coffeeShopState.coffeeShop));
                                         },
                                       ),
                                     ),
@@ -287,14 +273,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         Category category =
                             Category(id, addIns, title, description);
 
-                        /* coffeeShopState.coffeeShop.addIns
-                            .removeWhere((category) => category.id == id);
-                        coffeeShopState.coffeeShop.addIns.add(category);
-
-                        coffeeShopBloc.add(UpdateCoffeeShop(coffeeShop));
-                        coffeeShopState.update(coffeeShopState.coffeeShop);
-                        menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop)); */
-
                         Navigator.of(context).pop();
                       }
                     },
@@ -302,22 +280,17 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                 )
               : Padding(
                   padding: const EdgeInsets.all(30),
-                  child: CortadoButton(
+                  child: CortadoFatButton(
                     text: "Create Category",
-                    textStyle: TextStyles.kLargeCaramelTextStyle,
-                    color: AppColors.caramel,
+                    width: 300,
+                    textStyle: TextStyles.kDefaultLightTextStyle,
+                    backgroundColor: AppColors.dark,
                     onTap: () {
                       if (_formKey.currentState.validate()) {
                         String title = titleController.text;
                         String description = descriptionController.text;
                         Category category =
                             Category(Uuid().v4(), addIns, title, description);
-
-                        coffeeShopState.coffeeShop.addIns.add(category);
-                        //coffeeShopState.update(coffeeShopState.coffeeShop);
-                        menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
-
-                        Navigator.of(context).pop();
                       }
                     },
                   ),
@@ -327,7 +300,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
         ));
   }
 
-  _foodform(CoffeeShopState coffeeShopState, MenuBloc menuBloc) {
+  _foodform() {
     List<Food> food = List.castFrom<Item, Food>(widget.category.items);
     TextEditingController titleController =
         TextEditingController(text: widget.category.title);
@@ -442,8 +415,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                 Food(
                                   id: Uuid().v4(),
                                 ),
-                                widget.newCategory,
-                                false
                               ]);
 
                               if (foodItem != null) {
@@ -520,8 +491,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                               CategoryType.food,
                                               widget.category,
                                               food[index],
-                                              widget.newCategory,
-                                              true
                                             ]);
 
                                         if (foodItem != null) {
@@ -567,12 +536,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         Category category =
                             Category(id, food, title, description);
 
-                        coffeeShopState.coffeeShop.food
-                            .removeWhere((category) => category.id == id);
-                        coffeeShopState.coffeeShop.food.add(category);
-
-                        //coffeeShopState.update(coffeeShopState.coffeeShop);
-                        menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
+                        // menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
 
                         Navigator.of(context).pop();
                       }
@@ -581,20 +545,17 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                 )
               : Padding(
                   padding: const EdgeInsets.all(30),
-                  child: CortadoButton(
+                  child: CortadoFatButton(
                     text: "Create Category",
-                    textStyle: TextStyles.kLargeCaramelTextStyle,
-                    color: AppColors.caramel,
+                    width: 300,
+                    textStyle: TextStyles.kDefaultLightTextStyle,
+                    backgroundColor: AppColors.dark,
                     onTap: () {
                       if (_formKey.currentState.validate()) {
                         String title = titleController.text;
                         String description = descriptionController.text;
                         Category category =
                             Category(Uuid().v4(), food, title, description);
-
-                        coffeeShopState.coffeeShop.food.add(category);
-                        //coffeeShopState.update(coffeeShopState.coffeeShop);
-                        menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
 
                         Navigator.of(context).pop();
                       }
@@ -606,7 +567,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
         ));
   }
 
-  _drinkForm(CoffeeShopState coffeeShopState, MenuBloc menuBloc) {
+  _drinkForm() {
     List<Drink> drinks = List.castFrom<Item, Drink>(widget.category.items);
     TextEditingController titleController =
         TextEditingController(text: widget.category.title);
@@ -727,8 +688,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                       '12 oz': '',
                                       '16 oz': ''
                                     }),
-                                widget.newCategory,
-                                false
                               ]);
                               if (drink != null) {
                                 setState(() {
@@ -804,8 +763,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                   CategoryType.drink,
                                                   widget.category,
                                                   drinks[index],
-                                                  widget.newCategory,
-                                                  true
                                                 ]);
                                             if (drink != null) {
                                               setState(() {
@@ -864,13 +821,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         Category category =
                             Category(id, drinks, title, description);
 
-                        coffeeShopState.coffeeShop.drinks
-                            .removeWhere((category) => category.id == id);
-                        coffeeShopState.coffeeShop.drinks.add(category);
-
-                        //coffeeShopState.update(coffeeShopState.coffeeShop);
-                        menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
-
                         Navigator.of(context).pop();
                       }
                     },
@@ -878,10 +828,11 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                 )
               : Padding(
                   padding: const EdgeInsets.all(30),
-                  child: CortadoButton(
+                  child: CortadoFatButton(
                     text: "Create Category",
-                    textStyle: TextStyles.kLargeCaramelTextStyle,
-                    color: AppColors.caramel,
+                    width: 300,
+                    textStyle: TextStyles.kDefaultLightTextStyle,
+                    backgroundColor: AppColors.dark,
                     onTap: () {
                       if (_formKey.currentState.validate()) {
                         String title = titleController.text;
@@ -889,9 +840,8 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         Category category =
                             Category(Uuid().v4(), drinks, title, description);
 
-                        coffeeShopState.coffeeShop.drinks.add(category);
                         // coffeeShopState.update(coffeeShopState.coffeeShop);
-                        menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
+                        //menuBloc.add(UpdateMenu(coffeeShopState.coffeeShop));
 
                         Navigator.of(context).pop();
                       }

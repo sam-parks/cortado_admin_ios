@@ -2,23 +2,44 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
 import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/services/coffee_shop_service.dart';
+import 'package:cortado_admin_ios/src/bloc/menu/menu_event.dart';
+import 'package:flutter/material.dart';
 
 class MenuBloc extends Bloc<MenuEvent, MenuState> {
-  CoffeeShopService get _coffeeShopService => locator.get();
+  MenuBloc({@required this.categoryBloc}) : super(MenuState.loading()) {
+    _categoryStateSubscription = categoryBloc.listen((categoryState) {
+      if (CategoryState is CategoriesUpdated) {
+        this.add(
+            UpdateMenu((categoryBloc.state as CategoriesUpdated).coffeeShop));
+      }
+    });
+  }
 
-  MenuBloc() : super(null);
+  final CategoryBloc categoryBloc;
+  StreamSubscription _categoryStateSubscription;
+
+  CoffeeShopService get _coffeeShopService => locator.get();
 
   @override
   Stream<MenuState> mapEventToState(
     MenuEvent event,
   ) async* {
+    if (event is SetMenu) {
+      yield MenuState.initialized(event.coffeeShop);
+    }
+
     if (event is UpdateMenu) {
-      await _coffeeShopService.updateCoffeeShop(event.coffeeShop);
+      _coffeeShopService.updateCoffeeShop(event.coffeeShop);
+      yield MenuState.updated(event.coffeeShop);
     }
-    if (event is RemoveCategory) {
-      await _coffeeShopService.updateCoffeeShop(event.coffeeShop);
-    }
+  }
+
+  @override
+  Future<void> close() {
+    _categoryStateSubscription.cancel();
+    return super.close();
   }
 }
