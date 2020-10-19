@@ -37,7 +37,6 @@ class _SideMenuState extends State<SideMenu> {
   UserType _userType;
   double _navRatio = .03;
   bool _titleVisible = false;
-  bool _openDrawerWithIcon = false;
   List<Widget> _pages;
 
   NavigationService get _navigationService => locator.get();
@@ -81,8 +80,7 @@ class _SideMenuState extends State<SideMenu> {
                   onPressed: () {
                     setState(() {
                       _titleVisible = true;
-                      _navRatio = .17;
-                      _openDrawerWithIcon = true;
+                      _navRatio = .2;
                     });
                   },
                 )),
@@ -92,15 +90,13 @@ class _SideMenuState extends State<SideMenu> {
                   ? 60
                   : SizeConfig.screenWidth * _navRatio,
               onEnd: () {
-                if (_openDrawerWithIcon == false) {
-                  setState(() {
-                    _titleVisible = false;
-                  });
-                } else {
-                  setState(() {
-                    _titleVisible = true;
-                  });
-                }
+                _navRatio == .2
+                    ? setState(() {
+                        _titleVisible = true;
+                      })
+                    : setState(() {
+                        _titleVisible = false;
+                      });
               },
               duration: Duration(milliseconds: 300),
               curve: Curves.ease,

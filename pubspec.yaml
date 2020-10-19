@@ -50,7 +50,6 @@ dependencies:
   flutter_web_image_picker: ^0.0.2
   google_sign_in: ^4.5.1
   flutter_auth_buttons: ^0.8.0
-  flutter_svg: ^0.17.4
   flushbar: ^1.10.4
   flutter_email_sender: ^3.0.1
   path_provider: ^1.6.11
@@ -67,6 +66,7 @@ dependencies:
   equatable: ^1.2.5
   keyboard_avoider: ^0.1.2
   flutter_launcher_icons: ^0.7.5  
+  flutter_svg: ^0.19.0
 
 
   #BLOC and PROVIDER

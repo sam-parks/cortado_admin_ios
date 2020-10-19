@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" colorMatched="YES">
+    <device id="ipad9_7" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
@@ -16,15 +16,15 @@
                         <viewControllerLayoutGuide type="bottom" id="fRN-Qe-HpP"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="gOV-G8-YiM">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="LaunchImage" translatesAutoresizingMaskIntoConstraints="NO" id="Mv2-mS-44e">
-                                <rect key="frame" x="-6" y="348" width="426" height="200"/>
+                                <rect key="frame" x="406" y="334" width="212.5" height="100"/>
                                 <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" red="0.99567526579999999" green="0.96522778269999998" blue="0.93725103139999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="backgroundColor" red="1" green="0.96470588235294119" blue="0.92941176470588238" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="Mv2-mS-44e" firstAttribute="centerX" secondItem="gOV-G8-YiM" secondAttribute="centerX" id="9iU-3i-AMX"/>
                             <constraint firstItem="Mv2-mS-44e" firstAttribute="centerY" secondItem="gOV-G8-YiM" secondAttribute="centerY" id="hbW-ZZ-oKM"/>
@@ -37,6 +37,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LaunchImage" width="425.5" height="200"/>
+        <image name="LaunchImage" width="212.5" height="100"/>
     </resources>
 </document>

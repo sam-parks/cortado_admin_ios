@@ -5,8 +5,8 @@ import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
-import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
 import 'package:cortado_admin_ios/src/utils/validate.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
@@ -92,7 +92,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
         backgroundColor: AppColors.light,
         resizeToAvoidBottomInset: false,
         body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 300),
+          padding: const EdgeInsets.symmetric(horizontal: 100),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -675,10 +675,12 @@ class _MenuItemPageState extends State<MenuItemPage> {
         ),
         floatingActionButton: Padding(
           padding: const EdgeInsets.all(30),
-          child: CortadoButton(
+          child: CortadoFatButton(
             text: widget.editing ? "Update Drink" : "Create Drink",
             textStyle: TextStyles.kLargeCaramelTextStyle,
-            color: AppColors.caramel,
+            color: AppColors.light,
+            backgroundColor: AppColors.dark,
+            width: 300,
             onTap: () {
               if (_formKey.currentState.validate()) {
                 Navigator.of(context).pop(drink);
@@ -716,7 +718,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
         backgroundColor: AppColors.light,
         resizeToAvoidBottomInset: false,
         body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 300),
+          padding: const EdgeInsets.symmetric(horizontal: 100),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -832,10 +834,12 @@ class _MenuItemPageState extends State<MenuItemPage> {
         ),
         floatingActionButton: Padding(
           padding: const EdgeInsets.all(30),
-          child: CortadoButton(
+          child: CortadoFatButton(
             text: widget.editing ? "Update Food Item" : "Create Food Item",
             textStyle: TextStyles.kLargeCaramelTextStyle,
-            color: AppColors.caramel,
+            color: AppColors.light,
+            backgroundColor: AppColors.dark,
+            width: 300,
             onTap: () {
               if (_formKey.currentState.validate()) {
                 Navigator.of(context).pop(food);
@@ -871,7 +875,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
         backgroundColor: AppColors.light,
         resizeToAvoidBottomInset: false,
         body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 300),
+          padding: const EdgeInsets.symmetric(horizontal: 100),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -987,10 +991,12 @@ class _MenuItemPageState extends State<MenuItemPage> {
         ),
         floatingActionButton: Padding(
           padding: const EdgeInsets.all(30),
-          child: CortadoButton(
+          child: CortadoFatButton(
             text: widget.editing ? "Update Add In" : "Create Add In",
             textStyle: TextStyles.kLargeCaramelTextStyle,
-            color: AppColors.caramel,
+            color: AppColors.light,
+            backgroundColor: AppColors.dark,
+            width: 300,
             onTap: () {
               if (_formKey.currentState.validate()) {
                 Navigator.of(context).pop(addIn);

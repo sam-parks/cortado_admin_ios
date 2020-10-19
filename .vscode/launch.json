@@ -17,6 +17,16 @@
             "request": "launch",
             "type": "dart",
            
+        },
+        {
+            "name": "dev-release",
+            "program": "lib/main_dev.dart",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--release"
+            ]
+           
         }
     ]
 }

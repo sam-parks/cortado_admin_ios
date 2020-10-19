@@ -66,14 +66,13 @@ class _MenuPageState extends State<MenuPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _editMenuWidget(coffeeShopState),
-                    _mostOrderedItemsWidget()
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _editDiscountsWidget(coffeeShopState),
-                    _currentDealsWidget(coffeeShopState)
+                    _mostOrderedItemsWidget()
                   ],
                 ),
               ],
@@ -229,7 +228,7 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  _currentDealsWidget(CoffeeShopState coffeeShopState) {
+/*   _currentDealsWidget(CoffeeShopState coffeeShopState) {
     ScrollController _scrollController = ScrollController();
     return Expanded(
       child: DashboardCard(
@@ -246,7 +245,7 @@ class _MenuPageState extends State<MenuPage> {
         innerColor: Colors.transparent,
       ),
     );
-  }
+  } */
 
   _discountTile(CoffeeShopState coffeeShopState, int index) {
     return Container(
