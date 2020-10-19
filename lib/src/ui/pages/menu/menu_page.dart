@@ -8,6 +8,7 @@ import 'package:cortado_admin_ios/src/ui/widgets/charts/daily_redemptions_bar_ch
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class MenuPage extends StatefulWidget {
@@ -88,112 +89,106 @@ class _MenuPageState extends State<MenuPage> {
       child: DashboardCard(
           innerColor: Colors.transparent,
           title: "Edit Menu and Redemptions",
+          width: SizeConfig.screenWidth,
+          height: SizeConfig.screenHeight * .6,
           content: _menuWidget()),
     );
   }
 
   _menuWidget() {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      child: Column(
-        children: [
-          Expanded(
+    return Column(
+      children: [
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/menu/category-list',
+                        arguments: CategoryType.drink);
+                  },
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    decoration: BoxDecoration(
+                        color: AppColors.dark_lighter,
+                        borderRadius: BorderRadius.circular(8.0)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: SvgPicture.asset("images/coffee_cup.svg",
+                              height: 100, fit: BoxFit.cover),
+                        ),
+                        Text(
+                          "Drinks",
+                          style: TextStyles.kDefaultCreamTextStyle,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/menu/category-list',
+                        arguments: CategoryType.food);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: AppColors.caramel,
+                        borderRadius: BorderRadius.circular(8.0)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: SvgPicture.asset("images/egg.svg",
+                              height: 100, fit: BoxFit.cover),
+                        ),
+                        Text(
+                          "Food",
+                          style: TextStyles.kDefaultCreamTextStyle,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).pushNamed('/menu/category-list',
+                arguments: CategoryType.addIn);
+          },
+          child: Container(
+            margin: const EdgeInsets.only(top: 8),
+            decoration: BoxDecoration(
+                color: AppColors.tan, borderRadius: BorderRadius.circular(8.0)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pushNamed('/menu/category-list',
-                          arguments: CategoryType.drink);
-                    },
-                    child: Container(
-                      height: MediaQuery.of(context).size.height,
-                      decoration: BoxDecoration(
-                          color: AppColors.caramel,
-                          borderRadius: BorderRadius.circular(8.0)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Image.asset("images/coffee_cup.png",
-                                height: SizeConfig.screenHeight * .1,
-                                fit: BoxFit.cover),
-                          ),
-                          Text(
-                            "Drinks",
-                            style: TextStyles.kDefaultCreamTextStyle,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+              children: <Widget>[
+                SvgPicture.asset(
+                  "images/sugar.svg",
+                  width: 80,
+                  fit: BoxFit.cover,
                 ),
-                SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pushNamed('/menu/category-list',
-                          arguments: CategoryType.food);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: AppColors.caramel,
-                          borderRadius: BorderRadius.circular(8.0)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Image.asset("images/egg.png",
-                                height: 70, fit: BoxFit.cover),
-                          ),
-                          Text(
-                            "Food",
-                            style: TextStyles.kDefaultCreamTextStyle,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                Text(
+                  "Add Ins",
+                  style: TextStyles.kDefaultCaramelTextStyle,
                 )
               ],
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).pushNamed('/menu/category-list',
-                  arguments: CategoryType.addIn);
-            },
-            child: Container(
-              margin: const EdgeInsets.only(top: 8),
-              decoration: BoxDecoration(
-                  color: AppColors.tan,
-                  borderRadius: BorderRadius.circular(8.0)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Image.asset(
-                      "images/add_ins.png",
-                      width: 50,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Text(
-                    "Add Ins",
-                    style: TextStyles.kDefaultCaramelTextStyle,
-                  )
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

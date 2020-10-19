@@ -125,11 +125,13 @@ class _OrdersPageState extends State<OrdersPage> {
                     ),
                   ),
                   _loading
-                      ? Container(
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppColors.caramel)))
+                      ? Expanded(
+                          child: Container(
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      AppColors.caramel))),
+                        )
                       : _viewCurrentOrders
                           ? _currentOrdersGrid()
                           : _pastOrdersGrid()
