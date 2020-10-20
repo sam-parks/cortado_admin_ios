@@ -34,6 +34,7 @@ class _OrderCardState extends State<OrderCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -48,6 +49,7 @@ class _OrderCardState extends State<OrderCard> {
                   ),
                 ),
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),

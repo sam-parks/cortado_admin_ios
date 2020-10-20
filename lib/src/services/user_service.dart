@@ -9,7 +9,6 @@ class UserService {
   CollectionReference get _usersCollection => _firestore.collection('users');
   CollectionReference get _adminsCollection => _firestore.collection('admins');
 
-
   Future<CortadoUser> saveUser(CortadoUser userData) async {
     DocumentReference docRef = _usersCollection.doc(userData.firebaseUser.uid);
     //userData.createdAt = DateTime.now();
@@ -46,7 +45,6 @@ class UserService {
       DocumentSnapshot snapshot =
           await adminsCollection.doc(user.coffeeShopId).get();
       DocumentReference owner = snapshot.data()['owner'];
-      print("Coffee Shop owner: " + owner.id);
 
       return user.id == owner.id;
     } catch (e) {

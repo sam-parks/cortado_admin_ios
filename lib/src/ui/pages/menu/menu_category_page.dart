@@ -852,7 +852,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                     textStyle: TextStyles.kDefaultLightTextStyle,
                     backgroundColor: AppColors.caramel,
                     width: 300,
-                    color: AppColors.caramel,
                     onTap: () {
                       if (_formKey.currentState.validate()) {
                         String title = titleController.text;

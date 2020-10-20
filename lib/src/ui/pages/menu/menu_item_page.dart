@@ -677,7 +677,6 @@ class _MenuItemPageState extends State<MenuItemPage> {
           child: CortadoFatButton(
             text: widget.editing ? "Update Drink" : "Create Drink",
             textStyle: TextStyles.kDefaultLightTextStyle,
-            color: AppColors.light,
             backgroundColor: AppColors.caramel,
             width: 300,
             onTap: () {

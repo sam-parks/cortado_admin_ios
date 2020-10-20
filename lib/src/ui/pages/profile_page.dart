@@ -75,28 +75,69 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   _payoutWidget(CoffeeShopState coffeeShopState) {
-    return DashboardCard(
-      innerHorizontalPadding: 10,
-      title: "Payout details",
-      innerColor: AppColors.light,
-      content: _customAccountId == null
-          ? _startPayoutAccountContent(coffeeShopState)
-          : _customAccount == null
-              ? _verifyAccountContent(coffeeShopState)
-              : _customAccount.requirements.currentlyDue.isNotEmpty
+    return Stack(
+      children: [
+        DashboardCard(
+          innerHorizontalPadding: 10,
+          title: "Payout details",
+          innerColor: AppColors.light,
+          content: _customAccountId == null
+              ? _startPayoutAccountContent(coffeeShopState)
+              : _customAccount == null
                   ? _verifyAccountContent(coffeeShopState)
-                  : _customAccountContent(coffeeShopState),
+                  : _customAccount.requirements.currentlyDue.isNotEmpty
+                      ? _verifyAccountContent(coffeeShopState)
+                      : _customAccountContent(coffeeShopState),
+        ),
+        if (_customAccount.requirements.currentlyDue.isEmpty)
+          Positioned(
+            right: 15,
+            top: 10,
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: CortadoFatButton(
+                  width: SizeConfig.screenWidth * .17,
+                  height: 35,
+                  backgroundColor: AppColors.tan,
+                  text: "Update Account Information",
+                  textStyle: TextStyles.kDefaultCaramelTextStyle,
+                  onTap: () => _paymentBloc.add(CreateCustomAccountUpdateLink(
+                      coffeeShopState.coffeeShop.customStripeAccountId))),
+            ),
+          )
+      ],
     );
   }
 
   _startFilePicker() async {}
 
   _baristaWidget(CoffeeShopState coffeeShopState) {
-    return DashboardCard(
-      innerHorizontalPadding: 10,
-      title: "Manage Your Baristas",
-      content: _baristaContent(coffeeShopState),
-      innerColor: AppColors.light,
+    return Stack(
+      children: [
+        DashboardCard(
+          innerHorizontalPadding: 10,
+          title: "Manage Your Baristas",
+          content: _baristaContent(coffeeShopState),
+          innerColor: AppColors.light,
+        ),
+        Positioned(
+          right: 15,
+          top: 10,
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: CortadoFatButton(
+              width: SizeConfig.screenWidth * .1,
+              height: 35,
+              backgroundColor: AppColors.tan,
+              textStyle: TextStyles.kDefaultCaramelTextStyle,
+              text: "Add a Barista",
+              onTap: () async {
+                await createBaristaDialog(context);
+              },
+            ),
+          ),
+        )
+      ],
     );
   }
 
@@ -402,103 +443,89 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   _customAccountContent(CoffeeShopState coffeeShopState) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.end,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text("Business Email",
-                style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: AppColors.dark,
-                    fontFamily: kFontFamilyNormal,
-                    fontSize: 24)),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                _customAccount.email,
-                style: TextStyle(
-                    color: AppColors.caramel,
-                    fontFamily: kFontFamilyNormal,
-                    fontSize: 18),
-              ),
-            ),
-            Text("Account Holder Name",
-                style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: AppColors.dark,
-                    fontFamily: kFontFamilyNormal,
-                    fontSize: 24)),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                _externalAccount.accountHolderName,
-                style: TextStyle(
-                    color: AppColors.caramel,
-                    fontFamily: kFontFamilyNormal,
-                    fontSize: 18),
-              ),
-            ),
-            Text("Account Number Last 4",
-                style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: AppColors.dark,
-                    fontFamily: kFontFamilyNormal,
-                    fontSize: 24)),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                _externalAccount.last4,
-                style: TextStyle(
-                    color: AppColors.caramel,
-                    fontFamily: kFontFamilyNormal,
-                    fontSize: 18),
-              ),
-            ),
-            Text("Routing Number",
-                style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: AppColors.dark,
-                    fontFamily: kFontFamilyNormal,
-                    fontSize: 24)),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                _externalAccount.routingNumber,
-                style: TextStyle(
-                    color: AppColors.caramel,
-                    fontFamily: kFontFamilyNormal,
-                    fontSize: 18),
-              ),
-            ),
-            Text("Account Status",
-                style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: AppColors.dark,
-                    fontFamily: kFontFamilyNormal,
-                    fontSize: 24)),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                _externalAccount.status,
-                style: TextStyle(
-                    color: AppColors.caramel,
-                    fontFamily: kFontFamilyNormal,
-                    fontSize: 18),
-              ),
-            ),
-          ],
+        Text("Business Email",
+            style: TextStyle(
+                decoration: TextDecoration.underline,
+                color: AppColors.dark,
+                fontFamily: kFontFamilyNormal,
+                fontSize: 24)),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            _customAccount.email,
+            style: TextStyle(
+                color: AppColors.caramel,
+                fontFamily: kFontFamilyNormal,
+                fontSize: 18),
+          ),
         ),
-        Flexible(
-          child: CortadoFatButton(
-              width: SizeConfig.screenWidth * .17,
-              backgroundColor: AppColors.dark,
-              text: "Update Account Information",
-              onTap: () => _paymentBloc.add(CreateCustomAccountUpdateLink(
-                  coffeeShopState.coffeeShop.customStripeAccountId))),
-        )
+        Text("Account Holder Name",
+            style: TextStyle(
+                decoration: TextDecoration.underline,
+                color: AppColors.dark,
+                fontFamily: kFontFamilyNormal,
+                fontSize: 24)),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            _externalAccount.accountHolderName,
+            style: TextStyle(
+                color: AppColors.caramel,
+                fontFamily: kFontFamilyNormal,
+                fontSize: 18),
+          ),
+        ),
+        Text("Account Number Last 4",
+            style: TextStyle(
+                decoration: TextDecoration.underline,
+                color: AppColors.dark,
+                fontFamily: kFontFamilyNormal,
+                fontSize: 24)),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            _externalAccount.last4,
+            style: TextStyle(
+                color: AppColors.caramel,
+                fontFamily: kFontFamilyNormal,
+                fontSize: 18),
+          ),
+        ),
+        Text("Routing Number",
+            style: TextStyle(
+                decoration: TextDecoration.underline,
+                color: AppColors.dark,
+                fontFamily: kFontFamilyNormal,
+                fontSize: 24)),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            _externalAccount.routingNumber,
+            style: TextStyle(
+                color: AppColors.caramel,
+                fontFamily: kFontFamilyNormal,
+                fontSize: 18),
+          ),
+        ),
+        Text("Account Status",
+            style: TextStyle(
+                decoration: TextDecoration.underline,
+                color: AppColors.dark,
+                fontFamily: kFontFamilyNormal,
+                fontSize: 24)),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            _externalAccount.status,
+            style: TextStyle(
+                color: AppColors.caramel,
+                fontFamily: kFontFamilyNormal,
+                fontSize: 18),
+          ),
+        ),
       ],
     );
   }
@@ -551,98 +578,72 @@ class _ProfilePageState extends State<ProfilePage> {
               child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(AppColors.caramel)),
             )
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
+          : Stack(
               children: <Widget>[
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: _baristas.length,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                height: 350,
-                                padding: const EdgeInsets.all(8),
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 10),
-                                decoration: BoxDecoration(
-                                    color: AppColors.caramel,
-                                    borderRadius:
-                                        BorderRadiusDirectional.circular(8.0)),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Flexible(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: AutoSizeText(
-                                              _baristas[index].displayName,
-                                              style: TextStyles
-                                                  .kDefaultLightTextStyle,
-                                            ),
-                                          ),
-                                          Row(
-                                            children: <Widget>[
-                                              IconButton(
-                                                icon: Icon(
-                                                  Icons.edit,
-                                                  color: AppColors.cream,
-                                                ),
-                                                onPressed: () async {},
-                                              ),
-                                              IconButton(
-                                                icon: Icon(
-                                                  Icons.delete,
-                                                  color: AppColors.cream,
-                                                ),
-                                                onPressed: () {},
-                                              )
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        _baristas[index].email,
-                                        style: TextStyles
-                                            .kDefaultSmallLightTextStyle,
-                                      ),
-                                    ),
-                                  ],
+                Container(
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: .6,
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 5),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _baristas.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        width: 200,
+                        padding: const EdgeInsets.all(8),
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: BoxDecoration(
+                            color: AppColors.caramel,
+                            borderRadius:
+                                BorderRadiusDirectional.circular(8.0)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: AutoSizeText(
+                                    _baristas[index].displayName,
+                                    style: TextStyles.kDefaultLightTextStyle,
+                                  ),
                                 ),
-                              );
-                            },
-                          ),
+                                Row(
+                                  children: <Widget>[
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.edit,
+                                        color: AppColors.cream,
+                                      ),
+                                      onPressed: () async {},
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: AppColors.cream,
+                                      ),
+                                      onPressed: () {},
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                            Flexible(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: AutoSizeText(
+                                  _baristas[index].email,
+                                  style: TextStyles.kDefaultSmallLightTextStyle,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Spacer(),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: Padding(
-                          padding: EdgeInsets.all(16),
-                          child: CortadoFatButton(
-                            width: SizeConfig.screenWidth * .1,
-                            height: 70,
-                            backgroundColor: AppColors.dark,
-                            text: "Add a Barista",
-                            onTap: () async {
-                              await createBaristaDialog(context);
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
                 ),
               ],

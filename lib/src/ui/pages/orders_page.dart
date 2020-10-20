@@ -199,18 +199,18 @@ class _OrdersPageState extends State<OrdersPage> {
   }
 
   _pastOrdersGrid() {
-    print(_pastOrders.length);
     return Container(
       margin: const EdgeInsets.only(top: 25),
       height: SizeConfig.screenHeight * .8,
       decoration: BoxDecoration(
           color: AppColors.dark, borderRadius: BorderRadius.circular(8)),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Past Order Count: " + _currentOrders.length.toString(),
+              "Past Order Count: " + _pastOrders.length.toString(),
               style: TextStyles.kLargeCreamTextStyle,
             ),
           ),
@@ -222,11 +222,19 @@ class _OrdersPageState extends State<OrdersPage> {
                   List<Item> items = [];
                   items.addAll(_pastOrders[index].food);
                   items.addAll(_pastOrders[index].drinks);
-                  return OrderCard(
-                      orderNumber: _pastOrders[index].orderNumber,
-                      createdAt: _pastOrders[index].createdAt,
-                      customer: _pastOrders[index].customerName,
-                      items: items);
+
+                  return Container(
+                    width: 300,
+                    child: Stack(
+                      children: [
+                        OrderCard(
+                            orderNumber: _pastOrders[index].orderNumber,
+                            createdAt: _pastOrders[index].createdAt,
+                            customer: _pastOrders[index].customerName,
+                            items: items),
+                      ],
+                    ),
+                  );
                 }),
           ),
         ],

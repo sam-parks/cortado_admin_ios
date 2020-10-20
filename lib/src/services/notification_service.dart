@@ -26,7 +26,8 @@ class NotificationService {
 
     if (Platform.isIOS) {
       sleep(Duration(milliseconds: 500));
-      await _fcm.requestNotificationPermissions(IosNotificationSettings());
+      await _fcm.requestNotificationPermissions(const IosNotificationSettings(
+          sound: true, badge: true, alert: true, provisional: false));
       _iosSubscription = _fcm.onIosSettingsRegistered.listen((data) {
         print('iOS settings registered');
       });
@@ -53,7 +54,7 @@ class NotificationService {
       String type = message['type'];
       switch (type) {
         case _orderType:
-          handleNotification(type, message['notification']['title']);
+          handleNotification(type, message['aps']['alert']['title']);
           break;
       }
     }
@@ -75,7 +76,7 @@ class NotificationService {
 
       switch (type) {
         case _orderType:
-          handleNotification(type, message['notification']['title']);
+          handleNotification(type, message['aps']['alert']['title']);
           break;
       }
     }
@@ -109,6 +110,7 @@ class NotificationService {
 
     if (fcmToken != null && user != null) {
       var tokenRef = user.reference.collection("tokens").doc(fcmToken);
+      print(tokenRef.path);
       try {
         await tokenRef.delete();
       } catch (e) {

@@ -8,7 +8,6 @@ class CortadoFatButton extends StatelessWidget {
       {Key key,
       this.text,
       this.onTap,
-      this.color,
       this.textStyle,
       this.enabled,
       this.fontSize,
@@ -17,7 +16,6 @@ class CortadoFatButton extends StatelessWidget {
       this.backgroundColor})
       : super(key: key);
   final String text;
-  final Color color;
   final Function onTap;
   final TextStyle textStyle;
   final bool enabled;
@@ -48,7 +46,7 @@ class CortadoFatButton extends StatelessWidget {
                           TextStyle(
                             fontFamily: kFontFamilyNormal,
                             fontSize: fontSize,
-                            color: color ?? AppColors.light,
+                            color: AppColors.light,
                           ),
                     ),
                   ),
