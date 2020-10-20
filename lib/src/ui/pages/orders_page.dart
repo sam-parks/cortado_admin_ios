@@ -178,7 +178,6 @@ class _OrdersPageState extends State<OrdersPage> {
                   items.addAll(_currentOrders[index].food);
                   items.addAll(_currentOrders[index].drinks);
 
-                  OrderStatus status = _currentOrders[index].status;
                   return Container(
                     width: 300,
                     child: Stack(
@@ -188,96 +187,7 @@ class _OrdersPageState extends State<OrdersPage> {
                             createdAt: _currentOrders[index].createdAt,
                             customer: _currentOrders[index].customerName,
                             items: items),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: status == OrderStatus.ordered
-                              ? Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: ButtonTheme(
-                                    minWidth: 250,
-                                    height: 40,
-                                    child: RaisedButton(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8)),
-                                      onPressed: () {
-                                        Provider.of<OrdersBloc>(context,
-                                                listen: false)
-                                            .add(StartOrder(
-                                                _currentOrders[index]
-                                                    .orderRef));
-                                      },
-                                      child: Text(
-                                        "Start Order",
-                                        style: TextStyle(
-                                          fontFamily: kFontFamilyNormal,
-                                          fontSize: 20,
-                                          color: AppColors.dark,
-                                        ),
-                                      ),
-                                      color: AppColors.light,
-                                    ),
-                                  ),
-                                )
-                              : status == OrderStatus.started
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: ButtonTheme(
-                                        minWidth: 250,
-                                        height: 40,
-                                        child: RaisedButton(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8)),
-                                          child: Text(
-                                            "Ready For Pickup",
-                                            style: TextStyle(
-                                              fontFamily: kFontFamilyNormal,
-                                              fontSize: 20,
-                                              color: AppColors.caramel,
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            Provider.of<OrdersBloc>(context,
-                                                    listen: false)
-                                                .add(ReadyForPickup(
-                                                    _currentOrders[index]
-                                                        .orderRef));
-                                          },
-                                          color: AppColors.cream,
-                                        ),
-                                      ),
-                                    )
-                                  : status == OrderStatus.readyForPickup
-                                      ? Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: ButtonTheme(
-                                            minWidth: 250,
-                                            height: 40,
-                                            child: RaisedButton(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8)),
-                                              child: Text(
-                                                "Complete",
-                                                style: TextStyle(
-                                                  fontFamily: kFontFamilyNormal,
-                                                  fontSize: 20,
-                                                  color: AppColors.light,
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                Provider.of<OrdersBloc>(context,
-                                                        listen: false)
-                                                    .add(CompleteOrder(
-                                                        _currentOrders[index]
-                                                            .orderRef));
-                                              },
-                                              color: AppColors.dark,
-                                            ),
-                                          ))
-                                      : Container(),
-                        )
+                        statusButton(index)
                       ],
                     ),
                   );
@@ -289,24 +199,120 @@ class _OrdersPageState extends State<OrdersPage> {
   }
 
   _pastOrdersGrid() {
+    print(_pastOrders.length);
     return Container(
       margin: const EdgeInsets.only(top: 25),
       height: SizeConfig.screenHeight * .8,
       decoration: BoxDecoration(
           color: AppColors.dark, borderRadius: BorderRadius.circular(8)),
-      child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: _pastOrders.length,
-          itemBuilder: (context, index) {
-            List<Item> items = [];
-            items.addAll(_pastOrders[index].food);
-            items.addAll(_pastOrders[index].drinks);
-            return OrderCard(
-                orderNumber: _pastOrders[index].orderNumber,
-                createdAt: _pastOrders[index].createdAt,
-                customer: _pastOrders[index].customerName,
-                items: items);
-          }),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "Past Order Count: " + _currentOrders.length.toString(),
+              style: TextStyles.kLargeCreamTextStyle,
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _pastOrders.length,
+                itemBuilder: (context, index) {
+                  List<Item> items = [];
+                  items.addAll(_pastOrders[index].food);
+                  items.addAll(_pastOrders[index].drinks);
+                  return OrderCard(
+                      orderNumber: _pastOrders[index].orderNumber,
+                      createdAt: _pastOrders[index].createdAt,
+                      customer: _pastOrders[index].customerName,
+                      items: items);
+                }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  statusButton(index) {
+    OrderStatus status = _currentOrders[index].status;
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: status == OrderStatus.ordered
+          ? Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ButtonTheme(
+                minWidth: 250,
+                height: 40,
+                child: RaisedButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  onPressed: () {
+                    Provider.of<OrdersBloc>(context, listen: false)
+                        .add(StartOrder(_currentOrders[index].orderRef));
+                  },
+                  child: Text(
+                    "Start Order",
+                    style: TextStyle(
+                      fontFamily: kFontFamilyNormal,
+                      fontSize: 20,
+                      color: AppColors.dark,
+                    ),
+                  ),
+                  color: AppColors.light,
+                ),
+              ),
+            )
+          : status == OrderStatus.started
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ButtonTheme(
+                    minWidth: 250,
+                    height: 40,
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      child: Text(
+                        "Ready For Pickup",
+                        style: TextStyle(
+                          fontFamily: kFontFamilyNormal,
+                          fontSize: 20,
+                          color: AppColors.caramel,
+                        ),
+                      ),
+                      onPressed: () {
+                        Provider.of<OrdersBloc>(context, listen: false).add(
+                            ReadyForPickup(_currentOrders[index].orderRef));
+                      },
+                      color: AppColors.cream,
+                    ),
+                  ),
+                )
+              : status == OrderStatus.readyForPickup
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ButtonTheme(
+                        minWidth: 250,
+                        height: 40,
+                        child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Text(
+                            "Complete",
+                            style: TextStyle(
+                              fontFamily: kFontFamilyNormal,
+                              fontSize: 20,
+                              color: AppColors.light,
+                            ),
+                          ),
+                          onPressed: () {
+                            Provider.of<OrdersBloc>(context, listen: false).add(
+                                CompleteOrder(_currentOrders[index].orderRef));
+                          },
+                          color: AppColors.dark,
+                        ),
+                      ))
+                  : Container(),
     );
   }
 }

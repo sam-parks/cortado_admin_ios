@@ -42,7 +42,6 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
   @override
   Future<void> close() {
-  
     _categoryStateSubscription.cancel();
     return super.close();
   }
