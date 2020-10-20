@@ -67,6 +67,8 @@ dependencies:
   keyboard_avoider: ^0.1.2
   flutter_launcher_icons: ^0.7.5  
   flutter_svg: ^0.19.0
+  sign_in_with_apple: ^2.5.4
+
 
 
   #BLOC and PROVIDER

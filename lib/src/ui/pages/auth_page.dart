@@ -3,6 +3,7 @@ import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyboard_avoider/keyboard_avoider.dart';
 
@@ -87,13 +88,11 @@ class _AuthPageState extends State<AuthPage> {
             child: Center(
               child: Container(
                 padding: EdgeInsets.only(top: 40.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      _buildImage(),
-                      _buildForm(),
-                    ],
-                  ),
+                child: Column(
+                  children: <Widget>[
+                    _buildImage(),
+                    _buildForm(),
+                  ],
                 ),
               ),
             ),
@@ -154,9 +153,6 @@ class _AuthPageState extends State<AuthPage> {
                   obscureText: true,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
-                  onFieldSubmitted: (val) {
-                    authBloc.add(SignInEmailPressed(_username, _password));
-                  },
                   onChanged: (val) {
                     setState(() {
                       _password = val;
@@ -178,29 +174,46 @@ class _AuthPageState extends State<AuthPage> {
                     },
                   ),
                 ),
-                //GoogleSignInButton(),
+                AppleSignInButton(
+                  style: AppleButtonStyle.black,
+                  onPressed: () {
+                    authBloc.add(SignInApplePressed());
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 100),
+                  child: GoogleSignInButton(
+                    onPressed: () {
+                      authBloc.add(SignInGooglePressed());
+                    },
+                    darkMode: true,
+                  ),
+                ),
                 if (state.status == AuthStatus.loading) ...[
                   CircularProgressIndicator(
                       valueColor:
                           AlwaysStoppedAnimation<Color>(AppColors.caramel))
                 ],
-                if (state.status == AuthStatus.error) ...[
-                  Container(
-                    padding: EdgeInsets.only(top: 20.0),
-                    child: RaisedButton(
-                      child: Text('Forgot Password?'),
-                      onPressed: () async {
+                Flexible(
+                  child: Container(
+                    alignment: Alignment.bottomCenter,
+                    child: GestureDetector(
+                      onTap: () async {
                         _justEmail = true;
                         if (_formKey.currentState.validate()) {
                           _formKey.currentState.save();
                           //TODO send forgot password email
                           /* await auth.sendForgotPassword(_username);
-                          _showMessage('Reset link sent to your email!'); */
+                            _showMessage('Reset link sent to your email!'); */
                         }
                       },
+                      child: Text(
+                        'Forgot Password?',
+                        style: TextStyles.kTextDarkStyleUnderline,
+                      ),
                     ),
                   ),
-                ],
+                ),
               ],
             ),
           ),

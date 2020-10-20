@@ -12,6 +12,7 @@ import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -102,6 +103,70 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           yield AuthState.error(e.toString());
       }
     }
+
+    if (event is SignInGooglePressed) {
+      try {
+        User firebaseUser = await _authService.handleGoogleSignIn(false);
+        if (firebaseUser == null) {
+          _authService.handleGoogleSignOut();
+          yield AuthState.error("There was an error verifying you with Google");
+        } else {
+          CortadoUser user = await _userService.getUser(firebaseUser);
+          if (firebaseUser != null && user != null) {
+            coffeeShopBloc.add(InitializeCoffeeShop(user.coffeeShopId));
+            await _notificationService.start();
+            UserType userType = await getUserType(user);
+            yield AuthState.authenticated(user.copyWith(userType: userType));
+          } else {
+            _authService.handleGoogleSignOut();
+            yield AuthState.error(kGenericSignInError);
+          }
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
+
+    if (event is SignInApplePressed) {
+      final available = await SignInWithApple.isAvailable();
+      if (!available) {
+        yield AuthState.error("There was an error signing you up with Apple.");
+        return;
+      }
+      try {
+        AuthorizationCredentialAppleID credential =
+            await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+        );
+
+        OAuthCredential oAuthCredential = OAuthProvider('apple.com').credential(
+          accessToken: credential.authorizationCode,
+          idToken: credential.identityToken,
+        );
+
+        UserCredential firebaseResult =
+            await _authService.signInWithCredential(oAuthCredential);
+        User firebaseUser = firebaseResult.user;
+        bool userExists = await _userService.userExists(firebaseUser);
+        if (!userExists) {
+          yield AuthState.error("This user was not found with an account.");
+          return;
+        }
+
+        CortadoUser user = await _userService.getUser(firebaseUser);
+
+        await _notificationService.start();
+        UserType userType = await getUserType(user);
+
+        yield AuthState.authenticated(user.copyWith(userType: userType));
+      } on Exception catch (e) {
+        yield AuthState.error(e.toString());
+      }
+    }
+
     if (event is SignOut) {
       _notificationService.stop();
       await _authService.signOut();
@@ -125,10 +190,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (_barista) {
           return UserType.barista;
         }
-        throw 'Invalid User';
+        throw Exception('Invalid User');
       }
     } catch (e) {
-      throw 'Invalid User';
+      throw Exception('Invalid User');
     }
   }
 }

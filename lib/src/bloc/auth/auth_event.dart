@@ -12,5 +12,8 @@ class SignInEmailPressed extends AuthEvent {
   SignInEmailPressed(this.email, this.password);
 }
 
+class SignInGooglePressed extends AuthEvent {}
+
+class SignInApplePressed extends AuthEvent {}
 
 class SignOut extends AuthEvent {}

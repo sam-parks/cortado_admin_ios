@@ -1,4 +1,3 @@
-import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/router.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
@@ -62,7 +61,7 @@ class _ItemListPageState extends State<ItemListPage> {
             Spacer(),
             GestureDetector(
                 onTap: () async {
-                  var drink = await Navigator.of(context)
+                /*   var drink = await Navigator.of(context)
                       .pushNamed(kItemRoute, arguments: [
                     false,
                     CategoryType.drink,
@@ -73,7 +72,7 @@ class _ItemListPageState extends State<ItemListPage> {
                         redeemableType: RedeemableType.none,
                         redeemableSize: SizeInOunces.none,
                         sizePriceMap: {"8 oz": '', '12 oz': '', '16 oz': ''}),
-                  ]);
+                  ]); */
                 },
                 child: Row(
                   children: [
@@ -125,13 +124,13 @@ class _ItemListPageState extends State<ItemListPage> {
                                 color: AppColors.caramel,
                               ),
                               onPressed: () async {
-                                var drink = await Navigator.of(context)
+                                /* var drink = await Navigator.of(context)
                                     .pushNamed(kItemRoute, arguments: [
                                   true,
                                   CategoryType.drink,
                                   widget.category,
                                   drinks[index]
-                                ]);
+                                ]); */
                               },
                             ),
                             IconButton(
@@ -237,13 +236,13 @@ class _ItemListPageState extends State<ItemListPage> {
                                 color: AppColors.caramel,
                               ),
                               onPressed: () async {
-                                var foodItem = await Navigator.of(context)
+                                /* var foodItem = await Navigator.of(context)
                                     .pushNamed(kItemRoute, arguments: [
                                   true,
                                   CategoryType.food,
                                   widget.category,
                                   food[index],
-                                ]);
+                                ]); */
                               },
                             ),
                             IconButton(
@@ -279,7 +278,7 @@ class _ItemListPageState extends State<ItemListPage> {
             Spacer(),
             GestureDetector(
                 onTap: () async {
-                  var addIn = await Navigator.of(context)
+                  /* var addIn = await Navigator.of(context)
                       .pushNamed(kItemRoute, arguments: [
                     false,
                     CategoryType.addIn,
@@ -287,7 +286,7 @@ class _ItemListPageState extends State<ItemListPage> {
                     AddIn(
                       id: Uuid().v4(),
                     ),
-                  ]);
+                  ]); */
                 },
                 child: Row(
                   children: [
@@ -339,13 +338,13 @@ class _ItemListPageState extends State<ItemListPage> {
                                 color: AppColors.caramel,
                               ),
                               onPressed: () async {
-                                var addIn = await Navigator.of(context)
+                                /* var addIn = await Navigator.of(context)
                                     .pushNamed('/menu/category/item',
                                         arguments: [
                                       CategoryType.addIn,
                                       widget.category,
                                       addIns[index],
-                                    ]);
+                                    ]); */
                               },
                             ),
                             IconButton(

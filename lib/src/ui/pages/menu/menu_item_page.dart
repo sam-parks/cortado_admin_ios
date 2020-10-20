@@ -15,13 +15,11 @@ class MenuItemPage extends StatefulWidget {
   MenuItemPage(
     this.editing, {
     Key key,
-    this.newCategory,
     this.item,
     this.category,
     this.categoryType,
   }) : super(key: key);
   final CategoryType categoryType;
-  final bool newCategory;
   final Item item;
   final Category category;
   final bool editing;
@@ -679,7 +677,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
             text: widget.editing ? "Update Drink" : "Create Drink",
             textStyle: TextStyles.kDefaultLightTextStyle,
             color: AppColors.light,
-              backgroundColor: AppColors.caramel,
+            backgroundColor: AppColors.caramel,
             width: 300,
             onTap: () {
               if (_formKey.currentState.validate()) {
@@ -837,7 +835,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
           child: CortadoFatButton(
             text: widget.editing ? "Update Food Item" : "Create Food Item",
             textStyle: TextStyles.kDefaultLightTextStyle,
-                backgroundColor: AppColors.caramel,
+            backgroundColor: AppColors.caramel,
             width: 300,
             onTap: () {
               if (_formKey.currentState.validate()) {
@@ -993,7 +991,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
           child: CortadoFatButton(
             text: widget.editing ? "Update Add In" : "Create Add In",
             textStyle: TextStyles.kDefaultLightTextStyle,
-                   backgroundColor: AppColors.caramel,
+            backgroundColor: AppColors.caramel,
             width: 300,
             onTap: () {
               if (_formKey.currentState.validate()) {

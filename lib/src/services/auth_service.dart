@@ -1,4 +1,3 @@
-
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/services/user_service.dart';
@@ -32,8 +31,6 @@ class AuthService {
       throw e;
     }
   }
-
-  
 
   Stream<User> listenForUser() {
     return _firebaseAuth.authStateChanges();
@@ -130,6 +127,10 @@ class AuthService {
   Future<CortadoUser> getCurrentUser() async {
     CortadoUser user = await _userService.getUser(await getCurrentFBUser());
     return user;
+  }
+
+  Future<UserCredential> signInWithCredential(cred) async {
+    return await _firebaseAuth.signInWithCredential(cred);
   }
 
   Future<void> signOut() async {

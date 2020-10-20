@@ -180,7 +180,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             onTap: () async {
                               var addIn = await Navigator.of(context)
                                   .pushNamed(kItemRoute, arguments: [
-                                    false,
+                                false,
                                 CategoryType.addIn,
                                 widget.category,
                                 AddIn(
@@ -256,11 +256,17 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                               await Navigator.of(context)
                                                   .pushNamed(kItemRoute,
                                                       arguments: [
-                                                        true,
+                                                true,
                                                 CategoryType.addIn,
                                                 widget.category,
                                                 addIns[index],
                                               ]);
+
+                                          if (addIn != null) {
+                                            setState(() {
+                                              addIns.add(addIn);
+                                            });
+                                          }
                                         },
                                       ),
                                     ),
@@ -310,7 +316,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                     text: "Create Category",
                     width: 300,
                     textStyle: TextStyles.kDefaultLightTextStyle,
-                           backgroundColor: AppColors.caramel,
+                    backgroundColor: AppColors.caramel,
                     onTap: () {
                       if (_formKey.currentState.validate()) {
                         String title = titleController.text;
@@ -439,7 +445,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             onTap: () async {
                               var foodItem = await Navigator.of(context)
                                   .pushNamed(kItemRoute, arguments: [
-                                     false,
+                                false,
                                 CategoryType.food,
                                 widget.category,
                                 Food(
@@ -517,7 +523,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                             await Navigator.of(context)
                                                 .pushNamed(kItemRoute,
                                                     arguments: [
-                                                      true,
+                                              true,
                                               CategoryType.food,
                                               widget.category,
                                               food[index],
@@ -579,7 +585,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                     text: "Create Category",
                     width: 300,
                     textStyle: TextStyles.kDefaultLightTextStyle,
-                          backgroundColor: AppColors.caramel,
+                    backgroundColor: AppColors.caramel,
                     onTap: () {
                       if (_formKey.currentState.validate()) {
                         String title = titleController.text;
@@ -707,7 +713,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             onTap: () async {
                               var drink = await Navigator.of(context)
                                   .pushNamed(kItemRoute, arguments: [
-                                     false,
+                                false,
                                 CategoryType.drink,
                                 widget.category,
                                 Drink(
@@ -791,7 +797,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                 await Navigator.of(context)
                                                     .pushNamed(kItemRoute,
                                                         arguments: [
-                                                          true,
+                                                  true,
                                                   CategoryType.drink,
                                                   widget.category,
                                                   drinks[index],
@@ -867,7 +873,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                     text: "Create Category",
                     width: 300,
                     textStyle: TextStyles.kDefaultLightTextStyle,
-                     backgroundColor: AppColors.caramel,
+                    backgroundColor: AppColors.caramel,
                     onTap: () {
                       if (_formKey.currentState.validate()) {
                         String title = titleController.text;
