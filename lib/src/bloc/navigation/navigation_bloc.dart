@@ -19,6 +19,9 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
           this.state.navigationStatus != NavigationStatus.userTypeKnown) {
         this.add(InitializeUserType(authState.user.userType));
       }
+      if (authState.status == AuthStatus.unauthenticated) {
+        this.add(UninitializeUserType());
+      }
     });
   }
 
@@ -35,6 +38,10 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
       List<MenuItem> menuItems = getMenuItems(event.userType);
       yield NavigationState.userTypeKnown(
           CortadoAdminScreen.dashboard, menuItems[0], menuItems);
+    }
+
+    if (event is UninitializeUserType) {
+      yield NavigationState.initial();
     }
 
     if (event is ChangeDashboardPage) {

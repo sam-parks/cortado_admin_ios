@@ -7,6 +7,8 @@ abstract class NavigationEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class UninitializeUserType extends NavigationEvent{}
+
 class InitializeUserType extends NavigationEvent {
   final UserType userType;
 

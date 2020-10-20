@@ -111,6 +111,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           _authService.handleGoogleSignOut();
           yield AuthState.error("There was an error verifying you with Google");
         } else {
+          yield AuthState.loading();
           CortadoUser user = await _userService.getUser(firebaseUser);
           if (firebaseUser != null && user != null) {
             coffeeShopBloc.add(InitializeCoffeeShop(user.coffeeShopId));
@@ -141,7 +142,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             AppleIDAuthorizationScopes.fullName,
           ],
         );
-
+        yield AuthState.loading();
         OAuthCredential oAuthCredential = OAuthProvider('apple.com').credential(
           accessToken: credential.authorizationCode,
           idToken: credential.identityToken,
