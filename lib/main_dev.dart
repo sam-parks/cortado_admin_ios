@@ -41,18 +41,22 @@ void setupApp() async {
             MultiBlocProvider(
               providers: [
                 BlocProvider(
+                  lazy: false,
                   create: (_) => CategoryBloc(),
                 ),
               ],
               child: BlocProvider(
+                lazy: false,
                 create: (context) => MenuBloc(
                     categoryBloc: BlocProvider.of<CategoryBloc>(context)),
                 child: BlocProvider(
+                  lazy: false,
                   create: (context) => CoffeeShopBloc(
                       menuBloc: BlocProvider.of<MenuBloc>(context)),
                   child: MultiBlocProvider(
                       providers: [
                         BlocProvider<FinanceBloc>(
+                            lazy: false,
                             create: (context) => FinanceBloc(
                                 coffeeShopBloc:
                                     BlocProvider.of<CoffeeShopBloc>(context))),
@@ -61,6 +65,7 @@ void setupApp() async {
                         BlocProvider<UserManagementBloc>(
                             create: (context) => UserManagementBloc()),
                         BlocProvider<AuthBloc>(
+                            lazy: false,
                             create: (context) => AuthBloc(
                                 BlocProvider.of<CoffeeShopBloc>(context))),
                         BlocProvider<OrdersBloc>(

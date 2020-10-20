@@ -17,11 +17,13 @@ part 'finance_state.dart';
 class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
   FinanceBloc({@required this.coffeeShopBloc}) : super(FinanceState.inital()) {
     _coffeeShopStateSubscription = coffeeShopBloc.listen((coffeeShopState) {
-      String customAccountId = coffeeShopState.coffeeShop.customStripeAccountId;
-
-      if (coffeeShopState.status == CoffeeShopStatus.initialized &&
-          customAccountId != null)
-        this.add(RetrieveCustomAccount(customAccountId));
+      print(coffeeShopState);
+      if (coffeeShopState.status == CoffeeShopStatus.initialized) {
+        String customAccountId =
+            coffeeShopState.coffeeShop.customStripeAccountId;
+        if (customAccountId != null)
+          this.add(RetrieveCustomAccount(customAccountId));
+      }
     });
   }
 
@@ -71,6 +73,7 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
 
   @override
   Future<void> close() {
+    print("coffeeShop state closed");
     _coffeeShopStateSubscription.cancel();
     return super.close();
   }

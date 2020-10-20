@@ -36,18 +36,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         var firebaseUser = await _authService.getCurrentFBUser();
 
-        if (firebaseUser != null) {
+        if (firebaseUser == null) {
+          yield AuthState.error(kEmailNotVerifiedError);
+        } else {
           CortadoUser user = await _userService.getUser(firebaseUser);
-          UserType userType = await getUserType(user);
-          if (user != null) {
+          if (firebaseUser != null && user != null) {
             coffeeShopBloc.add(InitializeCoffeeShop(user.coffeeShopId));
             await _notificationService.start();
+            UserType userType = await getUserType(user);
+
             yield AuthState.authenticated(user.copyWith(userType: userType));
           } else {
-            yield AuthState.unauthenticated();
+            yield AuthState.error(kGenericSignInError);
           }
-        } else {
-          yield AuthState.unauthenticated();
         }
       } catch (error) {
         await _authService.signOut();
