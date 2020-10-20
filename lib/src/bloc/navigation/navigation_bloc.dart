@@ -27,8 +27,7 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
     }
 
     if (event is ChangeDashboardPage) {
-      _navigationService.pageController
-          .jumpToPage(event.cortadoAdminScreen.index);
+      _navigationService.pageController.jumpToPage(event.menuItem.index);
       CortadoAdminScreen updatedScreen =
           screenFromString(event.cortadoAdminScreen.name);
       yield NavigationState.userTypeKnown(

@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
+import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/router.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
@@ -33,6 +35,8 @@ class _MenuPageState extends State<MenuPage> {
   Widget build(BuildContext context) {
     CoffeeShopState coffeeShopState =
         BlocProvider.of<CoffeeShopBloc>(context).state;
+
+    UserType userType = BlocProvider.of<AuthBloc>(context).state.user.userType;
 
     ScrollController _scrollController = ScrollController();
     return Scaffold(
@@ -82,13 +86,14 @@ class _MenuPageState extends State<MenuPage> {
                         _editMenuWidget(),
                       ],
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _editDiscountsWidget(coffeeShopState),
-                        _mostOrderedItemsWidget()
-                      ],
-                    ),
+                    if (userType == UserType.owner)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _editDiscountsWidget(coffeeShopState),
+                          _mostOrderedItemsWidget()
+                        ],
+                      ),
                   ],
                 ),
               ),

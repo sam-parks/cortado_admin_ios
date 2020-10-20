@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
+import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cortado_admin_ios/src/constants.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
@@ -183,17 +184,16 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  _cortadUsersStatsWidget() {
+  _cortadoUsersStatsWidget() {
     List<charts.Series<DailyUsers, String>> series = _createDailyUserData();
 
     return Expanded(
       child: DashboardCard(
           innerHorizontalPadding: 10,
           title: "Cortado Users Per Day",
+          width: SizeConfig.screenWidth,
           content: Container(
               alignment: Alignment.bottomCenter,
-              height: 300,
-              width: 300,
               child: DailyUsersChart(series))),
     );
   }
@@ -256,6 +256,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
     _drinksAdded = coffeeShopState.coffeeShop.drinks.isNotEmpty;
     _foodAdded = coffeeShopState.coffeeShop.food.isNotEmpty;
+    UserType userType = BlocProvider.of<AuthBloc>(context).state.user.userType;
     _payoutInfoComplete =
         !coffeeShopState.coffeeShop.needsVerificationUpdate ?? false;
     return Scaffold(
@@ -286,7 +287,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text(
-                                "Welcome to your individualized sales dashboard.",
+                                "Welcome to your individualized dashboard.",
                                 style: TextStyles.kDefaultCaramelTextStyle,
                               ),
                             )
@@ -306,8 +307,8 @@ class _DashboardPageState extends State<DashboardPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _signUpChecklistWidget(),
-                      _cortadUsersStatsWidget()
+                      if (userType == UserType.owner) _signUpChecklistWidget(),
+                      _cortadoUsersStatsWidget()
                     ],
                   ),
                 ),
