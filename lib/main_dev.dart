@@ -44,19 +44,23 @@ void setupApp() async {
                 child: BlocProvider(
                   create: (context) => CoffeeShopBloc(
                       menuBloc: BlocProvider.of<MenuBloc>(context)),
-                  child: MultiBlocProvider(providers: [
-                    BlocProvider<UserManagementBloc>(
-                        create: (context) => UserManagementBloc()),
-                    BlocProvider<AuthBloc>(
-                        create: (context) =>
-                            AuthBloc(BlocProvider.of<CoffeeShopBloc>(context))),
-                    BlocProvider<PaymentBloc>(
-                        create: (context) => PaymentBloc(
-                            BlocProvider.of<CoffeeShopBloc>(context))),
-                    BlocProvider<OrdersBloc>(create: (context) => OrdersBloc()),
-                    BlocProvider<NavigationBloc>(
-                        create: (_) => NavigationBloc())
-                  ], child: MyApp()),
+                  child: MultiBlocProvider(
+                      providers: [
+                        BlocProvider<UserManagementBloc>(
+                            create: (context) => UserManagementBloc()),
+                        BlocProvider<AuthBloc>(
+                            create: (context) => AuthBloc(
+                                BlocProvider.of<CoffeeShopBloc>(context))),
+                        BlocProvider<PaymentBloc>(
+                            create: (context) => PaymentBloc(
+                                BlocProvider.of<CoffeeShopBloc>(context))),
+                        BlocProvider<OrdersBloc>(
+                            create: (context) => OrdersBloc()),
+                      ],
+                      child: BlocProvider<NavigationBloc>(
+                          create: (context) => NavigationBloc(
+                              authBloc: BlocProvider.of<AuthBloc>(context)),
+                          child: MyApp())),
                 ),
               ),
             ),

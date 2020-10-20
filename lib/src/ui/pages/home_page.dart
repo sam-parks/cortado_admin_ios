@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         );
         break;
       case AuthStatus.authenticated:
-        navigationBloc.add(InitializeUserType(authState.user.userType));
+        
         if (authState.user.userType == UserType.superUser) {
           return SideMenu(authState.user);
         } else {

@@ -119,6 +119,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
                       fontFamily: kFontFamilyNormal,
                       letterSpacing: .75,
                     ),
+                    keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                       focusedBorder: OutlineInputBorder(
                         borderSide:
