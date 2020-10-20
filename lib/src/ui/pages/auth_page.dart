@@ -1,6 +1,4 @@
 import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
-import 'package:cortado_admin_ios/src/locator.dart';
-import 'package:cortado_admin_ios/src/services/auth_service.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dialogs.dart';
