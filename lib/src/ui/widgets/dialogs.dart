@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/orders_bloc.dart';
@@ -5,6 +6,8 @@ import 'package:cortado_admin_ios/src/bloc/orders/orders_event.dart';
 import 'package:cortado_admin_ios/src/bloc/payment/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/payment/payment_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/payment/payment_event.dart';
+import 'package:cortado_admin_ios/src/locator.dart';
+import 'package:cortado_admin_ios/src/services/auth_service.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/barista_details_dialog_form.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
@@ -13,9 +16,12 @@ import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
 
 import 'package:cortado_admin_ios/src/ui/widgets/loading_state_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/payout_details_dialog_form.dart';
+import 'package:cortado_admin_ios/src/utils/validate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+
+AuthService get _authService => locator.get();
 
 newOrderDialog(String title, BuildContext ctx) {
   showDialog(
@@ -70,6 +76,60 @@ newOrderDialog(String title, BuildContext ctx) {
             ],
           ),
         ],
+      );
+    },
+  );
+}
+
+forgotPasswordDialog(BuildContext context, Function callback) {
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String email;
+  return showDialog<String>(
+    context: context,
+    builder: (BuildContext context) {
+      return Container(
+        child: AlertDialog(
+          backgroundColor: AppColors.dark,
+          title: Text(
+            'Provide an email so we can send you a link to reset your password.',
+            style: TextStyles.kDefaultLightTextStyle,
+          ),
+          content: Form(
+            key: _formKey,
+            child: TextFormField(
+              autofocus: true,
+              validator: (value) {
+                return Validate.validateEmail(value);
+              },
+              style: TextStyle(
+                  fontFamily: kFontFamilyNormal, color: AppColors.cream),
+              decoration: InputDecoration(
+                  labelText: 'Email',
+                  labelStyle: TextStyle(
+                      fontFamily: kFontFamilyNormal, color: AppColors.light)),
+              onChanged: (value) {
+                email = value;
+              },
+            ),
+          ),
+          actions: <Widget>[
+            RaisedButton(
+              color: AppColors.tan,
+              child: Text(
+                'Send Link',
+                style: TextStyle(
+                    fontFamily: kFontFamilyNormal, color: AppColors.dark),
+              ),
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  _authService.sendPasswordResetEmail(email);
+                  Navigator.of(context).pop();
+                  callback();
+                }
+              },
+            ),
+          ],
+        ),
       );
     },
   );

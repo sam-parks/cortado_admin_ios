@@ -1,6 +1,9 @@
 import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
+import 'package:cortado_admin_ios/src/locator.dart';
+import 'package:cortado_admin_ios/src/services/auth_service.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/dialogs.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
@@ -200,12 +203,11 @@ class _AuthPageState extends State<AuthPage> {
                     child: GestureDetector(
                       onTap: () async {
                         _justEmail = true;
-                        if (_formKey.currentState.validate()) {
-                          _formKey.currentState.save();
-                          //TODO send forgot password email
-                          /* await auth.sendForgotPassword(_username);
-                            _showMessage('Reset link sent to your email!'); */
-                        }
+
+                        forgotPasswordDialog(
+                            context,
+                            () =>
+                                _showMessage('Reset link sent to your email!'));
                       },
                       child: Text(
                         'Forgot Password?',

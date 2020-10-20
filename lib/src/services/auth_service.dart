@@ -157,6 +157,7 @@ class AuthService {
   }
 
   Future<void> sendPasswordResetEmail(String email) {
+    print("reset email sent");
     return _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
