@@ -1,17 +1,25 @@
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
+import 'package:equatable/equatable.dart';
 
-abstract class UserManagementState {}
+abstract class BaristaManagementState extends Equatable {
+  const BaristaManagementState();
 
-class UserManagementInitial extends UserManagementState {}
+  @override
+  List<Object> get props => [];
+}
 
-class BaristaCreated extends UserManagementState {}
+class BaristasLoadInProgress extends BaristaManagementState {}
 
-class UserManagementLoadingState extends UserManagementState {}
-
-class UserManagementErrorState extends UserManagementState {}
-
-class BaristasRetrieved extends UserManagementState {
+class BaristasLoadSuccess extends BaristaManagementState {
   final List<CortadoUser> baristas;
 
-  BaristasRetrieved(this.baristas);
+  const BaristasLoadSuccess([this.baristas = const []]);
+
+  @override
+  List<Object> get props => [baristas];
+
+  @override
+  String toString() => 'BaristasLoadSuccess { baristas: $baristas }';
 }
+
+class BaristasLoadFailure extends BaristaManagementState {}

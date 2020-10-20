@@ -32,14 +32,14 @@ class _BaristaDetailsDialogFormState extends State<BaristaDetailsDialogForm> {
   @override
   Widget build(BuildContext context) {
     // ignore: close_sinks
-    UserManagementBloc _userManagementBloc =
-        Provider.of<UserManagementBloc>(context);
+    BaristaManagementBloc _baristaManagementBloc =
+        Provider.of<BaristaManagementBloc>(context);
     CoffeeShopState _coffeeShopState =
         BlocProvider.of<CoffeeShopBloc>(context).state;
     return BlocListener(
-      cubit: _userManagementBloc,
+      cubit: _baristaManagementBloc,
       listener: (BuildContext context, state) {
-        if (state is BaristaCreated) {
+        if (state is BaristasLoadSuccess) {
           Navigator.of(context).pop();
         }
       },
@@ -119,8 +119,8 @@ class _BaristaDetailsDialogFormState extends State<BaristaDetailsDialogForm> {
                   ),
                 ),
                 Spacer(),
-                LoadingStateButton<UserManagementLoadingState>(
-                  bloc: _userManagementBloc,
+                LoadingStateButton<BaristasLoadInProgress>(
+                  bloc: _baristaManagementBloc,
                   button: CortadoButton(
                     text: "Submit",
                     color: AppColors.caramel,
@@ -128,7 +128,7 @@ class _BaristaDetailsDialogFormState extends State<BaristaDetailsDialogForm> {
                     lineWidth: 120,
                     onTap: () {
                       if (_formKey.currentState.validate()) {
-                        _userManagementBloc.add(CreateBarista(
+                        _baristaManagementBloc.add(CreateBarista(
                             _email,
                             _firstName,
                             _lastName,

@@ -1,6 +1,6 @@
-abstract class UserManagementEvent {}
+abstract class BaristaManagementEvent {}
 
-class CreateBarista extends UserManagementEvent {
+class CreateBarista extends BaristaManagementEvent {
   final String email;
   final String firstName;
   final String lastName;
@@ -11,7 +11,7 @@ class CreateBarista extends UserManagementEvent {
       this.coffeeShopId);
 }
 
-class RetrieveBaristas extends UserManagementEvent {
+class RetrieveBaristas extends BaristaManagementEvent {
   final String coffeeShopId;
 
   RetrieveBaristas(this.coffeeShopId);

@@ -5,32 +5,38 @@ import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/services/barista_service.dart';
 import 'bloc.dart';
 
-class UserManagementBloc
-    extends Bloc<UserManagementEvent, UserManagementState> {
-  UserManagementBloc() : super(null);
+class BaristaManagementBloc
+    extends Bloc<BaristaManagementEvent, BaristaManagementState> {
+  BaristaManagementBloc() : super(BaristasLoadInProgress());
 
   BaristaService get _baristaService => locator.get();
 
   @override
-  Stream<UserManagementState> mapEventToState(
-    UserManagementEvent event,
+  Stream<BaristaManagementState> mapEventToState(
+    BaristaManagementEvent event,
   ) async* {
     if (event is CreateBarista) {
-      yield UserManagementLoadingState();
-      bool success = await _baristaService.createBarista(event.firstName,
-          event.lastName, event.email, event.password, event.coffeeShopId);
-      if (success) {
-        yield BaristaCreated();
+      yield BaristasLoadInProgress();
+      CortadoUser newBarista = await _baristaService.createBarista(
+          event.firstName,
+          event.lastName,
+          event.email,
+          event.password,
+          event.coffeeShopId);
+      if (newBarista != null) {
+        final List<CortadoUser> updatedTodos =
+            List.from((state as BaristasLoadSuccess).baristas)..add(newBarista);
+        yield BaristasLoadSuccess(updatedTodos);
       } else {
-        yield UserManagementErrorState();
+        yield BaristasLoadFailure();
       }
     }
 
     if (event is RetrieveBaristas) {
-      yield UserManagementLoadingState();
+      yield BaristasLoadInProgress();
       List<CortadoUser> baristas =
           await _baristaService.retrieveBaristas(event.coffeeShopId);
-      yield BaristasRetrieved(baristas);
+      yield BaristasLoadSuccess(baristas);
     }
   }
 }

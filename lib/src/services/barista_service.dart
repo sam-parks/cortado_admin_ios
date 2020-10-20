@@ -29,8 +29,8 @@ class BaristaService {
     }
   }
 
-  Future<bool> createBarista(String firstName, String lastName, String email,
-      String password, String coffeeShopId) async {
+  Future<CortadoUser> createBarista(String firstName, String lastName,
+      String email, String password, String coffeeShopId) async {
     try {
       final _user = await _authService.createUser(email, password);
       if (_user != null) {
@@ -45,9 +45,13 @@ class BaristaService {
         List<dynamic> baristas = coffeeShopAdmin.data()['baristas'];
         baristas.add(ref);
         await coffeeShopAdmin.reference.update({'baristas': baristas});
-        return true;
+        return CortadoUser(
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            coffeeShopId: coffeeShopId);
       } else {
-        return false;
+        return null;
       }
     } catch (e) {
       throw e;
