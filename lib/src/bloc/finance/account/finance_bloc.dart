@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
@@ -6,21 +7,37 @@ import 'package:cortado_admin_ios/src/data/custom_account.dart';
 import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/services/coffee_shop_service.dart';
 import 'package:cortado_admin_ios/src/services/stripe_service.dart';
-import 'bloc.dart';
+import 'package:equatable/equatable.dart';
 
-class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
-  PaymentBloc(this.coffeeShopBloc) : super(null);
+import 'package:meta/meta.dart';
 
-  CoffeeShopBloc coffeeShopBloc;
+part 'finance_event.dart';
+part 'finance_state.dart';
+
+class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
+  FinanceBloc({@required this.coffeeShopBloc}) : super(FinanceState.inital()) {
+    _coffeeShopStateSubscription = coffeeShopBloc.listen((coffeeShopState) {
+      String customAccountId = coffeeShopState.coffeeShop.customStripeAccountId;
+
+      if (coffeeShopState.status == CoffeeShopStatus.initialized &&
+          customAccountId != null)
+        this.add(RetrieveCustomAccount(customAccountId));
+    });
+  }
+
+  final CoffeeShopBloc coffeeShopBloc;
+  StreamSubscription _coffeeShopStateSubscription;
+
   StripeService get stripeService => locator.get();
   CoffeeShopService get coffeeShopService => locator.get();
 
   @override
-  Stream<PaymentState> mapEventToState(
-    PaymentEvent event,
+  Stream<FinanceState> mapEventToState(
+    FinanceEvent event,
   ) async* {
     if (event is CreateCustomAccount) {
-      yield PaymentLoadingState();
+      yield FinanceState.loading();
+
       CoffeeShop coffeeShop = event.coffeeShop;
       String account = await stripeService.createCustomAccount(
           event.businessEmail,
@@ -33,28 +50,28 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
 
       await coffeeShopService.updateCoffeeShop(updatedCoffeeShop);
       coffeeShopBloc.add(UpdateCoffeeShop(updatedCoffeeShop));
-      yield CustomAccountCreated();
-    }
 
-    if (event is CreateCustomAccountLink) {
-      dynamic link = await stripeService.createCustomAccountLink(event.account);
-
-      yield CustomAccountLinkCreated(link['url']);
-    }
-
-    if (event is CreateCustomAccountUpdateLink) {
-      dynamic link =
-          await stripeService.createCustomAccountUpdateLink(event.account);
-
-      yield CustomAccountLinkCreated(link['url']);
+      yield FinanceState.unverified();
     }
 
     if (event is RetrieveCustomAccount) {
-      yield PaymentLoadingState();
+      yield FinanceState.loading();
       CustomAccount customAccount =
           await stripeService.retrieveCustomAccount(event.account);
 
-      yield CustomAccountRetrieved(customAccount);
+      if (customAccount.requirements.currentlyDue.isNotEmpty) {
+        print(customAccount.id + " is not verified yet");
+        print("Currently due:" + customAccount.requirements.currentlyDue[0]);
+        yield FinanceState.unverified();
+      } else {
+        yield FinanceState.verified(customAccount);
+      }
     }
+  }
+
+  @override
+  Future<void> close() {
+    _coffeeShopStateSubscription.cancel();
+    return super.close();
   }
 }

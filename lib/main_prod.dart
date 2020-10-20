@@ -5,7 +5,6 @@ import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/bloc.dart';
-import 'package:cortado_admin_ios/src/bloc/payment/payment_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
 import 'package:cortado_admin_ios/src/ui/app.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -47,9 +46,6 @@ void setupApp() async {
                     create: (context) => UserManagementBloc()),
                 BlocProvider<MenuBloc>(create: (context) => menuBloc),
                 BlocProvider<CategoryBloc>(create: (context) => categoryBloc),
-                BlocProvider<PaymentBloc>(
-                    create: (context) =>
-                        PaymentBloc(BlocProvider.of<CoffeeShopBloc>(context))),
                 BlocProvider<OrdersBloc>(create: (context) => OrdersBloc())
               ], child: MyApp()),
             ),

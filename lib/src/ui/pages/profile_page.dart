@@ -2,12 +2,14 @@ import 'dart:typed_data';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
-import 'package:cortado_admin_ios/src/bloc/payment/bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/finance/account/finance_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/finance/links/finance_links_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/user_management_bloc.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:cortado_admin_ios/src/data/custom_account.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/cortado_admin_loading_indicator.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/loading_state_button.dart';
@@ -31,65 +33,47 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  CustomAccount _customAccount;
-
   Uint8List _pictureBytes;
   Uint8List uploadedImage;
-
-  ExternalAccount _externalAccount;
-  PaymentBloc _paymentBloc;
-  String _customAccountId;
-  bool _loading = false;
   bool _baristasLoading = false;
 
   List<CortadoUser> _baristas = [];
   UserManagementBloc _userManagementBloc;
+
   // ignore: close_sinks
   AuthBloc _authBloc;
+  // ignore: close_sinks
+  FinanceBloc financeBloc;
+  // ignore: close_sinks
+  FinanceLinksBloc financeLinksBloc;
 
   @override
   void initState() {
     super.initState();
 
     _authBloc = BlocProvider.of<AuthBloc>(context);
-    _paymentBloc = BlocProvider.of<PaymentBloc>(context);
     _userManagementBloc = BlocProvider.of<UserManagementBloc>(context);
-    _customAccountId = BlocProvider.of<CoffeeShopBloc>(context)
-        .state
-        .coffeeShop
-        .customStripeAccountId;
-    if (_customAccountId != null) {
-      _paymentBloc.add(RetrieveCustomAccount(_customAccountId));
-    }
-
     _baristasLoading = true;
     _userManagementBloc.add(RetrieveBaristas(
         BlocProvider.of<CoffeeShopBloc>(context).state.coffeeShop.id));
-    if (widget.reauth) {
+    /*   if (widget.reauth) {
       CoffeeShopState coffeeShopState =
           Provider.of<CoffeeShopState>(context, listen: false);
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await reauthDialog(context, _paymentBloc, coffeeShopState);
       });
-    }
+    } */
   }
 
-  _payoutWidget(CoffeeShopState coffeeShopState) {
+  _payoutWidget(FinanceStatus status) {
     return Stack(
       children: [
         DashboardCard(
-          innerHorizontalPadding: 10,
-          title: "Payout details",
-          innerColor: AppColors.light,
-          content: _customAccountId == null
-              ? _startPayoutAccountContent(coffeeShopState)
-              : _customAccount == null
-                  ? _verifyAccountContent(coffeeShopState)
-                  : _customAccount.requirements.currentlyDue.isNotEmpty
-                      ? _verifyAccountContent(coffeeShopState)
-                      : _customAccountContent(coffeeShopState),
-        ),
-        if (_customAccount.requirements.currentlyDue.isEmpty)
+            innerHorizontalPadding: 10,
+            title: "Payout details",
+            innerColor: AppColors.light,
+            content: _financeStatusToWidget(status)),
+        if (status == FinanceStatus.verified)
           Positioned(
             right: 15,
             top: 10,
@@ -101,8 +85,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   backgroundColor: AppColors.tan,
                   text: "Update Account Information",
                   textStyle: TextStyles.kDefaultCaramelTextStyle,
-                  onTap: () => _paymentBloc.add(CreateCustomAccountUpdateLink(
-                      coffeeShopState.coffeeShop.customStripeAccountId))),
+                  onTap: () => financeLinksBloc.add(
+                      CreateCustomAccountUpdateLink(
+                          financeBloc.state.customAccount.id))),
             ),
           )
       ],
@@ -319,130 +304,129 @@ class _ProfilePageState extends State<ProfilePage> {
     ScrollController _scrollController = ScrollController();
     CoffeeShopState coffeeShopState =
         BlocProvider.of<CoffeeShopBloc>(context).state;
-    _customAccountId = coffeeShopState.coffeeShop.customStripeAccountId;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.transparent,
-      body: MultiBlocListener(
-        listeners: [
-          BlocListener(
-              cubit: _userManagementBloc,
-              listener: (context, state) {
-                if (state is BaristasRetrieved) {
-                  setState(() {
-                    _baristas = state.baristas;
-                    _baristasLoading = false;
-                  });
-                }
-              }),
-          BlocListener(
-            cubit: _paymentBloc,
-            listener: (context, state) async {
-              if (state is PaymentLoadingState) {
-                setState(() {
-                  _loading = true;
-                });
-              }
 
-              if (state is CustomAccountCreated) {
-                setState(() {
-                  _loading = false;
-                });
-              }
+    // ignore: close_sinks
+    financeBloc = Provider.of<FinanceBloc>(context);
+    financeLinksBloc = Provider.of<FinanceLinksBloc>(context);
 
-              if (state is CustomAccountLinkCreated) {
-                setState(() {
-                  _loading = false;
-                });
+    return BlocListener(
+      cubit: _userManagementBloc,
+      listener: (context, state) {
+        if (state is BaristasRetrieved) {
+          setState(() {
+            _baristas = state.baristas;
+            _baristasLoading = false;
+          });
+        }
+      },
+      child: BlocConsumer(
+        cubit: financeLinksBloc,
+        listener: (context, state) {
+          if (state is CustomUpdateLinkCreated) {
+            launch(state.link);
+          }
 
-                await launch(state.url);
-              }
-              if (state is CustomAccountRetrieved) {
-                setState(() {
-                  _loading = false;
-                  _customAccount = state.customAccount;
-
-                  if (_customAccount
-                      .externalAccounts.externalAccounts.isEmpty) {
-                    return;
-                  }
-
-                  _externalAccount =
-                      _customAccount.externalAccounts.externalAccounts.first;
-                });
-              }
-            },
-          )
-        ],
-        child: _loading
-            ? Container(
-                alignment: Alignment.center,
-                child: CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(AppColors.caramel)))
-            : Scrollbar(
-                controller: _scrollController,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 130.0, right: 20),
-                  child: ListView(
-                    controller: _scrollController,
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 30, top: 20.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  AutoSizeText(
-                                    "Profile",
-                                    maxLines: 1,
-                                    style: TextStyles.kWelcomeTitleTextStyle,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Text(
-                                      "Edit your shop details and payout details.",
-                                      style:
-                                          TextStyles.kDefaultCaramelTextStyle,
+          if (state is CustomAccountLinkCreated) {
+            launch(state.link);
+          }
+        },
+        builder: (BuildContext context, financeLinksState) {
+          return BlocBuilder(
+            cubit: financeBloc,
+            builder: (BuildContext context, FinanceState financeState) {
+              return Scaffold(
+                body: Scrollbar(
+                  controller: _scrollController,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 130.0, right: 20),
+                    child: ListView(
+                      controller: _scrollController,
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 30, top: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    AutoSizeText(
+                                      "Profile",
+                                      maxLines: 1,
+                                      style: TextStyles.kWelcomeTitleTextStyle,
                                     ),
-                                  )
-                                ],
-                              ),
-                              IconButton(
-                                  color: AppColors.dark,
-                                  tooltip: "Logout",
-                                  icon: Icon(FontAwesomeIcons.signOutAlt),
-                                  onPressed: () => _authBloc.add(SignOut())),
-                            ],
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Text(
+                                        "Edit your shop details and payout details.",
+                                        style:
+                                            TextStyles.kDefaultCaramelTextStyle,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Spacer(),
+                                if (financeLinksState is FinanceLinksLoading)
+                                  CortadoAdminLoadingIndicator(),
+                                IconButton(
+                                    color: AppColors.dark,
+                                    tooltip: "Logout",
+                                    icon: Icon(FontAwesomeIcons.signOutAlt),
+                                    onPressed: () => _authBloc.add(SignOut())),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _shopDetailsWidget(coffeeShopState),
-                          Column(
-                            children: <Widget>[
-                              _payoutWidget(coffeeShopState),
-                              _baristaWidget(coffeeShopState)
-                            ],
-                          )
-                        ],
-                      ),
-                    ],
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _shopDetailsWidget(coffeeShopState),
+                            Column(
+                              children: <Widget>[
+                                _payoutWidget(financeState.status),
+                                _baristaWidget(coffeeShopState)
+                              ],
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
+              );
+            },
+          );
+        },
       ),
     );
   }
 
-  _customAccountContent(CoffeeShopState coffeeShopState) {
+  _financeStatusToWidget(FinanceStatus status) {
+    switch (status) {
+      case FinanceStatus.initial:
+        return _financeInitialWidget();
+        break;
+      case FinanceStatus.unverified:
+        return _verifyAccountContent();
+        break;
+      case FinanceStatus.verified:
+        return _customAccountContent();
+        break;
+      case FinanceStatus.loading:
+        return Center(
+          child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.caramel)),
+        );
+        break;
+    }
+  }
+
+  _customAccountContent() {
+    ExternalAccount externalAccount =
+        financeBloc.state.customAccount.externalAccounts.externalAccounts.first;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -455,7 +439,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            _customAccount.email,
+            financeBloc.state.customAccount.email,
             style: TextStyle(
                 color: AppColors.caramel,
                 fontFamily: kFontFamilyNormal,
@@ -471,7 +455,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            _externalAccount.accountHolderName,
+            externalAccount.accountHolderName,
             style: TextStyle(
                 color: AppColors.caramel,
                 fontFamily: kFontFamilyNormal,
@@ -487,7 +471,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            _externalAccount.last4,
+            externalAccount.last4,
             style: TextStyle(
                 color: AppColors.caramel,
                 fontFamily: kFontFamilyNormal,
@@ -503,7 +487,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            _externalAccount.routingNumber,
+            externalAccount.routingNumber,
             style: TextStyle(
                 color: AppColors.caramel,
                 fontFamily: kFontFamilyNormal,
@@ -519,7 +503,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            _externalAccount.status,
+            externalAccount.status,
             style: TextStyle(
                 color: AppColors.caramel,
                 fontFamily: kFontFamilyNormal,
@@ -530,7 +514,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  _startPayoutAccountContent(CoffeeShopState coffeeShopState) {
+  _financeInitialWidget() {
     return Container(
       child: Column(
         children: <Widget>[
@@ -539,11 +523,10 @@ class _ProfilePageState extends State<ProfilePage> {
             child: AutoSizeText(
               "In order to start recieving payouts, we need you to create an account by filling in your business email and banking information. Then you will be prompted to fill out a verification form through Stripe. After that, you're all set to start recieving payouts through Cortado!",
               style: TextStyles.kDefaultCaramelTextStyle,
-              maxLines: 4,
+              maxLines: 6,
             ),
           ),
           Expanded(
-            flex: 2,
             child: Row(
               children: <Widget>[
                 Align(
@@ -552,8 +535,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     padding: EdgeInsets.only(
                         left: 20, bottom: SizeConfig.screenHeight * .075),
                     child: CortadoFatButton(
-                      width: SizeConfig.screenWidth * .1,
-                      height: 70,
+                      width: SizeConfig.screenWidth * .13,
+                      height: 50,
                       backgroundColor: AppColors.dark,
                       text: "Create Payout Account",
                       onTap: () async {
@@ -562,7 +545,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                 ),
-                Expanded(child: Image.asset('images/make_it_rain.png')),
+                Spacer(),
+                Expanded(
+                    flex: 5, child: Image.asset('images/make_it_rain.png')),
               ],
             ),
           ),
@@ -651,11 +636,11 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  _verifyAccountContent(CoffeeShopState coffeeShopState) {
+  _verifyAccountContent() {
     return Container(
       child: Column(
         children: <Widget>[
-          _customAccount == null
+          financeBloc.state.customAccount == null
               ? Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: AutoSizeText(
@@ -664,7 +649,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     maxLines: 4,
                   ),
                 )
-              : _customAccount.requirements.currentlyDue.isNotEmpty
+              : financeBloc
+                      .state.customAccount.requirements.currentlyDue.isNotEmpty
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: AutoSizeText(
@@ -685,15 +671,15 @@ class _ProfilePageState extends State<ProfilePage> {
             flex: 2,
             child: Row(
               children: <Widget>[
-                LoadingStateButton<PaymentLoadingState>(
-                  bloc: _paymentBloc,
+                LoadingStateButton<FinanceLinksLoading>(
+                  bloc: financeLinksBloc,
                   button: CortadoFatButton(
                       width: SizeConfig.screenWidth * .1,
                       height: 70,
                       backgroundColor: AppColors.dark,
                       text: "Get Verified",
-                      onTap: () => _paymentBloc.add(CreateCustomAccountLink(
-                          coffeeShopState.coffeeShop.customStripeAccountId))),
+                      onTap: () => financeLinksBloc.add(CreateCustomAccountLink(
+                          financeBloc.state.customAccount.id))),
                 ),
                 Expanded(child: Image.asset('images/make_it_rain.png')),
               ],

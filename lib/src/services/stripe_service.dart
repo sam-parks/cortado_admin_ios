@@ -73,7 +73,7 @@ class StripeService {
   }
 
   retrieveCustomAccount(String account) async {
-    final data = <String, dynamic>{'account': account, 'live': live};
+    final data = <dynamic, dynamic>{'account': account, 'live': live};
     HttpsCallableResult response =
         await retrieveCustomAccountCallable.call(data);
 

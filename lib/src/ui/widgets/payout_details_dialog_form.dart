@@ -1,10 +1,9 @@
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
-import 'package:cortado_admin_ios/src/bloc/payment/bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/finance/account/finance_bloc.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_input_field.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
-import 'package:cortado_admin_ios/src/ui/widgets/loading_state_button.dart';
 import 'package:cortado_admin_ios/src/utils/validate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,13 +31,13 @@ class _PayoutDetailsDialogFormState extends State<PayoutDetailsDialogForm> {
   @override
   Widget build(BuildContext context) {
     // ignore: close_sinks
-    PaymentBloc _paymentBloc = Provider.of<PaymentBloc>(context);
+    FinanceBloc _financeBloc = Provider.of<FinanceBloc>(context);
     CoffeeShopState _coffeeShopState =
         BlocProvider.of<CoffeeShopBloc>(context).state;
     return BlocListener(
-      cubit: _paymentBloc,
-      listener: (BuildContext context, state) {
-        if (state is CustomAccountCreated) {
+      cubit: _financeBloc,
+      listener: (BuildContext context, FinanceState state) {
+        if (state.status == FinanceStatus.unverified) {
           Navigator.of(context).pop();
         }
       },
@@ -189,27 +188,24 @@ class _PayoutDetailsDialogFormState extends State<PayoutDetailsDialogForm> {
                   ),
                 ),
                 Spacer(),
-                LoadingStateButton<PaymentLoadingState>(
-                  bloc: _paymentBloc,
-                  button: CortadoButton(
-                    text: "Submit",
-                    color: AppColors.caramel,
-                    fontSize: 30,
-                    lineWidth: 120,
-                    onTap: () {
-                      if (_formKey.currentState.validate() &&
-                          _accountHolderType != null) {
-                        _paymentBloc.add(CreateCustomAccount(
-                            _businessEmail,
-                            _accountHolderName,
-                            _accountHolderType,
-                            _routingNumber,
-                            _accountNumber,
-                            _coffeeShopState.coffeeShop));
-                      }
-                    },
-                  ),
-                )
+                CortadoButton(
+                  text: "Submit",
+                  color: AppColors.caramel,
+                  fontSize: 30,
+                  lineWidth: 120,
+                  onTap: () {
+                    if (_formKey.currentState.validate() &&
+                        _accountHolderType != null) {
+                      _financeBloc.add(CreateCustomAccount(
+                          _businessEmail,
+                          _accountHolderName,
+                          _accountHolderType,
+                          _routingNumber,
+                          _accountNumber,
+                          _coffeeShopState.coffeeShop));
+                    }
+                  },
+                ),
               ],
             )),
       ),

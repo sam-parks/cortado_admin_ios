@@ -1,10 +1,8 @@
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/finance/links/finance_links_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/orders_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/orders_event.dart';
-import 'package:cortado_admin_ios/src/bloc/payment/bloc.dart';
-import 'package:cortado_admin_ios/src/bloc/payment/payment_bloc.dart';
-import 'package:cortado_admin_ios/src/bloc/payment/payment_event.dart';
 import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/services/auth_service.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
@@ -172,8 +170,11 @@ newSizeInputDialog(BuildContext ctx) {
   );
 }
 
-Future<void> reauthDialog(BuildContext context, PaymentBloc paymentBloc,
-    CoffeeShopState coffeeShopState) async {
+Future<void> reauthDialog(
+    BuildContext context, CoffeeShopState coffeeShopState) async {
+  // ignore: close_sinks
+  FinanceLinksBloc financeLinksBloc =
+      BlocProvider.of<FinanceLinksBloc>(context);
   return await showDialog(
     context: context,
     builder: (context) {
@@ -191,14 +192,14 @@ Future<void> reauthDialog(BuildContext context, PaymentBloc paymentBloc,
                   style: TextStyles.kDefaultCaramelTextStyle,
                 ),
               ),
-              LoadingStateButton<PaymentLoadingState>(
-                bloc: paymentBloc,
+              LoadingStateButton<FinanceLinksLoading>(
+                bloc: financeLinksBloc,
                 button: CortadoFatButton(
                     width: SizeConfig.screenWidth * .1,
                     height: 70,
                     backgroundColor: AppColors.dark,
                     text: "Get Verified",
-                    onTap: () => paymentBloc.add(CreateCustomAccountLink(
+                    onTap: () => financeLinksBloc.add(CreateCustomAccountLink(
                         coffeeShopState.coffeeShop.customStripeAccountId))),
               ),
             ],

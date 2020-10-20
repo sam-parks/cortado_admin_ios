@@ -1,24 +1,24 @@
 class CustomAccount {
-  String id;
-  String object;
-  BusinessProfile businessProfile;
-  String businessType;
-  Capabilities capabilities;
-  bool chargesEnabled;
-  String country;
-  int created;
-  String defaultCurrency;
-  bool detailsSubmitted;
-  String email;
-  ExternalAccounts externalAccounts;
-  Individual individual;
-  bool payoutsEnabled;
-  Requirements requirements;
-  Settings settings;
-  TosAcceptance tosAcceptance;
-  String type;
+  final String id;
+  final String object;
+  final BusinessProfile businessProfile;
+  final String businessType;
+  final Capabilities capabilities;
+  final bool chargesEnabled;
+  final String country;
+  final int created;
+  final String defaultCurrency;
+  final bool detailsSubmitted;
+  final String email;
+  final ExternalAccounts externalAccounts;
+  final Individual individual;
+  final bool payoutsEnabled;
+  final Requirements requirements;
+  final Settings settings;
+  final TosAcceptance tosAcceptance;
+  final String type;
 
-  CustomAccount(
+  const CustomAccount(
       {this.id,
       this.object,
       this.businessProfile,
@@ -38,43 +38,42 @@ class CustomAccount {
       this.tosAcceptance,
       this.type});
 
-  CustomAccount.fromJson(Map<dynamic, dynamic> json) {
-    id = json['id'];
-    object = json['object'];
-    businessProfile = json['business_profile'] != null
-        ? new BusinessProfile.fromJson(json['business_profile'])
-        : null;
-    businessType = json['business_type'];
-    capabilities = json['capabilities'] != null
-        ? new Capabilities.fromJson(json['capabilities'])
-        : null;
-    chargesEnabled = json['charges_enabled'];
-    country = json['country'];
-    created = json['created'];
-    defaultCurrency = json['default_currency'];
-    detailsSubmitted = json['details_submitted'];
-    email = json['email'];
-    externalAccounts = json['external_accounts'] != null
-        ? new ExternalAccounts.fromJson(json['external_accounts'])
-        : null;
-    individual = json['individual'] != null
-        ? new Individual.fromJson(json['individual'])
-        : null;
-    payoutsEnabled = json['payouts_enabled'];
-    requirements = json['requirements'] != null
-        ? new Requirements.fromJson(json['requirements'])
-        : null;
-    settings = json['settings'] != null
-        ? new Settings.fromJson(json['settings'])
-        : null;
-    tosAcceptance = json['tos_acceptance'] != null
-        ? new TosAcceptance.fromJson(json['tos_acceptance'])
-        : null;
-    type = json['type'];
-  }
+  CustomAccount.fromJson(Map<dynamic, dynamic> json)
+      : id = json['id'],
+        object = json['object'],
+        businessProfile = json['business_profile'] != null
+            ? new BusinessProfile.fromJson(json['business_profile'])
+            : null,
+        businessType = json['business_type'],
+        capabilities = json['capabilities'] != null
+            ? new Capabilities.fromJson(json['capabilities'])
+            : null,
+        chargesEnabled = json['charges_enabled'],
+        country = json['country'],
+        created = json['created'],
+        defaultCurrency = json['default_currency'],
+        detailsSubmitted = json['details_submitted'],
+        email = json['email'],
+        externalAccounts = json['external_accounts'] != null
+            ? new ExternalAccounts.fromJson(json['external_accounts'])
+            : null,
+        individual = json['individual'] != null
+            ? new Individual.fromJson(json['individual'])
+            : null,
+        payoutsEnabled = json['payouts_enabled'],
+        requirements = json['requirements'] != null
+            ? new Requirements.fromJson(json['requirements'])
+            : null,
+        settings = json['settings'] != null
+            ? new Settings.fromJson(json['settings'])
+            : null,
+        tosAcceptance = json['tos_acceptance'] != null
+            ? new TosAcceptance.fromJson(json['tos_acceptance'])
+            : null,
+        type = json['type'];
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['id'] = this.id;
     data['object'] = this.object;
     if (this.businessProfile != null) {
@@ -109,6 +108,9 @@ class CustomAccount {
     data['type'] = this.type;
     return data;
   }
+
+  /// Empty user which represents an unauthenticated user.
+  static const empty = const CustomAccount(email: '', id: '');
 }
 
 class BusinessProfile {
@@ -142,8 +144,8 @@ class BusinessProfile {
     url = json['url'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['mcc'] = this.mcc;
     data['name'] = this.name;
     data['product_description'] = this.productDescription;
@@ -167,8 +169,8 @@ class Capabilities {
     transfers = json['transfers'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['card_payments'] = this.cardPayments;
     data['transfers'] = this.transfers;
     return data;
@@ -196,8 +198,8 @@ class ExternalAccounts {
     url = json['url'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['object'] = this.object;
     if (this.externalAccounts != null) {
       data['data'] = this.externalAccounts.map((v) => v.toJson()).toList();
@@ -254,8 +256,8 @@ class ExternalAccount {
     status = json['status'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['id'] = this.id;
     data['object'] = this.object;
     data['account'] = this.account;
@@ -329,8 +331,8 @@ class Individual {
         : null;
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['id'] = this.id;
     data['object'] = this.object;
     data['account'] = this.account;
@@ -385,8 +387,8 @@ class Address {
     state = json['state'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['city'] = this.city;
     data['country'] = this.country;
     data['line1'] = this.line1;
@@ -410,8 +412,8 @@ class Dob {
     year = json['year'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['day'] = this.day;
     data['month'] = this.month;
     data['year'] = this.year;
@@ -444,8 +446,8 @@ class Relationship {
     title = json['title'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['director'] = this.director;
     data['executive'] = this.executive;
     data['owner'] = this.owner;
@@ -503,8 +505,8 @@ class Requirements {
     }
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     // ignore: unrelated_type_equality_checks
     if (this.currentlyDue != dynamic) {
       data['currently_due'] = this.currentlyDue.map((v) => v.toJson()).toList();
@@ -557,8 +559,8 @@ class Verification {
     status = json['status'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     if (this.additionalDocument != null) {
       data['additional_document'] = this.additionalDocument.toJson();
     }
@@ -587,8 +589,8 @@ class AdditionalDocument {
     front = json['front'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['back'] = this.back;
     data['details'] = this.details;
     data['details_code'] = this.detailsCode;
@@ -628,8 +630,8 @@ class Settings {
         json['payouts'] != null ? new Payouts.fromJson(json['payouts']) : null;
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     if (this.branding != null) {
       data['branding'] = this.branding.toJson();
     }
@@ -664,8 +666,8 @@ class Branding {
     secondaryColor = json['secondary_color'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['icon'] = this.icon;
     data['logo'] = this.logo;
     data['primary_color'] = this.primaryColor;
@@ -687,8 +689,8 @@ class CardPayments {
     statementDescriptorPrefix = json['statement_descriptor_prefix'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     if (this.declineOn != null) {
       data['decline_on'] = this.declineOn.toJson();
     }
@@ -708,8 +710,8 @@ class DeclineOn {
     cvcFailure = json['cvc_failure'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['avs_failure'] = this.avsFailure;
     data['cvc_failure'] = this.cvcFailure;
     return data;
@@ -727,8 +729,8 @@ class Dashboard {
     timezone = json['timezone'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['display_name'] = this.displayName;
     data['timezone'] = this.timezone;
     return data;
@@ -751,8 +753,8 @@ class Payments {
     statementDescriptorKanji = json['statement_descriptor_kanji'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['statement_descriptor'] = this.statementDescriptor;
     data['statement_descriptor_kana'] = this.statementDescriptorKana;
     data['statement_descriptor_kanji'] = this.statementDescriptorKanji;
@@ -776,8 +778,8 @@ class Payouts {
     statementDescriptor = json['statement_descriptor'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['debit_negative_balances'] = this.debitNegativeBalances;
     if (this.schedule != null) {
       data['schedule'] = this.schedule.toJson();
@@ -798,8 +800,8 @@ class Schedule {
     interval = json['interval'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['delay_days'] = this.delayDays;
     data['interval'] = this.interval;
     return data;
@@ -819,8 +821,8 @@ class TosAcceptance {
     userAgent = json['user_agent'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['date'] = this.date;
     data['ip'] = this.ip;
     data['user_agent'] = this.userAgent;
