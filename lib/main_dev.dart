@@ -17,7 +17,6 @@ import 'package:sentry/sentry.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-      name: 'Cortado',
       options: const FirebaseOptions(
           appId: '1:56935818141:ios:8f5b7ee5b120f4fa8d0574',
           apiKey: 'AIzaSyAhwy1kt_a56tsV54eWjVB0BEAb9nR_5Sk',

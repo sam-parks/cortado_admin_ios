@@ -85,7 +85,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
           backgroundColor: AppColors.light,
           resizeToAvoidBottomInset: false,
           body: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 300),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -97,6 +96,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                   ),
                 ),
                 Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
                   child: TextFormField(
                     validator: (value) {
                       return Validate.requiredField(value, "Required field");
@@ -130,6 +130,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                 ),
                 SizedBox(height: 5),
                 Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
                   child: TextFormField(
                     maxLines: 6,
                     keyboardType: TextInputType.multiline,
@@ -350,7 +351,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
           backgroundColor: AppColors.light,
           resizeToAvoidBottomInset: false,
           body: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 300),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -362,6 +362,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                   ),
                 ),
                 Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
                   child: TextFormField(
                     validator: (value) {
                       return Validate.requiredField(value, "Required field");
@@ -395,6 +396,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                 ),
                 SizedBox(height: 5),
                 Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
                   child: TextFormField(
                     maxLines: 6,
                     keyboardType: TextInputType.multiline,

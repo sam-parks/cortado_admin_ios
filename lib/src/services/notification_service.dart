@@ -43,7 +43,7 @@ class NotificationService {
   }
 
   _setAudio() {
-    _audio = Audio.load('assets/order_notification.mp3');
+    _audio = Audio.load('sounds/order_notification.mp3');
   }
 
   _configure() {
