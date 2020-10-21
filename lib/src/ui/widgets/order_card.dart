@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 class OrderCard extends StatefulWidget {
@@ -157,8 +158,8 @@ class _OrderCardState extends State<OrderCard> {
                                                   Container(
                                                     padding:
                                                         const EdgeInsets.all(8),
-                                                    child: Image.asset(
-                                                      'images/coffee_bean.png',
+                                                    child: SvgPicture.asset(
+                                                      'images/coffee_bean.svg',
                                                       color: AppColors.dark,
                                                       width: 15,
                                                     ),

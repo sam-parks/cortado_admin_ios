@@ -143,6 +143,8 @@ class _MenuItemPageState extends State<MenuItemPage> {
                 Container(
                   child: TextField(
                     maxLines: 6,
+                    keyboardType: TextInputType.multiline,
+                    textInputAction: TextInputAction.done,
                     controller: descriptionController,
                     onChanged: (value) {
                       drink.description = value.trim();

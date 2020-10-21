@@ -10,11 +10,13 @@ import 'package:cortado_admin_ios/src/utils/validate.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:uuid/uuid.dart';
 
 class MenuCategoryPage extends StatefulWidget {
   MenuCategoryPage(
-    this.editing, {
+    this.editing,
+    this.newCategory, {
     Key key,
     this.categoryType,
     this.category,
@@ -22,6 +24,7 @@ class MenuCategoryPage extends StatefulWidget {
   final CategoryType categoryType;
   final Category category;
   final bool editing;
+  final bool newCategory;
 
   @override
   _MenuCategoryPageState createState() => _MenuCategoryPageState();
@@ -36,11 +39,20 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   ScrollController _scrollController = ScrollController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  List<Item> itemList;
+
+  bool editing;
+  bool newCategory;
+
   @override
   void initState() {
     super.initState();
     _categoryBloc = BlocProvider.of<CategoryBloc>(context);
     _coffeeShopBloc = BlocProvider.of<CoffeeShopBloc>(context);
+
+    editing = widget.editing;
+    newCategory = widget.newCategory;
+    itemList = List.from(widget.category.items);
   }
 
   @override
@@ -71,7 +83,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   }
 
   _addInForm() {
-    List<AddIn> addIns = List.castFrom<Item, AddIn>(widget.category.items);
+    List<AddIn> addIns = List.castFrom<Item, AddIn>(itemList);
     TextEditingController titleController =
         TextEditingController(text: widget.category.title);
     TextEditingController descriptionController =
@@ -88,13 +100,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    "Category Info",
-                    style: TextStyles.kDefaultLargeDarkTextStyle,
-                  ),
-                ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 100),
                   child: TextFormField(
@@ -289,7 +294,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
               ],
             ),
           ),
-          floatingActionButton: !widget.editing
+          floatingActionButton: editing
               ? Padding(
                   padding: const EdgeInsets.all(30),
                   child: CortadoFatButton(
@@ -337,7 +342,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   }
 
   _foodform() {
-    List<Food> food = List.castFrom<Item, Food>(widget.category.items);
+    List<Food> food = List.castFrom<Item, Food>(itemList);
     TextEditingController titleController =
         TextEditingController(text: widget.category.title);
     TextEditingController descriptionController =
@@ -347,6 +352,38 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: AppColors.caramel,
+            leading: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Icon(
+                Icons.arrow_back,
+                color: AppColors.cream,
+                size: 40,
+              ),
+            ),
+            title: Text(
+              widget.category.title,
+              style: TextStyle(
+                  color: AppColors.light,
+                  fontFamily: kFontFamilyNormal,
+                  fontSize: 40),
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.edit,
+                    color: AppColors.cream,
+                    size: 40,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      editing = !editing;
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
           backgroundColor: AppColors.light,
           resizeToAvoidBottomInset: false,
@@ -354,21 +391,16 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    "Category Info",
-                    style: TextStyles.kDefaultLargeDarkTextStyle,
-                  ),
-                ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                  padding:
+                      const EdgeInsets.only(left: 100, right: 100, top: 20),
                   child: TextFormField(
                     validator: (value) {
                       return Validate.requiredField(value, "Required field");
                     },
                     autofocus: true,
                     controller: titleController,
+                    enabled: editing || newCategory,
                     style: TextStyle(
                       fontSize: 20,
                       color: AppColors.dark,
@@ -381,6 +413,10 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             BorderSide(color: AppColors.dark, width: 2.0),
                       ),
                       enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: AppColors.dark, width: 2.0),
+                      ),
+                      disabledBorder: OutlineInputBorder(
                         borderSide:
                             BorderSide(color: AppColors.dark, width: 2.0),
                       ),
@@ -402,6 +438,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                     keyboardType: TextInputType.multiline,
                     textInputAction: TextInputAction.done,
                     controller: descriptionController,
+                    enabled: editing || newCategory,
                     style: TextStyle(
                       fontSize: 20,
                       color: AppColors.dark,
@@ -417,6 +454,10 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         borderSide:
                             BorderSide(color: AppColors.dark, width: 2.0),
                       ),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: AppColors.dark, width: 2.0),
+                      ),
                       labelText: "Description",
                       labelStyle: TextStyle(
                         fontSize: 20,
@@ -429,17 +470,15 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                 ),
                 Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 100, vertical: 16.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Center(
-                            child: Text(
-                              "Food Items",
-                              style: TextStyles.kDefaultLargeDarkTextStyle,
-                            ),
+                        Center(
+                          child: Text(
+                            "Food Items",
+                            style: TextStyles.kDefaultLargeDarkTextStyle,
                           ),
                         ),
                         Spacer(),
@@ -470,96 +509,102 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                     ),
                   ),
                 ),
-                Container(
-                  height: SizeConfig.screenHeight * .4,
-                  child: Scrollbar(
-                    controller: _scrollController,
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 5),
-                      scrollDirection: Axis.vertical,
+                Expanded(
+                  child: Container(
+                    height: SizeConfig.screenHeight * .4,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 90,
+                    ),
+                    child: Scrollbar(
                       controller: _scrollController,
-                      itemCount: food.length,
-                      itemBuilder: (context, index) {
-                        if (food[index].name == null) {
-                          return Container();
-                        }
-                        return Container(
-                          margin: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                            color: AppColors.dark,
-                          ),
-                          height: 50,
-                          width: 170,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Align(
-                                    alignment: Alignment.topLeft,
-                                    child: IconButton(
-                                      icon: Icon(
-                                        Icons.cancel,
-                                        color: AppColors.light,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          food.removeAt(index);
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: IconButton(
-                                      icon: Icon(
-                                        Icons.edit,
-                                        color: AppColors.light,
-                                      ),
-                                      onPressed: () async {
-                                        var foodItem =
-                                            await Navigator.of(context)
-                                                .pushNamed(kItemRoute,
-                                                    arguments: [
-                                              true,
-                                              CategoryType.food,
-                                              widget.category,
-                                              food[index],
-                                            ]);
-
-                                        if (foodItem != null) {
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4),
+                        scrollDirection: Axis.vertical,
+                        controller: _scrollController,
+                        itemCount: food.length,
+                        itemBuilder: (context, index) {
+                          if (food[index].name == null) {
+                            return Container();
+                          }
+                          return Container(
+                            margin: const EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: AppColors.dark,
+                            ),
+                            height: 50,
+                            width: 170,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.topLeft,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.cancel,
+                                          color: AppColors.cream,
+                                        ),
+                                        onPressed: () {
                                           setState(() {
                                             food.removeAt(index);
-                                            food.insert(index, foodItem);
+                                            editing = true;
                                           });
-                                        }
-                                      },
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: AutoSizeText(
-                                  food[index].name,
-                                  style: TextStyles.kDefaultLightTextStyle,
+                                    Align(
+                                      alignment: Alignment.topRight,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.edit,
+                                          color: AppColors.cream,
+                                        ),
+                                        onPressed: () async {
+                                          var foodItem =
+                                              await Navigator.of(context)
+                                                  .pushNamed(kItemRoute,
+                                                      arguments: [
+                                                true,
+                                                CategoryType.food,
+                                                widget.category,
+                                                food[index],
+                                              ]);
+
+                                          if (foodItem != null) {
+                                            setState(() {
+                                              food.removeAt(index);
+                                              food.insert(index, foodItem);
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: AutoSizeText(
+                                    food[index].name,
+                                    style: TextStyles.kDefaultLightTextStyle,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 )
               ],
             ),
           ),
-          floatingActionButton: widget.editing
+          floatingActionButton: editing
               ? Padding(
                   padding: const EdgeInsets.all(30),
                   child: CortadoFatButton(
@@ -581,33 +626,35 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                     },
                   ),
                 )
-              : Padding(
-                  padding: const EdgeInsets.all(30),
-                  child: CortadoFatButton(
-                    text: "Create Category",
-                    width: 300,
-                    textStyle: TextStyles.kDefaultLightTextStyle,
-                    backgroundColor: AppColors.caramel,
-                    onTap: () {
-                      if (_formKey.currentState.validate()) {
-                        String title = titleController.text;
-                        String description = descriptionController.text;
-                        Category category =
-                            Category(Uuid().v4(), food, title, description);
+              : newCategory
+                  ? Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: CortadoFatButton(
+                        text: "Create Category",
+                        width: 300,
+                        textStyle: TextStyles.kDefaultLightTextStyle,
+                        backgroundColor: AppColors.caramel,
+                        onTap: () {
+                          if (_formKey.currentState.validate()) {
+                            String title = titleController.text;
+                            String description = descriptionController.text;
+                            Category category =
+                                Category(Uuid().v4(), food, title, description);
 
-                        _categoryBloc.add(AddCategory(CategoryType.food,
-                            category, _coffeeShopBloc.state.coffeeShop));
-                      }
-                    },
-                  ),
-                ),
+                            _categoryBloc.add(AddCategory(CategoryType.food,
+                                category, _coffeeShopBloc.state.coffeeShop));
+                          }
+                        },
+                      ),
+                    )
+                  : Container(),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
         ));
   }
 
   _drinkForm() {
-    List<Drink> drinks = List.castFrom<Item, Drink>(widget.category.items);
+    List<Drink> drinks = List.castFrom<Item, Drink>(itemList);
     TextEditingController titleController =
         TextEditingController(text: widget.category.title);
     TextEditingController descriptionController =
@@ -615,28 +662,55 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
     return Form(
         key: _formKey,
         child: Scaffold(
+          backgroundColor: AppColors.light,
           appBar: AppBar(
             backgroundColor: AppColors.caramel,
+            leading: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Icon(
+                Icons.arrow_back,
+                color: AppColors.cream,
+                size: 40,
+              ),
+            ),
+            title: Text(
+              widget.category.title,
+              style: TextStyle(
+                  color: AppColors.light,
+                  fontFamily: kFontFamilyNormal,
+                  fontSize: 40),
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.edit,
+                    color: AppColors.cream,
+                    size: 40,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      editing = !editing;
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
-          backgroundColor: AppColors.light,
           resizeToAvoidBottomInset: false,
           body: Container(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    "Category Info",
-                    style: TextStyles.kDefaultLargeDarkTextStyle,
-                  ),
-                ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                  padding:
+                      const EdgeInsets.only(left: 100, right: 100, top: 20),
                   child: TextFormField(
                     validator: (value) {
                       return Validate.requiredField(value, "Required field");
                     },
+                    enabled: editing || newCategory,
                     autofocus: true,
                     controller: titleController,
                     style: TextStyle(
@@ -651,6 +725,10 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             BorderSide(color: AppColors.dark, width: 2.0),
                       ),
                       enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: AppColors.dark, width: 2.0),
+                      ),
+                      disabledBorder: OutlineInputBorder(
                         borderSide:
                             BorderSide(color: AppColors.dark, width: 2.0),
                       ),
@@ -669,6 +747,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 100),
                   child: TextFormField(
                     maxLines: 6,
+                    enabled: editing || newCategory,
                     keyboardType: TextInputType.multiline,
                     textInputAction: TextInputAction.done,
                     controller: descriptionController,
@@ -684,6 +763,10 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             BorderSide(color: AppColors.dark, width: 2.0),
                       ),
                       enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: AppColors.dark, width: 2.0),
+                      ),
+                      disabledBorder: OutlineInputBorder(
                         borderSide:
                             BorderSide(color: AppColors.dark, width: 2.0),
                       ),
@@ -746,13 +829,15 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                 ),
                 Expanded(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 90,
+                    ),
                     child: Scrollbar(
                       controller: _scrollController,
                       child: GridView.builder(
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 5),
+                                  crossAxisCount: 4),
                           scrollDirection: Axis.vertical,
                           controller: _scrollController,
                           itemCount: drinks.length,
@@ -778,11 +863,12 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                         child: IconButton(
                                           icon: Icon(
                                             Icons.cancel,
-                                            color: AppColors.light,
+                                            color: AppColors.cream,
                                           ),
                                           onPressed: () {
                                             setState(() {
                                               drinks.removeAt(index);
+                                              editing = true;
                                             });
                                           },
                                         ),
@@ -792,7 +878,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                         child: IconButton(
                                           icon: Icon(
                                             Icons.edit,
-                                            color: AppColors.light,
+                                            color: AppColors.cream,
                                           ),
                                           onPressed: () async {
                                             var drink =
@@ -829,8 +915,8 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                       alignment: Alignment.bottomRight,
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Image.asset(
-                                          'images/coffee_bean.png',
+                                        child: SvgPicture.asset(
+                                          'images/coffee_bean.svg',
                                           color: AppColors.cream,
                                           height: 25,
                                         ),
@@ -846,7 +932,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
               ],
             ),
           ),
-          floatingActionButton: widget.editing
+          floatingActionButton: editing
               ? Padding(
                   padding: const EdgeInsets.all(30),
                   child: CortadoFatButton(
@@ -868,26 +954,28 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                     },
                   ),
                 )
-              : Padding(
-                  padding: const EdgeInsets.all(30),
-                  child: CortadoFatButton(
-                    text: "Create Category",
-                    width: 300,
-                    textStyle: TextStyles.kDefaultLightTextStyle,
-                    backgroundColor: AppColors.caramel,
-                    onTap: () {
-                      if (_formKey.currentState.validate()) {
-                        String title = titleController.text;
-                        String description = descriptionController.text;
-                        Category category =
-                            Category(Uuid().v4(), drinks, title, description);
+              : newCategory
+                  ? Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: CortadoFatButton(
+                        text: "Create Category",
+                        width: 300,
+                        textStyle: TextStyles.kDefaultLightTextStyle,
+                        backgroundColor: AppColors.caramel,
+                        onTap: () {
+                          if (_formKey.currentState.validate()) {
+                            String title = titleController.text;
+                            String description = descriptionController.text;
+                            Category category = Category(
+                                Uuid().v4(), drinks, title, description);
 
-                        _categoryBloc.add(AddCategory(CategoryType.drink,
-                            category, _coffeeShopBloc.state.coffeeShop));
-                      }
-                    },
-                  ),
-                ),
+                            _categoryBloc.add(AddCategory(CategoryType.drink,
+                                category, _coffeeShopBloc.state.coffeeShop));
+                          }
+                        },
+                      ),
+                    )
+                  : Container(),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
         ));

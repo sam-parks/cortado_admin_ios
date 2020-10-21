@@ -66,8 +66,9 @@ class Routes {
 
     return MenuCategoryPage(
       args[0],
-      category: args[1],
-      categoryType: args[2],
+      args[1],
+      category: args[2],
+      categoryType: args[3],
     );
   });
 

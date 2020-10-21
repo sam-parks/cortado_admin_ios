@@ -1,11 +1,13 @@
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
+import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/ui/router.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:uuid/uuid.dart';
 
 class CategoryListPage extends StatefulWidget {
@@ -32,10 +34,19 @@ class _CategoryListPageState extends State<CategoryListPage> {
   Widget build(BuildContext context) {
     return BlocBuilder(
       cubit: _coffeeShopBloc,
-      builder: (BuildContext context, state) {
+      builder: (BuildContext context, CoffeeShopState state) {
         return Scaffold(
+          backgroundColor: AppColors.light,
           appBar: AppBar(
             backgroundColor: AppColors.caramel,
+            leading: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Icon(
+                Icons.arrow_back,
+                color: AppColors.cream,
+                size: 40,
+              ),
+            ),
             title: Text(
               _categoryTitleText(),
               style: TextStyle(
@@ -45,24 +56,22 @@ class _CategoryListPageState extends State<CategoryListPage> {
             ),
             actions: [_createCategory()],
           ),
-          body: _categoryListBody(),
+          body: _categoryListBody(state.coffeeShop),
         );
       },
     );
   }
 
-  Widget _categoryListBody() {
+  Widget _categoryListBody(CoffeeShop coffeeShop) {
     switch (widget.categoryType) {
       case CategoryType.drink:
-        return Center(
-            child: _drinkList(_coffeeShopBloc.state.coffeeShop.drinks));
+        return Center(child: _drinkList(coffeeShop.drinks));
         break;
       case CategoryType.food:
-        return Center(child: _foodList(_coffeeShopBloc.state.coffeeShop.food));
+        return Center(child: _foodList(coffeeShop.food));
         break;
       case CategoryType.addIn:
-        return Center(
-            child: _addInList(_coffeeShopBloc.state.coffeeShop.addIns));
+        return Center(child: _addInList(coffeeShop.addIns));
         break;
       default:
         return Container();
@@ -88,6 +97,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
         onTap: () {
           Navigator.of(context).pushNamed(kCategoryRoute, arguments: [
             false,
+            true,
             Category(Uuid().v4(), [], '', ''),
             widget.categoryType
           ]);
@@ -120,56 +130,91 @@ class _CategoryListPageState extends State<CategoryListPage> {
                   controller: scrollController,
                   itemCount: drinks.length,
                   itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {},
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Container(
-                        height: 60,
-                        margin: const EdgeInsets.symmetric(vertical: 10),
                         decoration: BoxDecoration(
                             color: AppColors.dark,
                             borderRadius:
                                 BorderRadiusDirectional.circular(8.0)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                drinks[index].title,
-                                style: TextStyles.kDefaultLightTextStyle,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context)
+                                .pushNamed(kCategoryRoute, arguments: [
+                              false,
+                              false,
+                              drinks[index],
+                              CategoryType.drink,
+                            ]);
+                          },
+                          child: ListTile(
+                            trailing: Container(
+                              width: 130,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: IconButton(
+                                      icon: Icon(
+                                        Icons.edit,
+                                        color: AppColors.cream,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pushNamed(
+                                            kCategoryRoute,
+                                            arguments: [
+                                              true,
+                                              false,
+                                              drinks[index],
+                                              CategoryType.drink,
+                                            ]);
+                                      },
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: IconButton(
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: AppColors.cream,
+                                      ),
+                                      onPressed: () {
+                                        _categoryBloc.add(RemoveCategory(
+                                            CategoryType.drink,
+                                            drinks[index],
+                                            _coffeeShopBloc.state.coffeeShop));
+                                      },
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                            Row(
-                              children: <Widget>[
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.edit,
-                                    color: AppColors.light,
-                                  ),
-                                  onPressed: () async {
-                                    Navigator.of(context)
-                                        .pushNamed(kCategoryRoute, arguments: [
-                                      true,
-                                      drinks[index],
-                                      CategoryType.drink,
-                                    ]);
-                                  },
+                            leading: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: SvgPicture.asset(
+                                'images/coffee_bean.svg',
+                                color: AppColors.cream,
+                                height: 25,
+                              ),
+                            ),
+                            subtitle: Row(
+                              children: [
+                                Text(
+                                  drinks[index].description,
+                                  style: TextStyles.kDefaultSmallLightTextStyle,
                                 ),
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.delete,
-                                    color: AppColors.light,
-                                  ),
-                                  onPressed: () {
-                                    _categoryBloc.add(RemoveCategory(
-                                        CategoryType.drink,
-                                        drinks[index],
-                                        _coffeeShopBloc.state.coffeeShop));
-                                  },
-                                )
                               ],
-                            )
-                          ],
+                            ),
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  drinks[index].title,
+                                  style: TextStyles.kDefaultLightTextStyle,
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     );
@@ -184,109 +229,110 @@ class _CategoryListPageState extends State<CategoryListPage> {
   Widget _foodList(List<Category> food) {
     ScrollController scrollController = ScrollController();
 
-    return Column(
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              "Food Categories",
-              style: TextStyles.kDefaultLargeDarkTextStyle,
-            ),
-            Spacer(),
-            GestureDetector(
-                onTap: () async {
-                  Navigator.of(context).pushNamed(kCategoryRoute, arguments: [
-                    false,
-                    Category(Uuid().v4(), [], '', ''),
-                    CategoryType.food,
-                  ]);
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      "Create Category",
-                      style: TextStyles.kDefaultSmallTextCreamStyle,
-                    ),
-                    Padding(
+    return Container(
+      constraints: BoxConstraints(maxWidth: SizeConfig.screenWidth * .7),
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: Scrollbar(
+              controller: scrollController,
+              child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: food.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.add_circle_outline,
-                        color: AppColors.cream,
-                        size: 20,
-                      ),
-                    ),
-                  ],
-                ))
-          ],
-        ),
-        Expanded(
-          child: Scrollbar(
-            controller: scrollController,
-            child: ListView.builder(
-                controller: scrollController,
-                itemCount: food.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {});
-                    },
-                    child: Container(
-                      height: 60,
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      decoration: BoxDecoration(
-                          color: AppColors.light,
-                          borderRadius: BorderRadiusDirectional.circular(8.0)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              food[index].title,
-                              style: TextStyles.kDefaultCaramelTextStyle,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: AppColors.dark,
+                            borderRadius:
+                                BorderRadiusDirectional.circular(8.0)),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context)
+                                .pushNamed(kCategoryRoute, arguments: [
+                              false,
+                              false,
+                              food[index],
+                              CategoryType.food,
+                            ]);
+                          },
+                          child: ListTile(
+                            trailing: Container(
+                              width: 130,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: IconButton(
+                                      icon: Icon(
+                                        Icons.edit,
+                                        color: AppColors.cream,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pushNamed(
+                                            kCategoryRoute,
+                                            arguments: [
+                                              true,
+                                              false,
+                                              food[index],
+                                              CategoryType.food,
+                                            ]);
+                                      },
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: IconButton(
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: AppColors.cream,
+                                      ),
+                                      onPressed: () {
+                                        _categoryBloc.add(RemoveCategory(
+                                            CategoryType.food,
+                                            food[index],
+                                            _coffeeShopBloc.state.coffeeShop));
+                                      },
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            leading: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: SvgPicture.asset(
+                                'images/coffee_bean.svg',
+                                color: AppColors.cream,
+                                height: 25,
+                              ),
+                            ),
+                            subtitle: Row(
+                              children: [
+                                Text(
+                                  food[index].description,
+                                  style: TextStyles.kDefaultSmallLightTextStyle,
+                                ),
+                              ],
+                            ),
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  food[index].title,
+                                  style: TextStyles.kDefaultLightTextStyle,
+                                ),
+                              ],
                             ),
                           ),
-                          Row(
-                            children: <Widget>[
-                              IconButton(
-                                icon: Icon(
-                                  Icons.edit,
-                                  color: AppColors.caramel,
-                                ),
-                                onPressed: () async {
-                                  Navigator.of(context)
-                                      .pushNamed(kCategoryRoute, arguments: [
-                                    true,
-                                    food[index],
-                                    CategoryType.food
-                                  ]);
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: AppColors.caramel,
-                                ),
-                                onPressed: () {
-                                  _categoryBloc.add(
-                                    RemoveCategory(
-                                        CategoryType.food,
-                                        food[index],
-                                        _coffeeShopBloc.state.coffeeShop),
-                                  );
-                                },
-                              )
-                            ],
-                          )
-                        ],
+                        ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -305,10 +351,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
             Spacer(),
             GestureDetector(
                 onTap: () async {
-                  Navigator.of(context).pushNamed(kCategoryRoute, arguments: [
-                    Category(Uuid().v4(), [], '', ''),
-                    CategoryType.addIn
-                  ]);
+                  _createCategory();
                 },
                 child: Row(
                   children: [
@@ -366,6 +409,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
                                   Navigator.of(context)
                                       .pushNamed(kCategoryRoute, arguments: [
                                     true,
+                                    false,
                                     addIns[index],
                                     CategoryType.addIn,
                                   ]);

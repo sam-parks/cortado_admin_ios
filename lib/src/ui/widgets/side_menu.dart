@@ -15,6 +15,7 @@ import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SideMenu extends StatefulWidget {
   SideMenu(
@@ -228,8 +229,8 @@ class _DynamicDrawerState extends State<DynamicDrawer> {
             Container(
               alignment: Alignment.centerLeft,
               margin: EdgeInsets.only(left: 16.0, top: 8, bottom: 16.0),
-              child: Image.asset(
-                "images/coffee_bean.png",
+              child: SvgPicture.asset(
+                'images/coffee_bean.svg',
                 height: 30,
               ),
             ),
