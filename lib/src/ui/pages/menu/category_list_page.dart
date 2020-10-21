@@ -339,104 +339,110 @@ class _CategoryListPageState extends State<CategoryListPage> {
   Widget _addInList(List<Category> addIns) {
     ScrollController scrollController = ScrollController();
 
-    return Column(
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              "Add In Categories",
-              style: TextStyles.kDefaultLargeDarkTextStyle,
-            ),
-            Spacer(),
-            GestureDetector(
-                onTap: () async {
-                  _createCategory();
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      "Create Category",
-                      style: TextStyles.kDefaultSmallTextCreamStyle,
-                    ),
-                    Padding(
+    return Container(
+      constraints: BoxConstraints(maxWidth: SizeConfig.screenWidth * .7),
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: Scrollbar(
+              controller: scrollController,
+              child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: addIns.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.add_circle_outline,
-                        color: AppColors.cream,
-                        size: 20,
-                      ),
-                    ),
-                  ],
-                ))
-          ],
-        ),
-        Expanded(
-          child: Scrollbar(
-            controller: scrollController,
-            child: ListView.builder(
-                controller: scrollController,
-                itemCount: addIns.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {});
-                    },
-                    child: Container(
-                      height: 60,
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      decoration: BoxDecoration(
-                          color: AppColors.light,
-                          borderRadius: BorderRadiusDirectional.circular(8.0)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              addIns[index].title,
-                              style: TextStyles.kDefaultCaramelTextStyle,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: AppColors.dark,
+                            borderRadius:
+                                BorderRadiusDirectional.circular(8.0)),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context)
+                                .pushNamed(kCategoryRoute, arguments: [
+                              false,
+                              false,
+                              addIns[index],
+                              CategoryType.addIn,
+                            ]);
+                          },
+                          child: ListTile(
+                            trailing: Container(
+                              width: 130,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: IconButton(
+                                      icon: Icon(
+                                        Icons.edit,
+                                        color: AppColors.cream,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pushNamed(
+                                            kCategoryRoute,
+                                            arguments: [
+                                              true,
+                                              false,
+                                              addIns[index],
+                                              CategoryType.addIn,
+                                            ]);
+                                      },
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: IconButton(
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: AppColors.cream,
+                                      ),
+                                      onPressed: () {
+                                        _categoryBloc.add(RemoveCategory(
+                                            CategoryType.addIn,
+                                            addIns[index],
+                                            _coffeeShopBloc.state.coffeeShop));
+                                      },
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            leading: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: SvgPicture.asset(
+                                'images/coffee_bean.svg',
+                                color: AppColors.cream,
+                                height: 25,
+                              ),
+                            ),
+                            subtitle: Row(
+                              children: [
+                                Text(
+                                  addIns[index].description,
+                                  style: TextStyles.kDefaultSmallLightTextStyle,
+                                ),
+                              ],
+                            ),
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  addIns[index].title,
+                                  style: TextStyles.kDefaultLightTextStyle,
+                                ),
+                              ],
                             ),
                           ),
-                          Row(
-                            children: <Widget>[
-                              IconButton(
-                                icon: Icon(
-                                  Icons.edit,
-                                  color: AppColors.caramel,
-                                ),
-                                onPressed: () async {
-                                  Navigator.of(context)
-                                      .pushNamed(kCategoryRoute, arguments: [
-                                    true,
-                                    false,
-                                    addIns[index],
-                                    CategoryType.addIn,
-                                  ]);
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: AppColors.caramel,
-                                ),
-                                onPressed: () {
-                                  _categoryBloc.add(RemoveCategory(
-                                      CategoryType.addIn,
-                                      addIns[index],
-                                      _coffeeShopBloc.state.coffeeShop));
-                                },
-                              )
-                            ],
-                          )
-                        ],
+                        ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

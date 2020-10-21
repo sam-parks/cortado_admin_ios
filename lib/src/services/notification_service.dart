@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:audiofileplayer/audiofileplayer.dart';
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/services/auth_service.dart';
@@ -17,11 +18,10 @@ class NotificationService {
   FirebaseMessaging _fcm = FirebaseMessaging();
   AuthService get _authService => locator.get();
   StreamSubscription _iosSubscription;
-  Audio _audio;
+  AudioCache _audioCache;
 
   dispose() {
     _iosSubscription?.cancel();
-    _audio.dispose();
   }
 
   start() async {
@@ -43,7 +43,9 @@ class NotificationService {
   }
 
   _setAudio() {
-    _audio = Audio.load('sounds/order_notification.mp3');
+    _audioCache = AudioCache(
+        prefix: "sounds/",
+        fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP));
   }
 
   _configure() {
@@ -63,16 +65,16 @@ class NotificationService {
       String type = message['type'];
       switch (type) {
         case _orderType:
-          _audio.play();
           _handleNotification(type, message['aps']['alert']['title']);
           break;
       }
     }
   }
 
-  _handleNotification(String type, String title) {
+  _handleNotification(String type, String title) async {
     var currentState = NavigationService.navigatorKey?.currentState;
     if (type == "newOrder") {
+      await _audioCache.play('order_notification.mp3');
       newOrderDialog(title, currentState.overlay.context);
     }
   }

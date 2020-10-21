@@ -767,6 +767,8 @@ class _MenuItemPageState extends State<MenuItemPage> {
               Container(
                 child: TextField(
                   maxLines: 6,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.done,
                   controller: descriptionController,
                   onChanged: (value) {
                     food.description = value.trim();
@@ -923,6 +925,8 @@ class _MenuItemPageState extends State<MenuItemPage> {
               Container(
                 child: TextField(
                   maxLines: 6,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.done,
                   controller: descriptionController,
                   onChanged: (value) {
                     addIn.description = value.trim();
