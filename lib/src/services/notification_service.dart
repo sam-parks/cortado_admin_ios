@@ -94,8 +94,8 @@ class NotificationService {
     }
   }
 
-  void stop() async {
-    await _deleteDeviceToken();
+  Future<bool> stop() async {
+    return await _deleteDeviceToken();
   }
 
   _saveDeviceToken() async {
@@ -116,7 +116,7 @@ class NotificationService {
     }
   }
 
-  _deleteDeviceToken() async {
+  Future<bool> _deleteDeviceToken() async {
     CortadoUser user = await _authService.getCurrentUser();
     String fcmToken = await _fcm.getToken();
 
@@ -125,10 +125,13 @@ class NotificationService {
       print(tokenRef.path);
       try {
         await tokenRef.delete();
+        return true;
       } catch (e) {
         print('Failed to delete user\'s token');
+        return false;
       }
     }
+    return false;
   }
 }
 

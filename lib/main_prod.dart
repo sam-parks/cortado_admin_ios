@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/finance/account/finance_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/finance/links/finance_links_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
 import 'package:cortado_admin_ios/src/ui/app.dart';
@@ -29,25 +32,47 @@ void setupApp() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ignore: close_sinks
-  final CategoryBloc categoryBloc = CategoryBloc();
-  // ignore: close_sinks
-  final MenuBloc menuBloc = MenuBloc(categoryBloc: categoryBloc);
   runZoned(
       () => runApp(
-            BlocProvider(
-              create: (BuildContext context) =>
-                  CoffeeShopBloc(menuBloc: menuBloc),
-              child: MultiBlocProvider(providers: [
-                BlocProvider<AuthBloc>(
-                    create: (context) =>
-                        AuthBloc(BlocProvider.of<CoffeeShopBloc>(context))),
-                BlocProvider<BaristaManagementBloc>(
-                    create: (context) => BaristaManagementBloc()),
-                BlocProvider<MenuBloc>(create: (context) => menuBloc),
-                BlocProvider<CategoryBloc>(create: (context) => categoryBloc),
-                BlocProvider<OrdersBloc>(create: (context) => OrdersBloc())
-              ], child: MyApp()),
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  lazy: false,
+                  create: (_) => CategoryBloc(),
+                ),
+              ],
+              child: BlocProvider(
+                lazy: false,
+                create: (context) => MenuBloc(
+                    categoryBloc: BlocProvider.of<CategoryBloc>(context)),
+                child: BlocProvider(
+                  lazy: false,
+                  create: (context) => CoffeeShopBloc(
+                      menuBloc: BlocProvider.of<MenuBloc>(context)),
+                  child: MultiBlocProvider(
+                      providers: [
+                        BlocProvider<FinanceBloc>(
+                            lazy: false,
+                            create: (context) => FinanceBloc(
+                                coffeeShopBloc:
+                                    BlocProvider.of<CoffeeShopBloc>(context))),
+                        BlocProvider<FinanceLinksBloc>(
+                            create: (context) => FinanceLinksBloc()),
+                        BlocProvider<BaristaManagementBloc>(
+                            create: (context) => BaristaManagementBloc()),
+                        BlocProvider<AuthBloc>(
+                            lazy: false,
+                            create: (context) => AuthBloc(
+                                BlocProvider.of<CoffeeShopBloc>(context))),
+                        BlocProvider<OrdersBloc>(
+                            create: (context) => OrdersBloc()),
+                      ],
+                      child: BlocProvider<NavigationBloc>(
+                          create: (context) => NavigationBloc(
+                              authBloc: BlocProvider.of<AuthBloc>(context)),
+                          child: MyApp())),
+                ),
+              ),
             ),
           ), onError: (Object error, StackTrace stackTrace) {
     try {
