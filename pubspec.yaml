@@ -69,6 +69,8 @@ dependencies:
   flutter_svg: ^0.19.0
   sign_in_with_apple: ^2.5.4
   audioplayers: any
+  flutter_statusbarcolor: ^0.2.3
+  flutter_native_splash: ^0.1.9
 
 
 
@@ -87,6 +89,11 @@ flutter_icons:
   android: "launcher_icon"
   ios: true
   image_path: "images/coffee_house_logo.png"
+
+flutter_native_splash:
+  image: images/Cortado-AdminLogo.png
+  color: "fff7f0"
+  android: false
 
 dev_dependencies:
   flutter_test:

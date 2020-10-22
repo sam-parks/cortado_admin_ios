@@ -8,6 +8,7 @@ import 'package:flavor/flavor.dart';
 import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart' as fluro;
 import 'package:flutter/services.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 class MyApp extends StatefulWidget {
   MyApp({Key key}) : super(key: key);
@@ -24,15 +25,12 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     registerLocatorItems(Flavor.instance.environment == Environment.production);
 
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.black,
-      statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ));
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+    FlutterStatusbarcolor.setStatusBarColor(AppColors.dark);
   }
 
   @override

@@ -76,6 +76,7 @@ class _SideMenuState extends State<SideMenu> {
             ),
             Positioned(
                 left: 60,
+                top: 15,
                 child: IconButton(
                   icon: Icon(Icons.menu),
                   onPressed: () {
