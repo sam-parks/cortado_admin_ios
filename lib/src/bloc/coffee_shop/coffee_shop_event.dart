@@ -13,6 +13,8 @@ class InitializeCoffeeShop extends CoffeeShopEvent {
   InitializeCoffeeShop(this.id);
 }
 
+class UninitializeCoffeeShop extends CoffeeShopEvent {}
+
 class UpdateCoffeeShop extends CoffeeShopEvent {
   final CoffeeShop coffeeShop;
 

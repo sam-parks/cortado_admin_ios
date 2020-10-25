@@ -87,25 +87,37 @@ class _OrderCardState extends State<OrderCard> {
                     if (widget.items[index] is Drink) {
                       Drink drink = widget.items[index];
 
-                      return Container(
-                        height: 160,
-                        margin: const EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                            color: AppColors.cream,
-                            border: Border.all(color: AppColors.dark, width: 3),
-                            borderRadius: BorderRadius.circular(8)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Flexible(
-                                    child: AutoSizeText(
-                                      drink.name,
+                      return Stack(children: [
+                        Container(
+                          height: 160,
+                          margin: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                              color: AppColors.cream,
+                              border:
+                                  Border.all(color: AppColors.dark, width: 3),
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: AutoSizeText(
+                                        drink.name,
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                          fontFamily: kFontFamilyNormal,
+                                          fontSize: 26,
+                                          color: AppColors.dark,
+                                        ),
+                                      ),
+                                    ),
+                                    AutoSizeText(
+                                      drink.size ?? "12 oz",
                                       maxLines: 1,
                                       style: TextStyle(
                                         fontFamily: kFontFamilyNormal,
@@ -113,79 +125,82 @@ class _OrderCardState extends State<OrderCard> {
                                         color: AppColors.dark,
                                       ),
                                     ),
-                                  ),
-                                  AutoSizeText(
-                                    drink.size ?? "12 oz",
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                      fontFamily: kFontFamilyNormal,
-                                      fontSize: 26,
-                                      color: AppColors.dark,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (drink.addIns != null && drink.addIns.isNotEmpty)
-                              Container(
-                                width: 250,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        "Add-Ins",
-                                        style: TextStyles
-                                            .kDefaultSmallTextDarkStyleUnderline,
-                                      ),
-                                    ),
-                                    Container(
-                                      height: 80,
-                                      width: 250,
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: GridView.count(
-                                          padding: EdgeInsets.zero,
-                                          scrollDirection: Axis.horizontal,
-                                          crossAxisCount: 3,
-                                          crossAxisSpacing: 1,
-                                          childAspectRatio: 1 / 4,
-                                          children: List.generate(
-                                              drink.addIns.length, (index) {
-                                            return Container(
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    padding:
-                                                        const EdgeInsets.all(8),
-                                                    child: SvgPicture.asset(
-                                                      'images/coffee_bean.svg',
-                                                      color: AppColors.dark,
-                                                      width: 15,
-                                                    ),
-                                                  ),
-                                                  Flexible(
-                                                    child: AutoSizeText(
-                                                      drink.addIns[index].name,
-                                                      maxLines: 1,
-                                                      style: TextStyle(
-                                                          color:
-                                                              AppColors.caramel,
-                                                          fontFamily:
-                                                              kFontFamilyNormal),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          })),
-                                    ),
                                   ],
                                 ),
-                              )
-                          ],
+                              ),
+                              if (drink.addIns != null &&
+                                  drink.addIns.isNotEmpty)
+                                Container(
+                                  width: 250,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          "Add-Ins",
+                                          style: TextStyles
+                                              .kDefaultSmallTextDarkStyleUnderline,
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 80,
+                                        width: 250,
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: GridView.count(
+                                            padding: EdgeInsets.zero,
+                                            scrollDirection: Axis.horizontal,
+                                            crossAxisCount: 3,
+                                            crossAxisSpacing: 1,
+                                            childAspectRatio: 1 / 4,
+                                            children: List.generate(
+                                                drink.addIns.length, (index) {
+                                              return Container(
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8),
+                                                      child: SvgPicture.asset(
+                                                        'images/coffee_bean.svg',
+                                                        color: AppColors.dark,
+                                                        width: 15,
+                                                      ),
+                                                    ),
+                                                    Flexible(
+                                                      child: AutoSizeText(
+                                                        drink
+                                                            .addIns[index].name,
+                                                        maxLines: 1,
+                                                        style: TextStyle(
+                                                            color: AppColors
+                                                                .caramel,
+                                                            fontFamily:
+                                                                kFontFamilyNormal),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            })),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                            ],
+                          ),
                         ),
-                      );
+                        Positioned(
+                          bottom: 20,
+                          right: 20,
+                          child: Text(
+                            drink.quantity.toString(),
+                            style: TextStyles.kDefaultLargeDarkTextStyle,
+                          ),
+                        )
+                      ]);
                     }
                     Food food = widget.items[index];
                     return Container(

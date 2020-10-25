@@ -24,6 +24,10 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
         if (customAccountId != null)
           this.add(RetrieveCustomAccount(customAccountId));
       }
+
+      if (coffeeShopState.status == CoffeeShopStatus.uninitialized) {
+        this.add(UninitializeFinance());
+      }
     });
   }
 
@@ -68,6 +72,10 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
       } else {
         yield FinanceState.verified(customAccount);
       }
+    }
+
+    if (event is UninitializeFinance) {
+      yield FinanceState.inital();
     }
   }
 

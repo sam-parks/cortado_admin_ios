@@ -26,3 +26,5 @@ class RetrieveCustomAccount extends FinanceEvent {
 
   RetrieveCustomAccount(this.account);
 }
+
+class UninitializeFinance extends FinanceEvent {}

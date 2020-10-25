@@ -45,6 +45,10 @@ class CoffeeShopBloc extends Bloc<CoffeeShopEvent, CoffeeShopState> {
 
       yield CoffeeShopState.initialized(coffeeShop);
     }
+
+    if (event is UninitializeCoffeeShop) {
+      yield CoffeeShopState.uninitialized();
+    }
   }
 
   @override

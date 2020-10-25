@@ -172,6 +172,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (event is SignOut) {
       await _notificationService.stop();
       await _authService.signOut();
+      coffeeShopBloc.add(UninitializeCoffeeShop());
 
       yield AuthState.unauthenticated();
     }

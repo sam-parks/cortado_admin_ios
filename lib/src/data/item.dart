@@ -15,6 +15,7 @@ class Drink extends Item {
   SizeInOunces redeemableSize;
   Map sizePriceMap;
   List<AddIn> addIns;
+  List<String> requiredAddIns;
   String size;
   bool servedIced;
 
@@ -25,6 +26,7 @@ class Drink extends Item {
       this.quantity,
       this.sizePriceMap,
       this.addIns,
+      this.requiredAddIns,
       this.servedIced,
       this.redeemableSize,
       this.redeemableType,
@@ -41,7 +43,8 @@ class Drink extends Item {
       'servedIced': servedIced,
       'redeemableSize': redeemableSize.statusToString(),
       'redeemableType': redeemableType.statusToString(),
-      'addIns': addIns != null ? _addinsToJson(addIns) : null
+      'addIns': addIns != null ? _addinsToJson(addIns) : null,
+      'requiredAddIns': requiredAddIns
     };
   }
 

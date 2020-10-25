@@ -226,6 +226,7 @@ categoryFromData(
 Drink drinkFromData(Map<dynamic, dynamic> data) {
   Drink drink = Drink(
       addIns: addInsToList(data['addIns']),
+      requiredAddIns: data['requiredAddIns'],
       id: data['id'],
       name: data['name'],
       size: data['size'],
