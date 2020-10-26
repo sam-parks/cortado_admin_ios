@@ -53,15 +53,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
     _authBloc = BlocProvider.of<AuthBloc>(context);
     _baristaManagementBloc = BlocProvider.of<BaristaManagementBloc>(context);
-    _baristaManagementBloc.add(RetrieveBaristas(
-        BlocProvider.of<CoffeeShopBloc>(context).state.coffeeShop.id));
-    /*   if (widget.reauth) {
-      CoffeeShopState coffeeShopState =
-          Provider.of<CoffeeShopState>(context, listen: false);
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await reauthDialog(context, _paymentBloc, coffeeShopState);
-      });
-    } */
+    if (_baristaManagementBloc.state is! BaristasLoadSuccess)
+      _baristaManagementBloc.add(RetrieveBaristas(
+          BlocProvider.of<CoffeeShopBloc>(context).state.coffeeShop.id));
   }
 
   _payoutWidget(FinanceStatus status) {

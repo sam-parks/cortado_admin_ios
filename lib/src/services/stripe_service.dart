@@ -34,8 +34,8 @@ class StripeService {
   createCustomAccountUpdateLink(String account) async {
     final data = <String, dynamic>{
       'account': account,
-      'refresh_url': 'http://localhost:5000/#/payment/reauth',
-      'return_url': 'http://localhost:5000/#/payment/return',
+      'refresh_url': 'https://cortadoadmin.page.link/financeRefresh',
+      'return_url': 'https://cortadoadmin.page.link/striperedirect',
       'live': live
     };
 
@@ -67,8 +67,8 @@ class StripeService {
   createCustomAccountLink(String account) async {
     final data = <String, dynamic>{
       'account': account,
-      'refresh_url': 'http://localhost:5000/#/payment/reauth',
-      'return_url': 'http://localhost:5000/#/payment/return',
+      'refresh_url': 'https://cortadoadmin.page.link/financeRefresh',
+      'return_url': 'https://cortadoadmin.page.link/striperedirect',
       'live': live
     };
 
@@ -87,19 +87,5 @@ class StripeService {
       return CustomAccount.fromJson(response.data);
     }
     return null;
-  }
-
-  createCustomAccountLoginLink(String account) async {
-    final data = <dynamic, dynamic>{
-      'account': account,
-      'refresh_url': 'http://localhost:5000/#/finance/reauth',
-      'return_url': 'http://localhost:5000/#/finance/return',
-      'live': live
-    };
-
-    HttpsCallableResult response =
-        await createCustomAccountLoginLinkCallable.call(data);
-
-    return response.data;
   }
 }

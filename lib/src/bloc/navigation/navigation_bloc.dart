@@ -7,6 +7,7 @@ import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/services/navigation_service.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 
 part 'navigation_event.dart';
@@ -15,6 +16,7 @@ part 'navigation_state.dart';
 class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
   NavigationBloc({@required this.authBloc}) : super(NavigationState.initial()) {
     _authStateSubscription = authBloc.listen((authState) {
+      initDynamicLinks();
       if (authState.status == AuthStatus.authenticated &&
           this.state.navigationStatus != NavigationStatus.userTypeKnown) {
         this.add(InitializeUserType(authState.user.userType));
@@ -73,5 +75,24 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
       default:
         return baristaMenuItems;
     }
+  }
+
+  void initDynamicLinks() async {
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      print(dynamicLink.link);
+      final Uri deepLink = dynamicLink?.link;
+
+      if (deepLink != null) {}
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
+
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri deepLink = data?.link;
+
+    if (deepLink != null) {}
   }
 }
