@@ -15,6 +15,12 @@ class StripeService {
       CloudFunctions.instance.getHttpsCallable(
     functionName: 'createCustomAccountLink',
   );
+
+  final HttpsCallable createCustomAccountLoginLinkCallable =
+      CloudFunctions.instance.getHttpsCallable(
+    functionName: 'createCustomAccountLoginLink',
+  );
+
   final HttpsCallable createCustomAccountUpdateLinkCallable =
       CloudFunctions.instance.getHttpsCallable(
     functionName: 'createCustomAccountUpdateLink',
@@ -81,5 +87,19 @@ class StripeService {
       return CustomAccount.fromJson(response.data);
     }
     return null;
+  }
+
+  createCustomAccountLoginLink(String account) async {
+    final data = <dynamic, dynamic>{
+      'account': account,
+      'refresh_url': 'http://localhost:5000/#/finance/reauth',
+      'return_url': 'http://localhost:5000/#/finance/return',
+      'live': live
+    };
+
+    HttpsCallableResult response =
+        await createCustomAccountLoginLinkCallable.call(data);
+
+    return response.data;
   }
 }

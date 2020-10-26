@@ -33,6 +33,7 @@ class _DashboardPageState extends State<DashboardPage> {
   _signUpChecklistWidget() {
     return Expanded(
       child: DashboardCard(
+        width: SizeConfig.screenWidth,
         innerHorizontalPadding: 10,
         title: "Sign Up Checklist",
         content: Column(
@@ -202,13 +203,13 @@ class _DashboardPageState extends State<DashboardPage> {
     /// Create one series with sample hard coded data.
 
     final data = [
-      DailyUsers('Monday', 5),
-      DailyUsers('Tuesday', 25),
-      DailyUsers('Wednesday', 100),
-      DailyUsers('Thursday', 75),
-      DailyUsers('Friday', 75),
-      DailyUsers('Saturday', 75),
-      DailyUsers('Sunday', 75),
+      DailyUsers('Mon', 5),
+      DailyUsers('Tue', 25),
+      DailyUsers('Wed', 100),
+      DailyUsers('Thu', 75),
+      DailyUsers('Fri', 75),
+      DailyUsers('Sat', 75),
+      DailyUsers('Sun', 75),
     ];
 
     return [
@@ -308,7 +309,6 @@ class _DashboardPageState extends State<DashboardPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       if (userType == UserType.owner) _signUpChecklistWidget(),
-                      _cortadoUsersStatsWidget()
                     ],
                   ),
                 ),

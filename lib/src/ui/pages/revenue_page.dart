@@ -34,14 +34,14 @@ class _RevenuePageState extends State<RevenuePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         AutoSizeText(
-                          "Revenue",
+                          "Sales",
                           maxLines: 1,
                           style: TextStyles.kWelcomeTitleTextStyle,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                            "View recent sales and revenue for your location.",
+                            "View recent sales for your location.",
                             style: TextStyles.kDefaultCaramelTextStyle,
                           ),
                         )
@@ -53,7 +53,7 @@ class _RevenuePageState extends State<RevenuePage> {
                   width: SizeConfig.screenWidth,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [_salesWidget(), _revenueWidget()],
+                    children: [_salesWidget()],
                   ),
                 ),
                 _monthlySalesWidget()
@@ -68,12 +68,11 @@ class _RevenuePageState extends State<RevenuePage> {
   _salesWidget() {
     return Expanded(
         child: DashboardCard(
+      width: SizeConfig.screenWidth,
       innerHorizontalPadding: 10,
-      title: "Sales",
+      title: "Weekly Sales",
       content: Container(
         alignment: Alignment.bottomCenter,
-        height: 300,
-        width: 300,
         child: DailySalesChart(_createDailySalesData()),
       ),
     ));

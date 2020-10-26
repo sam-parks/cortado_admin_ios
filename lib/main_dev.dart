@@ -8,6 +8,7 @@ import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/item/item_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/statistics/statistics_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
 import 'package:cortado_admin_ios/src/ui/app.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -71,6 +72,8 @@ void setupApp() async {
                             create: (context) => FinanceLinksBloc()),
                         BlocProvider<BaristaManagementBloc>(
                             create: (context) => BaristaManagementBloc()),
+                        BlocProvider<StatisticsBloc>(
+                            lazy: false, create: (context) => StatisticsBloc()),
                         BlocProvider<AuthBloc>(
                             lazy: false,
                             create: (context) => AuthBloc(
