@@ -94,9 +94,10 @@ class Routes {
 
     return MenuItemPage(
       args[0],
-      categoryType: args[1],
-      category: args[2],
-      item: args[3],
+      args[1],
+      categoryType: args[2],
+      category: args[3],
+      item: args[4],
     );
   });
 }

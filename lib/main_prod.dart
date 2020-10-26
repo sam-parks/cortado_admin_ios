@@ -6,6 +6,7 @@ import 'package:cortado_admin_ios/src/bloc/finance/account/finance_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/finance/links/finance_links_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/menu/item/item_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
@@ -44,7 +45,8 @@ void setupApp() async {
               child: BlocProvider(
                 lazy: false,
                 create: (context) => MenuBloc(
-                    categoryBloc: BlocProvider.of<CategoryBloc>(context)),
+                    categoryBloc: BlocProvider.of<CategoryBloc>(context),
+                    itemBloc: BlocProvider.of<ItemBloc>(context)),
                 child: BlocProvider(
                   lazy: false,
                   create: (context) => CoffeeShopBloc(

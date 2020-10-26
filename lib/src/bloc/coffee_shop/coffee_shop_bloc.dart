@@ -20,7 +20,6 @@ class CoffeeShopBloc extends Bloc<CoffeeShopEvent, CoffeeShopState> {
       : super(CoffeeShopState.uninitialized()) {
     _menuStateSubscription = menuBloc.listen((menuState) {
       if (menuState.status == MenuStatus.updated) {
-        print("updating coffee shop from menu");
         this.add(UpdateCoffeeShop(state.coffeeShop));
       }
     });

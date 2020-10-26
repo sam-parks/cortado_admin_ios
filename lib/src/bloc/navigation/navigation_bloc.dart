@@ -55,7 +55,6 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
 
   @override
   Future<void> close() {
-    print("close called");
     _authStateSubscription.cancel();
     return super.close();
   }

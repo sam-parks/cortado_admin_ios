@@ -44,6 +44,9 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   bool editing;
   bool newCategory;
 
+  TextEditingController titleController;
+  TextEditingController descriptionController;
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +56,10 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
     editing = widget.editing;
     newCategory = widget.newCategory;
     itemList = List.from(widget.category.items);
+
+    titleController = TextEditingController(text: widget.category.title);
+    descriptionController =
+        TextEditingController(text: widget.category.description);
   }
 
   @override
@@ -84,10 +91,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
 
   _addInForm() {
     List<AddIn> addIns = List.castFrom<Item, AddIn>(itemList);
-    TextEditingController titleController =
-        TextEditingController(text: widget.category.title);
-    TextEditingController descriptionController =
-        TextEditingController(text: widget.category.description);
+
     return Form(
         key: _formKey,
         child: Scaffold(
@@ -142,6 +146,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                     autofocus: true,
                     controller: titleController,
                     enabled: editing || newCategory,
+                    onChanged: (value) {},
                     style: TextStyle(
                       fontSize: 20,
                       color: AppColors.dark,
@@ -228,6 +233,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                               var addIn = await Navigator.of(context)
                                   .pushNamed(kItemRoute, arguments: [
                                 false,
+                                true,
                                 CategoryType.addIn,
                                 widget.category,
                                 AddIn(
@@ -310,6 +316,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                   .pushNamed(kItemRoute,
                                                       arguments: [
                                                 true,
+                                                false,
                                                 CategoryType.addIn,
                                                 widget.category,
                                                 addIns[index],
@@ -418,10 +425,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
 
   _foodform() {
     List<Food> food = List.castFrom<Item, Food>(itemList);
-    TextEditingController titleController =
-        TextEditingController(text: widget.category.title);
-    TextEditingController descriptionController =
-        TextEditingController(text: widget.category.description);
+
     return Form(
         key: _formKey,
         child: Scaffold(
@@ -562,6 +566,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                               var foodItem = await Navigator.of(context)
                                   .pushNamed(kItemRoute, arguments: [
                                 false,
+                                true,
                                 CategoryType.food,
                                 widget.category,
                                 Food(
@@ -645,6 +650,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                   .pushNamed(kItemRoute,
                                                       arguments: [
                                                 true,
+                                                false,
                                                 CategoryType.food,
                                                 widget.category,
                                                 food[index],
@@ -730,10 +736,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
 
   _drinkForm() {
     List<Drink> drinks = List.castFrom<Item, Drink>(itemList);
-    TextEditingController titleController =
-        TextEditingController(text: widget.category.title);
-    TextEditingController descriptionController =
-        TextEditingController(text: widget.category.description);
+
     return Form(
         key: _formKey,
         child: Scaffold(
@@ -874,6 +877,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                               var drink = await Navigator.of(context)
                                   .pushNamed(kItemRoute, arguments: [
                                 false,
+                                true,
                                 CategoryType.drink,
                                 widget.category,
                                 Drink(
@@ -961,6 +965,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                     .pushNamed(kItemRoute,
                                                         arguments: [
                                                   true,
+                                                  false,
                                                   CategoryType.drink,
                                                   widget.category,
                                                   drinks[index],

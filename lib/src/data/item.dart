@@ -15,7 +15,7 @@ class Drink extends Item {
   SizeInOunces redeemableSize;
   Map sizePriceMap;
   List<AddIn> addIns;
-  List<String> requiredAddIns;
+  List<dynamic> requiredAddIns;
   String size;
   bool servedIced;
 

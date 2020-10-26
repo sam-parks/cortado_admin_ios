@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
+import 'package:cortado_admin_ios/src/data/item.dart';
+import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:equatable/equatable.dart';
 
 part 'item_event.dart';
@@ -12,5 +15,54 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
   @override
   Stream<ItemState> mapEventToState(
     ItemEvent event,
-  ) async* {}
+  ) async* {
+    if (event is AddItem) {
+      CoffeeShop updatedCoffeeShop = updateItemForCoffeeShop(
+          event.type, event.categoryId, event.item, event.coffeeShop);
+
+      yield ItemAdded(updatedCoffeeShop);
+    }
+    if (event is RemoveItem) {
+      CoffeeShop updatedCoffeeShop = updateItemForCoffeeShop(
+          event.type, event.categoryId, event.item, event.coffeeShop);
+      yield ItemRemoved(updatedCoffeeShop);
+    }
+
+    if (event is UpdateItem) {
+      CoffeeShop updatedCoffeeShop = updateItemForCoffeeShop(
+          event.type, event.categoryId, event.item, event.coffeeShop);
+      yield ItemUpdated(updatedCoffeeShop);
+    }
+  }
+
+  CoffeeShop addItemToCoffeeShop(CategoryType categoryType, String categoryId,
+      Item itemToAdd, CoffeeShop coffeeShop) {
+    coffeeShop.addIns.forEach((category) {
+      if (category.id == categoryId) {
+        category.items.add(itemToAdd);
+      }
+    });
+    return coffeeShop.copy(coffeeShop);
+  }
+
+  CoffeeShop removeItemFromCoffeeShop(CategoryType categoryType,
+      String categoryId, Item itemToRemove, CoffeeShop coffeeShop) {
+    coffeeShop.addIns.forEach((category) {
+      if (category.id == categoryId) {
+        category.items.removeWhere((item) => item.id == itemToRemove.id);
+      }
+    });
+    return coffeeShop.copy(coffeeShop);
+  }
+
+  CoffeeShop updateItemForCoffeeShop(CategoryType categoryType,
+      String categoryId, Item updatedItem, CoffeeShop coffeeShop) {
+    coffeeShop.addIns.forEach((category) {
+      if (category.id == categoryId) {
+        category.items.removeWhere((item) => item.id == updatedItem.id);
+        category.items.add(updatedItem);
+      }
+    });
+    return coffeeShop.copy(coffeeShop);
+  }
 }

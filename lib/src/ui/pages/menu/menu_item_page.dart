@@ -1,5 +1,6 @@
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/menu/item/item_bloc.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
@@ -13,16 +14,19 @@ import 'package:flutter_masked_text/flutter_masked_text.dart';
 
 class MenuItemPage extends StatefulWidget {
   MenuItemPage(
-    this.editing, {
+    this.editing,
+    this.newCategory, {
     Key key,
     this.item,
     this.category,
     this.categoryType,
   }) : super(key: key);
-  final CategoryType categoryType;
-  final Item item;
+
   final Category category;
+  final CategoryType categoryType;
   final bool editing;
+  final Item item;
+  final bool newCategory;
 
   @override
   _MenuItemPageState createState() => _MenuItemPageState();
@@ -30,26 +34,13 @@ class MenuItemPage extends StatefulWidget {
 
 class _MenuItemPageState extends State<MenuItemPage> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  // ignore: close_sinks
+  ItemBloc _itemBloc;
 
   @override
-  Widget build(BuildContext context) {
-    MenuBloc menuBloc = BlocProvider.of<MenuBloc>(context);
-    CoffeeShopState coffeeShopState =
-        BlocProvider.of<CoffeeShopBloc>(context).state;
-
-    switch (widget.categoryType) {
-      case CategoryType.drink:
-        return _drinkItemForm(coffeeShopState, menuBloc);
-        break;
-      case CategoryType.food:
-        return _foodItemForm(coffeeShopState, menuBloc);
-        break;
-      case CategoryType.addIn:
-        return _addInItemForm(coffeeShopState, menuBloc);
-        break;
-      default:
-        return Container();
-    }
+  void initState() {
+    super.initState();
+    _itemBloc = BlocProvider.of<ItemBloc>(context);
   }
 
   _drinkItemForm(CoffeeShopState coffeeShopState, MenuBloc menuBloc) {
@@ -93,6 +84,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
           padding: const EdgeInsets.symmetric(horizontal: 100),
           child: SingleChildScrollView(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -245,7 +237,6 @@ class _MenuItemPageState extends State<MenuItemPage> {
                                             return null;
                                           },
                                           onChanged: (value) {
-                                            print(smallPriceController.text);
                                             drink.sizePriceMap['8 oz'] =
                                                 smallPriceController.text;
                                           },
@@ -416,6 +407,13 @@ class _MenuItemPageState extends State<MenuItemPage> {
                     ],
                   ),
                 ),
+                SizedBox(height: 15),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Text("Required Add Ins",
+                      style: TextStyles.kDefaultLargeDarkTextStyle),
+                ),
+                requiredAddIns(coffeeShopState, drink),
                 SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -681,11 +679,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
             textStyle: TextStyles.kDefaultLightTextStyle,
             backgroundColor: AppColors.caramel,
             width: 300,
-            onTap: () {
-              if (_formKey.currentState.validate()) {
-                Navigator.of(context).pop(drink);
-              }
-            },
+            onTap: () => _updateAddItem(drink, coffeeShopState),
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -841,14 +835,73 @@ class _MenuItemPageState extends State<MenuItemPage> {
             textStyle: TextStyles.kDefaultLightTextStyle,
             backgroundColor: AppColors.caramel,
             width: 300,
-            onTap: () {
-              if (_formKey.currentState.validate()) {
-                Navigator.of(context).pop(food);
-              }
-            },
+            onTap: () => _updateAddItem(food, coffeeShopState),
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      ),
+    );
+  }
+
+  _updateAddItem(Item item, CoffeeShopState coffeeShopState) {
+    if (_formKey.currentState.validate()) {
+      if (widget.newCategory)
+        Navigator.of(context).pop(item);
+      else {
+        if (widget.editing)
+          _itemBloc.add(UpdateItem(widget.categoryType, widget.category.id,
+              item, coffeeShopState.coffeeShop));
+        else
+          _itemBloc.add(AddItem(widget.categoryType, widget.category.id, item,
+              coffeeShopState.coffeeShop));
+      }
+    }
+  }
+
+  requiredAddIns(CoffeeShopState coffeeShopState, Drink drink) {
+    List<Category> addIns = coffeeShopState.coffeeShop.addIns;
+    return Container(
+      height: 150,
+      child: GridView.count(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        scrollDirection: Axis.horizontal,
+        crossAxisCount: 3,
+        crossAxisSpacing: 1,
+        childAspectRatio: 1 / 4,
+        children: List.generate(addIns.length, (index) {
+          Category addInCategory = addIns[index];
+          return Row(
+            children: [
+              Theme(
+                data: Theme.of(context).copyWith(
+                  unselectedWidgetColor: AppColors.dark,
+                ),
+                child: Checkbox(
+                    activeColor: AppColors.dark,
+                    checkColor: AppColors.cream,
+                    value: drink.requiredAddIns.contains(addInCategory.id),
+                    onChanged: (_) {
+                      setState(() {
+                        if (drink.requiredAddIns.contains(addInCategory.id)) {
+                          drink.requiredAddIns.remove(addInCategory.id);
+                        } else {
+                          drink.requiredAddIns.add(addInCategory.id);
+                        }
+                      });
+                    }),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(addInCategory.title,
+                    style: TextStyle(
+                        color: AppColors.caramel,
+                        fontFamily: kFontFamilyNormal,
+                        fontSize: 24)),
+              ),
+            ],
+          );
+        }),
       ),
     );
   }
@@ -999,15 +1052,32 @@ class _MenuItemPageState extends State<MenuItemPage> {
             textStyle: TextStyles.kDefaultLightTextStyle,
             backgroundColor: AppColors.caramel,
             width: 300,
-            onTap: () {
-              if (_formKey.currentState.validate()) {
-                Navigator.of(context).pop(addIn);
-              }
-            },
+            onTap: () => _updateAddItem(addIn, coffeeShopState),
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    MenuBloc menuBloc = BlocProvider.of<MenuBloc>(context);
+    CoffeeShopState coffeeShopState =
+        BlocProvider.of<CoffeeShopBloc>(context).state;
+
+    switch (widget.categoryType) {
+      case CategoryType.drink:
+        return _drinkItemForm(coffeeShopState, menuBloc);
+        break;
+      case CategoryType.food:
+        return _foodItemForm(coffeeShopState, menuBloc);
+        break;
+      case CategoryType.addIn:
+        return _addInItemForm(coffeeShopState, menuBloc);
+        break;
+      default:
+        return Container();
+    }
   }
 }
