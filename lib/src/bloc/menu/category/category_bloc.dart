@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:cortado_admin_ios/src/data/item.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
@@ -62,6 +63,13 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         break;
       case CategoryType.addIn:
         coffeeShop.addIns.remove(category);
+        coffeeShop.drinks.forEach((drinkCategory) {
+          drinkCategory.items.forEach((item) {
+            Drink drink = item;
+            if(drink.requiredAddIns.contains(category.id))
+              drink.requiredAddIns.remove(category.id);
+          });
+        });
         break;
     }
     return coffeeShop.copy(coffeeShop);
