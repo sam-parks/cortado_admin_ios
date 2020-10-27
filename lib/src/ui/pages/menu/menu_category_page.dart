@@ -50,6 +50,9 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.category.id == null) widget.category.id = Uuid().v4();
+
     _categoryBloc = BlocProvider.of<CategoryBloc>(context);
     _coffeeShopBloc = BlocProvider.of<CoffeeShopBloc>(context);
 
@@ -91,6 +94,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
 
   _addInForm() {
     List<AddIn> addIns = List.castFrom<Item, AddIn>(itemList);
+    addIns.sort((a, b) => a.id.compareTo(b.id));
 
     return Form(
         key: _formKey,
@@ -337,19 +341,22 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0, vertical: 8.0),
-                                      child: AutoSizeText(
-                                        addIns[index].name,
-                                        style:
-                                            TextStyles.kDefaultLightTextStyle,
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0, vertical: 8.0),
+                                        child: AutoSizeText(
+                                          addIns[index].name,
+                                          maxLines: 2,
+                                          style:
+                                              TextStyles.kDefaultLightTextStyle,
+                                        ),
                                       ),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: AutoSizeText(
-                                        '\$ ' + addIns[index].price,
+                                        '\$ ' + (addIns[index].price ?? "0.00"),
                                         style:
                                             TextStyles.kDefaultLightTextStyle,
                                       ),
@@ -425,7 +432,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
 
   _foodform() {
     List<Food> food = List.castFrom<Item, Food>(itemList);
-
+    food.sort((a, b) => a.id.compareTo(b.id));
     return Form(
         key: _formKey,
         child: Scaffold(
@@ -736,7 +743,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
 
   _drinkForm() {
     List<Drink> drinks = List.castFrom<Item, Drink>(itemList);
-
+    drinks.sort((a, b) => a.id.compareTo(b.id));
     return Form(
         key: _formKey,
         child: Scaffold(

@@ -1,5 +1,5 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
-import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/item/item_bloc.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
@@ -43,7 +43,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
     _itemBloc = BlocProvider.of<ItemBloc>(context);
   }
 
-  _drinkItemForm(CoffeeShopState coffeeShopState, MenuBloc menuBloc) {
+  _drinkItemForm(CoffeeShopState coffeeShopState) {
     Drink drink = widget.item;
 
     if (drink?.servedIced == null) drink.servedIced = false;
@@ -436,11 +436,21 @@ class _MenuItemPageState extends State<MenuItemPage> {
                               if (serveIced)
                                 setState(() {
                                   drink.servedIced = true;
-                                  drink.sizePriceMap.addAll({
-                                    '8 oz Iced': smallPriceController.text,
-                                    '12 oz Iced': mediumPriceController.text,
-                                    '16 oz Iced': largePriceController.text
-                                  });
+                                  Map<String, dynamic> icedMap = {};
+                                  if (drink.sizePriceMap.containsKey('8 oz'))
+                                    icedMap.addAll({
+                                      '8 oz Iced': smallPriceController.text
+                                    });
+                                  if (drink.sizePriceMap.containsKey('12 oz'))
+                                    icedMap.addAll({
+                                      '12 oz Iced': mediumPriceController.text
+                                    });
+                                  if (drink.sizePriceMap.containsKey('16 oz'))
+                                    icedMap.addAll({
+                                      '16 oz Iced': largePriceController.text
+                                    });
+
+                                  drink.sizePriceMap.addAll(icedMap);
                                 });
                               else
                                 setState(() {
@@ -687,7 +697,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
     );
   }
 
-  _foodItemForm(CoffeeShopState coffeeShopState, MenuBloc menuBloc) {
+  _foodItemForm(CoffeeShopState coffeeShopState) {
     final priceController = MoneyMaskedTextController(
       initialValue: 0.00,
       decimalSeparator: '.',
@@ -891,13 +901,16 @@ class _MenuItemPageState extends State<MenuItemPage> {
                       });
                     }),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(addInCategory.title,
-                    style: TextStyle(
-                        color: AppColors.caramel,
-                        fontFamily: kFontFamilyNormal,
-                        fontSize: 24)),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: AutoSizeText(addInCategory.title,
+                      maxLines: 1,
+                      style: TextStyle(
+                          color: AppColors.caramel,
+                          fontFamily: kFontFamilyNormal,
+                          fontSize: 24)),
+                ),
               ),
             ],
           );
@@ -906,7 +919,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
     );
   }
 
-  _addInItemForm(CoffeeShopState coffeeShopState, MenuBloc menuBloc) {
+  _addInItemForm(CoffeeShopState coffeeShopState) {
     final priceController = MoneyMaskedTextController(
       initialValue: 0.00,
       decimalSeparator: '.',
@@ -1062,22 +1075,29 @@ class _MenuItemPageState extends State<MenuItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    MenuBloc menuBloc = BlocProvider.of<MenuBloc>(context);
     CoffeeShopState coffeeShopState =
         BlocProvider.of<CoffeeShopBloc>(context).state;
 
-    switch (widget.categoryType) {
-      case CategoryType.drink:
-        return _drinkItemForm(coffeeShopState, menuBloc);
-        break;
-      case CategoryType.food:
-        return _foodItemForm(coffeeShopState, menuBloc);
-        break;
-      case CategoryType.addIn:
-        return _addInItemForm(coffeeShopState, menuBloc);
-        break;
-      default:
-        return Container();
-    }
+    return BlocConsumer(
+        cubit: _itemBloc,
+        listener: (context, ItemState state) {
+          if (state is ItemAdded) Navigator.of(context).pop();
+          if (state is ItemUpdated) Navigator.of(context).pop();
+        },
+        builder: (context, state) {
+          switch (widget.categoryType) {
+            case CategoryType.drink:
+              return _drinkItemForm(coffeeShopState);
+              break;
+            case CategoryType.food:
+              return _foodItemForm(coffeeShopState);
+              break;
+            case CategoryType.addIn:
+              return _addInItemForm(coffeeShopState);
+              break;
+            default:
+              return Container();
+          }
+        });
   }
 }

@@ -37,32 +37,93 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
 
   CoffeeShop addItemToCoffeeShop(CategoryType categoryType, String categoryId,
       Item itemToAdd, CoffeeShop coffeeShop) {
-    coffeeShop.addIns.forEach((category) {
-      if (category.id == categoryId) {
-        category.items.add(itemToAdd);
-      }
-    });
+    switch (categoryType) {
+      case CategoryType.drink:
+        coffeeShop.drinks.forEach((category) {
+          coffeeShop.drinks.forEach((category) {
+            if (category.id == categoryId) {
+              category.items.add(itemToAdd);
+            }
+          });
+        });
+        break;
+      case CategoryType.addIn:
+        coffeeShop.addIns.forEach((category) {
+          if (category.id == categoryId) {
+            category.items.add(itemToAdd);
+          }
+        });
+        break;
+      case CategoryType.food:
+        coffeeShop.food.forEach((category) {
+          if (category.id == categoryId) {
+            category.items.add(itemToAdd);
+          }
+        });
+        break;
+    }
+
     return coffeeShop.copy(coffeeShop);
   }
 
   CoffeeShop removeItemFromCoffeeShop(CategoryType categoryType,
       String categoryId, Item itemToRemove, CoffeeShop coffeeShop) {
-    coffeeShop.addIns.forEach((category) {
-      if (category.id == categoryId) {
-        category.items.removeWhere((item) => item.id == itemToRemove.id);
-      }
-    });
+    switch (categoryType) {
+      case CategoryType.addIn:
+        coffeeShop.addIns.forEach((category) {
+          if (category.id == categoryId) {
+            category.items.removeWhere((item) => item.id == itemToRemove.id);
+          }
+        });
+        break;
+      case CategoryType.drink:
+        coffeeShop.drinks.forEach((category) {
+          if (category.id == categoryId) {
+            category.items.removeWhere((item) => item.id == itemToRemove.id);
+          }
+        });
+        break;
+      case CategoryType.food:
+        coffeeShop.food.forEach((category) {
+          if (category.id == categoryId) {
+            category.items.removeWhere((item) => item.id == itemToRemove.id);
+          }
+        });
+        break;
+    }
+
     return coffeeShop.copy(coffeeShop);
   }
 
   CoffeeShop updateItemForCoffeeShop(CategoryType categoryType,
       String categoryId, Item updatedItem, CoffeeShop coffeeShop) {
-    coffeeShop.addIns.forEach((category) {
-      if (category.id == categoryId) {
-        category.items.removeWhere((item) => item.id == updatedItem.id);
-        category.items.add(updatedItem);
-      }
-    });
+    switch (categoryType) {
+      case CategoryType.drink:
+        coffeeShop.drinks.forEach((category) {
+          if (category.id == categoryId) {
+            category.items.removeWhere((item) => item.id == updatedItem.id);
+            category.items.add(updatedItem);
+          }
+        });
+        break;
+      case CategoryType.addIn:
+        coffeeShop.addIns.forEach((category) {
+          if (category.id == categoryId) {
+            category.items.removeWhere((item) => item.id == updatedItem.id);
+            category.items.add(updatedItem);
+          }
+        });
+        break;
+      case CategoryType.food:
+        coffeeShop.food.forEach((category) {
+          if (category.id == categoryId) {
+            category.items.removeWhere((item) => item.id == updatedItem.id);
+            category.items.add(updatedItem);
+          }
+        });
+        break;
+    }
+
     return coffeeShop.copy(coffeeShop);
   }
 }

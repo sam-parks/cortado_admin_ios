@@ -1,25 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
-import 'package:flutter/material.dart';
-
-class CoffeeShopsModel extends ChangeNotifier {
-  List<CoffeeShop> coffeeShops = [];
-  bool _mounted = true;
-  bool get mounted => _mounted;
-
-  List<CoffeeShop> get list => coffeeShops;
-  updateCoffeeShops(List<CoffeeShop> coffeeShops) {
-    this.coffeeShops = coffeeShops;
-    notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _mounted = false;
-  }
-}
 
 class CoffeeShop {
   final String id;

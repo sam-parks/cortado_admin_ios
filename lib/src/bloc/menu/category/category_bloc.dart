@@ -66,7 +66,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         coffeeShop.drinks.forEach((drinkCategory) {
           drinkCategory.items.forEach((item) {
             Drink drink = item;
-            if(drink.requiredAddIns.contains(category.id))
+            if (drink.requiredAddIns.contains(category.id))
               drink.requiredAddIns.remove(category.id);
           });
         });
@@ -79,28 +79,19 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       Category updatedCategory, CoffeeShop coffeeShop) {
     switch (categoryType) {
       case CategoryType.drink:
-        coffeeShop.drinks.forEach((category) {
-          if (category.id == updatedCategory.id) {
-            coffeeShop.drinks.remove(category);
-            coffeeShop.drinks.add(updatedCategory);
-          }
-        });
+        coffeeShop.drinks
+            .removeWhere((category) => category.id == updatedCategory.id);
+        coffeeShop.drinks.add(updatedCategory);
         break;
       case CategoryType.food:
-        coffeeShop.food.forEach((category) {
-          if (category.id == updatedCategory.id) {
-            coffeeShop.food.remove(category);
-            coffeeShop.food.add(updatedCategory);
-          }
-        });
+        coffeeShop.food
+            .removeWhere((category) => category.id == updatedCategory.id);
+        coffeeShop.food.add(updatedCategory);
         break;
       case CategoryType.addIn:
-        coffeeShop.addIns.forEach((category) {
-          if (category.id == updatedCategory.id) {
-            coffeeShop.addIns.remove(category);
-            coffeeShop.addIns.add(updatedCategory);
-          }
-        });
+        coffeeShop.addIns
+            .removeWhere((category) => category.id == updatedCategory.id);
+        coffeeShop.addIns.add(updatedCategory);
         break;
     }
     return coffeeShop.copy(coffeeShop);

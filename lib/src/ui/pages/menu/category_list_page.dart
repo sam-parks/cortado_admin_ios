@@ -118,6 +118,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
 
   Widget _drinkList(List<Category> drinks) {
     ScrollController scrollController = ScrollController();
+    drinks.sort((a, b) => a.id.compareTo(b.id));
 
     return Container(
       constraints: BoxConstraints(maxWidth: SizeConfig.screenWidth * .7),
@@ -228,6 +229,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
 
   Widget _foodList(List<Category> food) {
     ScrollController scrollController = ScrollController();
+    food.sort((a, b) => a.id.compareTo(b.id));
 
     return Container(
       constraints: BoxConstraints(maxWidth: SizeConfig.screenWidth * .7),
@@ -338,6 +340,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
 
   Widget _addInList(List<Category> addIns) {
     ScrollController scrollController = ScrollController();
+    addIns.sort((a, b) => a.id.compareTo(b.id));
 
     return Container(
       constraints: BoxConstraints(maxWidth: SizeConfig.screenWidth * .7),

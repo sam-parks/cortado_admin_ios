@@ -13,7 +13,7 @@ class Drink extends Item {
   int quantity;
   RedeemableType redeemableType;
   SizeInOunces redeemableSize;
-  Map sizePriceMap;
+  Map<String, dynamic> sizePriceMap;
   List<AddIn> addIns;
   List<dynamic> requiredAddIns;
   String size;
