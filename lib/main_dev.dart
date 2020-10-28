@@ -25,9 +25,7 @@ void main() async {
           apiKey: 'AIzaSyAhwy1kt_a56tsV54eWjVB0BEAb9nR_5Sk',
           messagingSenderId: '56935818141',
           projectId: 'cortado-f9ae2'));
-  Flavor.create(
-    Environment.dev,
-  );
+  Flavor.create(Environment.dev);
   setupApp();
 }
 

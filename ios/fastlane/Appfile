@@ -1,8 +1,0 @@
-app_identifier("com.cortado.cortadoadmin") # The bundle identifier of your app
-apple_id("parkssa@ufl.edu") # Your Apple email address
-
-itc_team_id("120023103") # App Store Connect Team ID
-team_id("9GDP8MNQF7") # Developer Portal Team ID
-
-# For more information about the Appfile, see:
-#     https://docs.fastlane.tools/advanced/#appfile

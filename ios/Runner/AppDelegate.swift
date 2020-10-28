@@ -9,11 +9,6 @@ import Firebase
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     FirebaseApp.configure()
-    UIApplication.shared.isStatusBarHidden = false
-
-    var flutter_native_splash = 1
-    UIApplication.shared.isStatusBarHidden = false
-
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
