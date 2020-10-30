@@ -102,9 +102,15 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   }
 
   _addInForm() {
-    Category category = _coffeeShopBloc.state.coffeeShop.addIns
-        .firstWhere((category) => category.id == widget.category.id);
-    List<AddIn> addIns = List.castFrom<Item, AddIn>(category.items);
+    List<AddIn> addIns;
+    if (widget.newCategory) {
+      addIns = List.castFrom<Item, AddIn>(widget.category.items);
+    } else {
+      Category category = _coffeeShopBloc.state.coffeeShop.addIns
+          .firstWhere((category) => category.id == widget.category.id);
+      addIns = List.castFrom<Item, AddIn>(category.items);
+    }
+
     addIns.sort((a, b) => a.id.compareTo(b.id));
 
     return Form(
@@ -448,9 +454,15 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   }
 
   _foodform() {
-    Category category = _coffeeShopBloc.state.coffeeShop.food
-        .firstWhere((category) => category.id == widget.category.id);
-    List<Food> food = List.castFrom<Item, Food>(category.items);
+    List<Food> food;
+    if (widget.newCategory) {
+      food = List.castFrom<Item, Food>(widget.category.items);
+    } else {
+      Category category = _coffeeShopBloc.state.coffeeShop.food
+          .firstWhere((category) => category.id == widget.category.id);
+      food = List.castFrom<Item, Food>(category.items);
+    }
+
     food.sort((a, b) => a.id.compareTo(b.id));
     return Form(
         key: _formKey,
@@ -765,9 +777,15 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   }
 
   _drinkForm() {
-    Category category = _coffeeShopBloc.state.coffeeShop.drinks
-        .firstWhere((category) => category.id == widget.category.id);
-    List<Drink> drinks = List.castFrom<Item, Drink>(category.items);
+    List<Drink> drinks;
+    if (widget.newCategory) {
+      drinks = List.castFrom<Item, Drink>(widget.category.items);
+    } else {
+      Category category = _coffeeShopBloc.state.coffeeShop.drinks
+          .firstWhere((category) => category.id == widget.category.id);
+      drinks = List.castFrom<Item, Drink>(category.items);
+    }
+
     drinks.sort((a, b) => a.id.compareTo(b.id));
     return Form(
         key: _formKey,
