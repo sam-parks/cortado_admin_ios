@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/menu/item/item_bloc.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
@@ -35,11 +37,13 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   CategoryBloc _categoryBloc;
   // ignore: close_sinks
   CoffeeShopBloc _coffeeShopBloc;
+  // ignore: close_sinks
+  MenuBloc _menuBloc;
+  // ignore: close_sinks
+  ItemBloc _itemBloc;
 
   ScrollController _scrollController = ScrollController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  List<Item> itemList;
 
   bool editing;
   bool newCategory;
@@ -55,10 +59,11 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
 
     _categoryBloc = BlocProvider.of<CategoryBloc>(context);
     _coffeeShopBloc = BlocProvider.of<CoffeeShopBloc>(context);
+    _menuBloc = BlocProvider.of<MenuBloc>(context);
+    _itemBloc = BlocProvider.of<ItemBloc>(context);
 
     editing = widget.editing;
     newCategory = widget.newCategory;
-    itemList = List.from(widget.category.items);
 
     titleController = TextEditingController(text: widget.category.title);
     descriptionController =
@@ -67,33 +72,39 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer(
-      cubit: _categoryBloc,
-      listener: (context, state) {
-        if (state is CategoryAdded || state is CategoryUpdated) {
-          Navigator.of(context).pop();
-        }
-      },
-      builder: (BuildContext context, CategoryState state) {
-        switch (widget.categoryType) {
-          case CategoryType.drink:
-            return _drinkForm();
-            break;
-          case CategoryType.food:
-            return _foodform();
-            break;
-          case CategoryType.addIn:
-            return _addInForm();
-            break;
-          default:
-            return Container();
-        }
-      },
-    );
+    return BlocBuilder(
+        cubit: _menuBloc,
+        builder: (context, state) {
+          return BlocConsumer(
+            cubit: _categoryBloc,
+            listener: (context, state) {
+              if (state is CategoryAdded || state is CategoryUpdated) {
+                Navigator.of(context).pop();
+              }
+            },
+            builder: (BuildContext context, CategoryState state) {
+              switch (widget.categoryType) {
+                case CategoryType.drink:
+                  return _drinkForm();
+                  break;
+                case CategoryType.food:
+                  return _foodform();
+                  break;
+                case CategoryType.addIn:
+                  return _addInForm();
+                  break;
+                default:
+                  return Container();
+              }
+            },
+          );
+        });
   }
 
   _addInForm() {
-    List<AddIn> addIns = List.castFrom<Item, AddIn>(itemList);
+    Category category = _coffeeShopBloc.state.coffeeShop.addIns
+        .firstWhere((category) => category.id == widget.category.id);
+    List<AddIn> addIns = List.castFrom<Item, AddIn>(category.items);
     addIns.sort((a, b) => a.id.compareTo(b.id));
 
     return Form(
@@ -102,7 +113,9 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
           appBar: AppBar(
             backgroundColor: AppColors.caramel,
             leading: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
+              onTap: () {
+                Navigator.of(context).pop();
+              },
               child: Icon(
                 Icons.arrow_back,
                 color: AppColors.cream,
@@ -237,7 +250,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                               var addIn = await Navigator.of(context)
                                   .pushNamed(kItemRoute, arguments: [
                                 false,
-                                true,
+                                widget.newCategory,
                                 CategoryType.addIn,
                                 widget.category,
                                 AddIn(
@@ -300,10 +313,12 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                           color: AppColors.cream,
                                         ),
                                         onPressed: () {
-                                          setState(() {
-                                            addIns.removeAt(index);
-                                            editing = true;
-                                          });
+                                          _itemBloc.add(RemoveItem(
+                                              widget.categoryType,
+                                              widget.category.id,
+                                              addIns[index],
+                                              _coffeeShopBloc
+                                                  .state.coffeeShop));
                                         },
                                       ),
                                     ),
@@ -315,7 +330,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                           color: AppColors.cream,
                                         ),
                                         onPressed: () async {
-                                          var foodItem =
+                                          var addIn =
                                               await Navigator.of(context)
                                                   .pushNamed(kItemRoute,
                                                       arguments: [
@@ -326,11 +341,13 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                 addIns[index],
                                               ]);
 
-                                          if (foodItem != null) {
-                                            setState(() {
-                                              addIns.removeAt(index);
-                                              addIns.insert(index, foodItem);
-                                            });
+                                          if (addIn != null) {
+                                            _itemBloc.add(UpdateItem(
+                                                widget.categoryType,
+                                                widget.category.id,
+                                                addIn,
+                                                _coffeeShopBloc
+                                                    .state.coffeeShop));
                                           }
                                         },
                                       ),
@@ -431,7 +448,9 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   }
 
   _foodform() {
-    List<Food> food = List.castFrom<Item, Food>(itemList);
+    Category category = _coffeeShopBloc.state.coffeeShop.food
+        .firstWhere((category) => category.id == widget.category.id);
+    List<Food> food = List.castFrom<Item, Food>(category.items);
     food.sort((a, b) => a.id.compareTo(b.id));
     return Form(
         key: _formKey,
@@ -573,7 +592,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                               var foodItem = await Navigator.of(context)
                                   .pushNamed(kItemRoute, arguments: [
                                 false,
-                                true,
+                                widget.newCategory,
                                 CategoryType.food,
                                 widget.category,
                                 Food(
@@ -637,10 +656,12 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                           color: AppColors.cream,
                                         ),
                                         onPressed: () {
-                                          setState(() {
-                                            food.removeAt(index);
-                                            editing = true;
-                                          });
+                                          _itemBloc.add(RemoveItem(
+                                              widget.categoryType,
+                                              widget.category.id,
+                                              food[index],
+                                              _coffeeShopBloc
+                                                  .state.coffeeShop));
                                         },
                                       ),
                                     ),
@@ -664,10 +685,12 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                               ]);
 
                                           if (foodItem != null) {
-                                            setState(() {
-                                              food.removeAt(index);
-                                              food.insert(index, foodItem);
-                                            });
+                                            _itemBloc.add(UpdateItem(
+                                                widget.categoryType,
+                                                widget.category.id,
+                                                foodItem,
+                                                _coffeeShopBloc
+                                                    .state.coffeeShop));
                                           }
                                         },
                                       ),
@@ -742,7 +765,9 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   }
 
   _drinkForm() {
-    List<Drink> drinks = List.castFrom<Item, Drink>(itemList);
+    Category category = _coffeeShopBloc.state.coffeeShop.drinks
+        .firstWhere((category) => category.id == widget.category.id);
+    List<Drink> drinks = List.castFrom<Item, Drink>(category.items);
     drinks.sort((a, b) => a.id.compareTo(b.id));
     return Form(
         key: _formKey,
@@ -884,7 +909,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                               var drink = await Navigator.of(context)
                                   .pushNamed(kItemRoute, arguments: [
                                 false,
-                                true,
+                                widget.newCategory,
                                 CategoryType.drink,
                                 widget.category,
                                 Drink(
@@ -892,6 +917,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                     redeemableType: RedeemableType.none,
                                     redeemableSize: SizeInOunces.none,
                                     servedIced: false,
+                                    requiredAddIns: [],
                                     sizePriceMap: {
                                       "8 oz": '',
                                       '12 oz': '',
@@ -952,10 +978,12 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                             color: AppColors.cream,
                                           ),
                                           onPressed: () {
-                                            setState(() {
-                                              drinks.removeAt(index);
-                                              editing = true;
-                                            });
+                                            _itemBloc.add(RemoveItem(
+                                                widget.categoryType,
+                                                widget.category.id,
+                                                drinks[index],
+                                                _coffeeShopBloc
+                                                    .state.coffeeShop));
                                           },
                                         ),
                                       ),
@@ -978,10 +1006,12 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                   drinks[index],
                                                 ]);
                                             if (drink != null) {
-                                              setState(() {
-                                                drinks.removeAt(index);
-                                                drinks.insert(index, drink);
-                                              });
+                                              _itemBloc.add(UpdateItem(
+                                                  widget.categoryType,
+                                                  widget.category.id,
+                                                  drink,
+                                                  _coffeeShopBloc
+                                                      .state.coffeeShop));
                                             }
                                           },
                                         ),

@@ -17,13 +17,13 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
     ItemEvent event,
   ) async* {
     if (event is AddItem) {
-      CoffeeShop updatedCoffeeShop = updateItemForCoffeeShop(
+      CoffeeShop updatedCoffeeShop = addItemToCoffeeShop(
           event.type, event.categoryId, event.item, event.coffeeShop);
 
       yield ItemAdded(updatedCoffeeShop);
     }
     if (event is RemoveItem) {
-      CoffeeShop updatedCoffeeShop = updateItemForCoffeeShop(
+      CoffeeShop updatedCoffeeShop = removeItemFromCoffeeShop(
           event.type, event.categoryId, event.item, event.coffeeShop);
       yield ItemRemoved(updatedCoffeeShop);
     }

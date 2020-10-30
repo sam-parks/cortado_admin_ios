@@ -16,7 +16,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       this.add(UpdateMenu(categoryBloc.state.coffeeShop));
     });
 
-    _itemStateSubscription = itemBloc.listen((categoryState) {
+    _itemStateSubscription = itemBloc.listen((itemState) {
+   
       this.add(UpdateMenu(itemBloc.state.coffeeShop));
     });
   }

@@ -85,15 +85,12 @@ class AddIn extends Item {
   String id;
   String name;
   String price;
+  String description;
 
   AddIn({this.id, this.name, this.price});
 
   toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'price': price,
-    };
+    return {'id': id, 'name': name, 'price': price, 'description': description};
   }
 }
 

@@ -6,13 +6,9 @@
     "configurations": [
         {
             "name": "prod",
-            "program": "lib/main_prod.dart",
+            "program": "lib/main.dart",
             "request": "launch",
             "type": "dart",
-            "args": [
-                "--flavor",
-                "prod"
-            ]
         },
         {
             "name": "dev",
