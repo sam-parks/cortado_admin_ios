@@ -160,6 +160,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         CortadoUser user = await _userService.getUser(firebaseUser);
 
+        coffeeShopBloc.add(InitializeCoffeeShop(user.coffeeShopId));
+
         await _notificationService.start();
         UserType userType = await getUserType(user);
 
