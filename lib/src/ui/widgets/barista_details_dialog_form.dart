@@ -10,17 +10,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
-class BaristaDetailsDialogForm extends StatefulWidget {
-  BaristaDetailsDialogForm({
+class BaristaDetailsForm extends StatefulWidget {
+  BaristaDetailsForm({
     Key key,
   }) : super(key: key);
 
   @override
-  _BaristaDetailsDialogFormState createState() =>
-      _BaristaDetailsDialogFormState();
+  _BaristaDetailsFormState createState() => _BaristaDetailsFormState();
 }
 
-class _BaristaDetailsDialogFormState extends State<BaristaDetailsDialogForm> {
+class _BaristaDetailsFormState extends State<BaristaDetailsForm> {
   FocusNode _emaiFocus = FocusNode();
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();

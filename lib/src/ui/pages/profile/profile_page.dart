@@ -7,6 +7,7 @@ import 'package:cortado_admin_ios/src/bloc/finance/links/finance_links_bloc.dart
 import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/user_management_bloc.dart';
 import 'package:cortado_admin_ios/src/data/custom_account.dart';
+import 'package:cortado_admin_ios/src/ui/router.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_admin_loading_indicator.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
@@ -109,8 +110,8 @@ class _ProfilePageState extends State<ProfilePage> {
               backgroundColor: AppColors.tan,
               textStyle: TextStyles.kDefaultCaramelTextStyle,
               text: "Add a Barista",
-              onTap: () async {
-                await createBaristaDialog(context);
+              onTap: () {
+                Navigator.of(context).pushNamed(kAddBaristaRoute);
               },
             ),
           ),
@@ -427,8 +428,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       height: 50,
                       backgroundColor: AppColors.dark,
                       text: "Create Payout Account",
-                      onTap: () async {
-                        await createPayoutAccountDialog(context);
+                      onTap: () {
+                        Navigator.of(context).pushNamed(kInitiateFinance);
                       },
                     ),
                   ),

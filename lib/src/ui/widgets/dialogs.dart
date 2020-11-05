@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/finance/links/finance_links_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
@@ -6,13 +8,10 @@ import 'package:cortado_admin_ios/src/bloc/orders/orders_event.dart';
 import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/services/auth_service.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
-import 'package:cortado_admin_ios/src/ui/widgets/barista_details_dialog_form.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
-
 import 'package:cortado_admin_ios/src/ui/widgets/loading_state_button.dart';
-import 'package:cortado_admin_ios/src/ui/widgets/payout_details_dialog_form.dart';
 import 'package:cortado_admin_ios/src/utils/validate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +19,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 AuthService get _authService => locator.get();
 
-newOrderDialog(String title, BuildContext ctx) {
+newOrderDialog(String title, BuildContext ctx, Timer notificationTimer) {
   showDialog(
     context: ctx,
     builder: (context) {
@@ -47,6 +46,7 @@ newOrderDialog(String title, BuildContext ctx) {
                     style: TextStyles.kDefaultCreamTextStyle,
                   ),
                   onPressed: () {
+                    notificationTimer.cancel();
                     Navigator.of(context).pop();
                   },
                 ),
@@ -59,6 +59,7 @@ newOrderDialog(String title, BuildContext ctx) {
                     style: TextStyles.kDefaultCreamTextStyle,
                   ),
                   onPressed: () {
+                    notificationTimer.cancel();
                     Navigator.of(context).pop();
 
                     navigationBloc.add(
@@ -512,22 +513,5 @@ reformatHours(Map hours) {
   return reformattedHours;
 }
 
-createPayoutAccountDialog(BuildContext context) async {
-  return showDialog<String>(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-          backgroundColor: AppColors.dark, child: PayoutDetailsDialogForm());
-    },
-  );
-}
 
-createBaristaDialog(BuildContext context) async {
-  return showDialog<String>(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-          backgroundColor: AppColors.dark, child: BaristaDetailsDialogForm());
-    },
-  );
-}
+

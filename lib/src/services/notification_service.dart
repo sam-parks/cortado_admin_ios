@@ -75,7 +75,13 @@ class NotificationService {
     var currentState = NavigationService.navigatorKey?.currentState;
     if (type == "newOrder") {
       await _audioCache.play('order_notification.mp3');
-      await newOrderDialog(title, currentState.overlay.context);
+      Timer notificationTimer =
+          Timer.periodic(Duration(seconds: 10), (timer) async {
+        await _audioCache.play('order_notification.mp3');
+      });
+
+      await newOrderDialog(
+          title, currentState.overlay.context, notificationTimer);
     }
   }
 

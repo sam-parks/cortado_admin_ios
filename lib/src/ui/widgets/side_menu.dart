@@ -8,7 +8,7 @@ import 'package:cortado_admin_ios/src/ui/pages/coffee_shops_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/manage_user_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/orders_page.dart';
-import 'package:cortado_admin_ios/src/ui/pages/profile_page.dart';
+import 'package:cortado_admin_ios/src/ui/pages/profile/profile_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/dashboard_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/revenue_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
