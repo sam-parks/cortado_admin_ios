@@ -63,7 +63,6 @@ class _InitiateFinanceAccountPageState
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: CortadoInputField(
-                        textCapitalization: TextCapitalization.sentences,
                         focusNode: _emaiFocus,
                         isPassword: false,
                         autofocus: true,

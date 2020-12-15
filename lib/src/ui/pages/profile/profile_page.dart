@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/finance/account/finance_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/finance/links/finance_links_bloc.dart';
@@ -15,7 +14,6 @@ import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/loading_state_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -42,17 +40,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Uint8List uploadedImage;
 
-  // ignore: close_sinks
-  AuthBloc _authBloc;
-
   BaristaManagementBloc _baristaManagementBloc;
   Uint8List _pictureBytes;
 
   @override
   void initState() {
     super.initState();
-
-    _authBloc = BlocProvider.of<AuthBloc>(context);
     _baristaManagementBloc = BlocProvider.of<BaristaManagementBloc>(context);
     if (_baristaManagementBloc.state is! BaristasLoadSuccess)
       _baristaManagementBloc.add(RetrieveBaristas(
@@ -328,7 +321,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            financeBloc.state.customAccount.email,
+            financeBloc.state.customAccount.email ?? '',
             style: TextStyle(
                 color: AppColors.caramel,
                 fontFamily: kFontFamilyNormal,
@@ -344,7 +337,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            externalAccount.accountHolderName,
+            externalAccount.accountHolderName ?? '',
             style: TextStyle(
                 color: AppColors.caramel,
                 fontFamily: kFontFamilyNormal,
@@ -648,11 +641,6 @@ class _ProfilePageState extends State<ProfilePage> {
                               Spacer(),
                               if (financeLinksState is FinanceLinksLoading)
                                 CortadoAdminLoadingIndicator(),
-                              IconButton(
-                                  color: AppColors.dark,
-                                  tooltip: "Logout",
-                                  icon: Icon(FontAwesomeIcons.signOutAlt),
-                                  onPressed: () => _authBloc.add(SignOut())),
                             ],
                           ),
                         ),

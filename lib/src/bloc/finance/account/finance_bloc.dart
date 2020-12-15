@@ -20,7 +20,7 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
       if (coffeeShopState.status == CoffeeShopStatus.initialized) {
         String customAccountId =
             coffeeShopState.coffeeShop.customStripeAccountId;
-        if (customAccountId != null)
+        if (customAccountId != null && customAccountId != '')
           this.add(RetrieveCustomAccount(customAccountId));
       }
 

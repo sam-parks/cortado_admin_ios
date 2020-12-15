@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
@@ -7,10 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cortado_admin_ios/src/constants.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
-import 'package:cortado_admin_ios/src/ui/widgets/charts/daily_users_bar_chart.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DashboardPage extends StatefulWidget {
   DashboardPage({Key key, this.coffeeShop}) : super(key: key);
@@ -185,45 +182,6 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  _cortadoUsersStatsWidget() {
-    List<charts.Series<DailyUsers, String>> series = _createDailyUserData();
-
-    return Expanded(
-      child: DashboardCard(
-          innerHorizontalPadding: 10,
-          title: "Cortado Users Per Day",
-          width: SizeConfig.screenWidth,
-          content: Container(
-              alignment: Alignment.bottomCenter,
-              child: DailyUsersChart(series))),
-    );
-  }
-
-  _createDailyUserData() {
-    /// Create one series with sample hard coded data.
-
-    final data = [
-      DailyUsers('Mon', 5),
-      DailyUsers('Tue', 25),
-      DailyUsers('Wed', 100),
-      DailyUsers('Thu', 75),
-      DailyUsers('Fri', 75),
-      DailyUsers('Sat', 75),
-      DailyUsers('Sun', 75),
-    ];
-
-    return [
-      charts.Series<DailyUsers, String>(
-          id: 'dailyUsers',
-          domainFn: (DailyUsers users, _) => users.day,
-          measureFn: (DailyUsers users, _) => users.amount,
-          data: data,
-          fillColorFn: (_, __) => charts.Color.fromHex(code: '#471D00'),
-          // Set a label accessor to control the text of the bar label.
-          labelAccessorFn: (DailyUsers users, _) => users.amount.toString())
-    ];
-  }
-
   _welcomeWidget() {
     return DashboardCard(
         innerColor: Colors.transparent,
@@ -294,11 +252,6 @@ class _DashboardPageState extends State<DashboardPage> {
                             )
                           ],
                         ),
-                        IconButton(
-                            color: AppColors.dark,
-                            tooltip: "Logout",
-                            icon: Icon(FontAwesomeIcons.signOutAlt),
-                            onPressed: () => authBloc.add(SignOut())),
                       ],
                     ),
                   ),

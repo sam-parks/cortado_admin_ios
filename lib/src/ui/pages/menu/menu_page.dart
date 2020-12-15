@@ -278,7 +278,7 @@ class _MenuPageState extends State<MenuPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  coffeeShopState.coffeeShop.discounts[index]['title'],
+                  coffeeShopState.coffeeShop.discounts[index]['title'] ?? '',
                   style: TextStyles.kDefaultCaramelTextStyle,
                 ),
               ),
@@ -305,7 +305,7 @@ class _MenuPageState extends State<MenuPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              coffeeShopState.coffeeShop.discounts[index]['description'],
+              coffeeShopState.coffeeShop.discounts[index]['description'] ?? '',
               style: TextStyles.kDefaultSmallDarkTextStyle,
             ),
           ),

@@ -211,6 +211,7 @@ Drink drinkFromData(Map<dynamic, dynamic> data) {
       id: data['id'],
       name: data['name'],
       size: data['size'],
+      soldOut: data['soldOut'] ?? false,
       quantity: data['quantity'] ?? 1,
       servedIced: data['servedIced'],
       redeemableType: redeemableTypeStringToEnum(data['redeemableType']),
@@ -235,6 +236,7 @@ Food foodFromData(Map<dynamic, dynamic> data) {
       id: data['id'],
       name: data['name'],
       notes: data['notes'],
+      soldOut: data['soldOut'] ?? false,
       quantity: data['quantity'] ?? 1,
       price: data['price'] ?? []);
 }

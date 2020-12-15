@@ -3,7 +3,6 @@ import 'package:cortado_admin_ios/src/services/auth_service.dart';
 import 'package:cortado_admin_ios/src/services/barista_service.dart';
 import 'package:cortado_admin_ios/src/services/navigation_service.dart';
 import 'package:cortado_admin_ios/src/services/notification_service.dart';
-import 'package:cortado_admin_ios/src/services/statistics_service.dart';
 import 'package:cortado_admin_ios/src/services/user_service.dart';
 import 'package:cortado_admin_ios/src/services/stripe_service.dart';
 import 'package:cortado_admin_ios/src/services/coffee_shop_service.dart';
@@ -22,7 +21,6 @@ registerLocatorItems(bool live) {
   locator.registerLazySingleton(() => NotificationService());
   locator.registerLazySingleton(() => OrderService(firestore));
   locator.registerLazySingleton(() => CoffeeShopService(firestore));
-  locator.registerLazySingleton(() => StatisticsService(firestore));
   locator.registerLazySingleton(() => UserService(firestore));
   locator.registerLazySingleton(() => AuthService(firebaseAuth));
   locator.registerLazySingleton(() => StripeService(live));

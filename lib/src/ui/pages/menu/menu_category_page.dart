@@ -716,6 +716,38 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                     style: TextStyles.kDefaultLightTextStyle,
                                   ),
                                 ),
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Theme(
+                                        data: Theme.of(context).copyWith(
+                                          unselectedWidgetColor:
+                                              AppColors.light,
+                                        ),
+                                        child: Checkbox(
+                                            activeColor: AppColors.caramel,
+                                            checkColor: AppColors.light,
+                                            value: food[index].soldOut,
+                                            onChanged: (soldOut) {
+                                              Food foodItem = food[index]
+                                                  .copyWith(soldOut: soldOut);
+                                             
+                                              _itemBloc.add(UpdateItem(
+                                                  widget.categoryType,
+                                                  widget.category.id,
+                                                  foodItem,
+                                                  _coffeeShopBloc
+                                                      .state.coffeeShop));
+                                            }),
+                                      ),
+                                      Text("Sold Out?",
+                                          style: TextStyles
+                                              .kDefaultSmallTextCreamStyle)
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           );
@@ -1041,6 +1073,40 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                     child: AutoSizeText(
                                       drinks[index].name,
                                       style: TextStyles.kDefaultLightTextStyle,
+                                    ),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Theme(
+                                          data: Theme.of(context).copyWith(
+                                            unselectedWidgetColor:
+                                                AppColors.light,
+                                          ),
+                                          child: Checkbox(
+                                              activeColor: AppColors.caramel,
+                                              checkColor: AppColors.light,
+                                              value: drinks[index].soldOut,
+                                              onChanged: (soldOut) {
+                                                Drink drink = drinks[index]
+                                                    .copyWith(soldOut: soldOut);
+                                                assert(
+                                                    drink.soldOut == soldOut);
+                                                _itemBloc.add(UpdateItem(
+                                                    widget.categoryType,
+                                                    widget.category.id,
+                                                    drink,
+                                                    _coffeeShopBloc
+                                                        .state.coffeeShop));
+                                              }),
+                                        ),
+                                        Text("Sold Out?",
+                                            style: TextStyles
+                                                .kDefaultSmallTextCreamStyle)
+                                      ],
                                     ),
                                   ),
                                   Spacer(),

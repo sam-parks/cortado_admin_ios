@@ -16,6 +16,7 @@ import 'package:cortado_admin_ios/src/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SideMenu extends StatefulWidget {
   SideMenu(
@@ -164,11 +165,13 @@ class DynamicDrawer extends StatefulWidget {
 class _DynamicDrawerState extends State<DynamicDrawer> {
   List<Widget> _menuOptionWidgets = [];
   NavigationBloc _navigationBloc;
+  AuthBloc _authBloc;
 
   @override
   initState() {
     super.initState();
     _navigationBloc = BlocProvider.of<NavigationBloc>(context);
+    _authBloc = BlocProvider.of<AuthBloc>(context);
   }
 
   @override
@@ -225,7 +228,8 @@ class _DynamicDrawerState extends State<DynamicDrawer> {
       body: Container(
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(color: AppColors.dark),
-        child: ListView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Container(
               alignment: Alignment.centerLeft,
@@ -235,10 +239,18 @@ class _DynamicDrawerState extends State<DynamicDrawer> {
                 height: 30,
               ),
             ),
-            Container(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: _menuOptionWidgets,
+                children: [
+                  ..._menuOptionWidgets,
+                  Spacer(),
+                  IconButton(
+                      color: AppColors.cream,
+                      tooltip: "Logout",
+                      icon: Icon(FontAwesomeIcons.signOutAlt),
+                      onPressed: () => _authBloc.add(SignOut())),
+                ],
               ),
             ),
           ],
