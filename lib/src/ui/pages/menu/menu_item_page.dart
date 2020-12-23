@@ -11,6 +11,7 @@ import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:tuple/tuple.dart';
 
 class MenuItemPage extends StatefulWidget {
   MenuItemPage(
@@ -36,41 +37,47 @@ class _MenuItemPageState extends State<MenuItemPage> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   // ignore: close_sinks
   ItemBloc _itemBloc;
+  List<Tuple2<SizeInOunces, TextEditingController>> regularSizesTuples;
+
+  TextEditingController nameController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _itemBloc = BlocProvider.of<ItemBloc>(context);
+    regularSizesTuples = _initSizesAndDrinkInfo();
+  }
+
+  _initSizesAndDrinkInfo() {
+    List<SizeInOunces> regularSizes = [
+      SizeInOunces.six,
+      SizeInOunces.eight,
+      SizeInOunces.twelve,
+      SizeInOunces.sixteen,
+      SizeInOunces.twenty,
+      SizeInOunces.twentyFour
+    ];
+
+    nameController.text = widget.item.name;
+    descriptionController.text = widget.item.description;
+
+    return List.generate(regularSizes.length, (index) {
+     
+      return Tuple2(
+          regularSizes[index],
+          MoneyMaskedTextController(
+            initialValue: double.parse(
+                (widget.item as Drink).sizePriceMap[regularSizes[index]] ??
+                    '0.00'),
+            decimalSeparator: '.',
+            thousandSeparator: ',',
+          ));
+    });
   }
 
   _drinkItemForm(CoffeeShopState coffeeShopState) {
     Drink drink = widget.item;
-
-    if (drink?.servedIced == null) drink.servedIced = false;
-    final smallPriceController = MoneyMaskedTextController(
-      initialValue: 0.00,
-      decimalSeparator: '.',
-      thousandSeparator: ',',
-    );
-
-    final mediumPriceController = MoneyMaskedTextController(
-      initialValue: 0.00,
-      decimalSeparator: '.',
-      thousandSeparator: ',',
-    );
-    final largePriceController = MoneyMaskedTextController(
-      initialValue: 0.00,
-      decimalSeparator: '.',
-      thousandSeparator: ',',
-    );
-    TextEditingController nameController = TextEditingController();
-    TextEditingController descriptionController = TextEditingController();
-
-    nameController.text = drink.name;
-    descriptionController.text = drink.description;
-    smallPriceController.text = drink.sizePriceMap['8 oz'];
-    mediumPriceController.text = drink.sizePriceMap['12 oz'];
-    largePriceController.text = drink.sizePriceMap['16 oz'];
 
     return Form(
       key: _formKey,
@@ -172,49 +179,55 @@ class _MenuItemPageState extends State<MenuItemPage> {
                   child: Text("Sizes and Prices",
                       style: TextStyles.kDefaultLargeDarkTextStyle),
                 ),
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              Theme(
-                                data: Theme.of(context).copyWith(
-                                  unselectedWidgetColor: AppColors.dark,
-                                ),
-                                child: Checkbox(
-                                    activeColor: AppColors.dark,
-                                    checkColor: AppColors.cream,
-                                    value: drink.sizePriceMap.keys
-                                        .contains('8 oz'),
-                                    onChanged: (_) {
-                                      setState(() {
-                                        if (drink.sizePriceMap.keys
-                                            .contains('8 oz')) {
-                                          drink.sizePriceMap.remove('8 oz');
-                                        } else {
-                                          Map<String, dynamic> map = {
-                                            '8 oz': ''
-                                          };
-                                          drink.sizePriceMap.addAll(map);
-                                        }
-                                      });
-                                    }),
+                Wrap(
+                  direction: Axis.horizontal,
+                  children: List.generate(regularSizesTuples.length, (index) {
+                    return Column(
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Theme(
+                              data: Theme.of(context).copyWith(
+                                unselectedWidgetColor: AppColors.dark,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("8 oz",
-                                    style: TextStyle(
-                                        color: AppColors.caramel,
-                                        fontFamily: kFontFamilyNormal,
-                                        fontSize: 24)),
-                              ),
-                            ],
-                          ),
-                          Visibility(
-                            visible: drink.sizePriceMap.keys.contains('8 oz'),
+                              child: Checkbox(
+                                  activeColor: AppColors.dark,
+                                  checkColor: AppColors.cream,
+                                  value: drink.sizePriceMap.keys.contains(
+                                      regularSizesTuples[index].item1),
+                                  onChanged: (_) {
+                                    setState(() {
+                                      if (drink.sizePriceMap.keys.contains(
+                                          regularSizesTuples[index].item1)) {
+                                        drink.sizePriceMap.remove(
+                                            regularSizesTuples[index].item1);
+                                      } else {
+                                        drink.sizePriceMap[
+                                            regularSizesTuples[index]
+                                                .item1] = '';
+                                      }
+                                    });
+                                  }),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  regularSizesTuples[index]
+                                      .item1
+                                      .sizeToString(),
+                                  style: TextStyle(
+                                      color: AppColors.caramel,
+                                      fontFamily: kFontFamilyNormal,
+                                      fontSize: 24)),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: Visibility(
+                            visible: drink.sizePriceMap.keys
+                                .contains(regularSizesTuples[index].item1),
                             child: Container(
                               width: 160,
                               child: Row(
@@ -227,94 +240,25 @@ class _MenuItemPageState extends State<MenuItemPage> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: TextFormField(
-                                          controller: smallPriceController,
+                                          controller:
+                                              regularSizesTuples[index].item2,
                                           validator: (value) {
                                             if (drink.sizePriceMap.keys
-                                                .contains('8 oz')) {
+                                                .contains(
+                                                    regularSizesTuples[index]
+                                                        .item1)) {
                                               return Validate.requiredField(
                                                   value, "Required field.");
                                             }
                                             return null;
                                           },
                                           onChanged: (value) {
-                                            drink.sizePriceMap['8 oz'] =
-                                                smallPriceController.text;
-                                          },
-                                          style: TextStyle(
-                                              color: AppColors.dark,
-                                              fontFamily: kFontFamilyNormal,
-                                              fontSize: 20)),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              Theme(
-                                data: Theme.of(context).copyWith(
-                                  unselectedWidgetColor: AppColors.dark,
-                                ),
-                                child: Checkbox(
-                                    activeColor: AppColors.dark,
-                                    checkColor: AppColors.cream,
-                                    value: drink.sizePriceMap.keys
-                                        .contains('12 oz'),
-                                    onChanged: (_) {
-                                      setState(() {
-                                        if (drink.sizePriceMap.keys
-                                            .contains('12 oz')) {
-                                          drink.sizePriceMap.remove('12 oz');
-                                        } else {
-                                          Map<String, dynamic> map = {
-                                            '12 oz': ''
-                                          };
-                                          drink.sizePriceMap.addAll(map);
-                                        }
-                                      });
-                                    }),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("12 oz",
-                                    style: TextStyle(
-                                        color: AppColors.caramel,
-                                        fontFamily: kFontFamilyNormal,
-                                        fontSize: 24)),
-                              ),
-                            ],
-                          ),
-                          Visibility(
-                            visible: drink.sizePriceMap.keys.contains('12 oz'),
-                            child: Container(
-                              width: 160,
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Price: \$ ",
-                                    style: TextStyles.kDefaultCaramelTextStyle,
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: TextFormField(
-                                          controller: mediumPriceController,
-                                          validator: (value) {
-                                            if (drink.sizePriceMap.keys
-                                                .contains('12 oz')) {
-                                              return Validate.requiredField(
-                                                  value, "Required field.");
-                                            }
-                                            return null;
-                                          },
-                                          onChanged: (value) {
-                                            drink.sizePriceMap['12 oz'] =
-                                                mediumPriceController.text;
+                                            drink.sizePriceMap[
+                                                    regularSizesTuples[index]
+                                                        .item1] =
+                                                regularSizesTuples[index]
+                                                    .item2
+                                                    .text;
                                           },
                                           style: TextStyle(
                                               color: AppColors.dark,
@@ -326,86 +270,10 @@ class _MenuItemPageState extends State<MenuItemPage> {
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              Theme(
-                                data: Theme.of(context).copyWith(
-                                  unselectedWidgetColor: AppColors.dark,
-                                ),
-                                child: Checkbox(
-                                    activeColor: AppColors.dark,
-                                    checkColor: AppColors.cream,
-                                    value: drink.sizePriceMap.keys
-                                        .contains('16 oz'),
-                                    onChanged: (_) {
-                                      setState(() {
-                                        if (drink.sizePriceMap.keys
-                                            .contains('16 oz')) {
-                                          drink.sizePriceMap.remove('16 oz');
-                                        } else {
-                                          Map<String, dynamic> map = {
-                                            '16 oz': ''
-                                          };
-                                          drink.sizePriceMap.addAll(map);
-                                        }
-                                      });
-                                    }),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("16 oz",
-                                    style: TextStyle(
-                                        color: AppColors.caramel,
-                                        fontFamily: kFontFamilyNormal,
-                                        fontSize: 24)),
-                              ),
-                            ],
-                          ),
-                          Visibility(
-                            visible: drink.sizePriceMap.keys.contains('16 oz'),
-                            child: Container(
-                              width: 160,
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Price: \$ ",
-                                    style: TextStyles.kDefaultCaramelTextStyle,
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: TextFormField(
-                                          controller: largePriceController,
-                                          validator: (value) {
-                                            if (drink.sizePriceMap.keys
-                                                .contains('16 oz')) {
-                                              return Validate.requiredField(
-                                                  value, "Required field.");
-                                            }
-                                            return null;
-                                          },
-                                          onChanged: (value) {
-                                            drink.sizePriceMap['16 oz'] =
-                                                largePriceController.text;
-                                          },
-                                          style: TextStyle(
-                                              color: AppColors.dark,
-                                              fontFamily: kFontFamilyNormal,
-                                              fontSize: 20)),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        )
+                      ],
+                    );
+                  }),
                 ),
                 SizedBox(height: 15),
                 Padding(
@@ -436,18 +304,42 @@ class _MenuItemPageState extends State<MenuItemPage> {
                               if (serveIced)
                                 setState(() {
                                   drink.servedIced = true;
-                                  Map<String, dynamic> icedMap = {};
-                                  if (drink.sizePriceMap.containsKey('8 oz'))
+                                  Map<SizeInOunces, dynamic> icedMap = {};
+                                  if (drink.sizePriceMap
+                                      .containsKey(SizeInOunces.six))
                                     icedMap.addAll({
-                                      '8 oz Iced': smallPriceController.text
+                                      SizeInOunces.sixIced:
+                                          regularSizesTuples[0].item2.text
                                     });
-                                  if (drink.sizePriceMap.containsKey('12 oz'))
+                                  if (drink.sizePriceMap
+                                      .containsKey(SizeInOunces.eight))
                                     icedMap.addAll({
-                                      '12 oz Iced': mediumPriceController.text
+                                      SizeInOunces.eightIced:
+                                          regularSizesTuples[1].item2.text
                                     });
-                                  if (drink.sizePriceMap.containsKey('16 oz'))
+                                  if (drink.sizePriceMap
+                                      .containsKey(SizeInOunces.twelve))
                                     icedMap.addAll({
-                                      '16 oz Iced': largePriceController.text
+                                      SizeInOunces.twelveIced:
+                                          regularSizesTuples[2].item2.text
+                                    });
+                                  if (drink.sizePriceMap
+                                      .containsKey(SizeInOunces.sixteen))
+                                    icedMap.addAll({
+                                      SizeInOunces.sixteenIced:
+                                          regularSizesTuples[3].item2.text
+                                    });
+                                  if (drink.sizePriceMap
+                                      .containsKey(SizeInOunces.twenty))
+                                    icedMap.addAll({
+                                      SizeInOunces.twentyIced:
+                                          regularSizesTuples[4].item2.text
+                                    });
+                                  if (drink.sizePriceMap
+                                      .containsKey(SizeInOunces.twentyFour))
+                                    icedMap.addAll({
+                                      SizeInOunces.twentyFourIced:
+                                          regularSizesTuples[5].item2.text
                                     });
 
                                   drink.sizePriceMap.addAll(icedMap);
@@ -455,9 +347,18 @@ class _MenuItemPageState extends State<MenuItemPage> {
                               else
                                 setState(() {
                                   drink.servedIced = false;
-                                  drink.sizePriceMap.remove('8 oz Iced');
-                                  drink.sizePriceMap.remove('12 oz Iced');
-                                  drink.sizePriceMap.remove('16 oz Iced');
+                                  drink.sizePriceMap
+                                      .remove(SizeInOunces.sixIced);
+                                  drink.sizePriceMap
+                                      .remove(SizeInOunces.eightIced);
+                                  drink.sizePriceMap
+                                      .remove(SizeInOunces.twelveIced);
+                                  drink.sizePriceMap
+                                      .remove(SizeInOunces.sixteenIced);
+                                  drink.sizePriceMap
+                                      .remove(SizeInOunces.twentyIced);
+                                  drink.sizePriceMap
+                                      .remove(SizeInOunces.twentyFourIced);
                                 });
                             }),
                       ),
@@ -569,9 +470,10 @@ class _MenuItemPageState extends State<MenuItemPage> {
                         child: Text("Redeemable Size",
                             style: TextStyles.kDefaultLargeDarkTextStyle),
                       ),
-                      Row(
-                        children: [
-                          Row(
+                      Wrap(
+                        children:
+                            List.generate(regularSizesTuples.length, (index) {
+                          return Row(
                             children: [
                               Theme(
                                 data: Theme.of(context).copyWith(
@@ -581,12 +483,12 @@ class _MenuItemPageState extends State<MenuItemPage> {
                                     activeColor: AppColors.dark,
                                     checkColor: AppColors.cream,
                                     value: drink.redeemableSize ==
-                                        SizeInOunces.eight,
+                                        regularSizesTuples[index].item1,
                                     onChanged: (value) {
                                       setState(() {
                                         if (value) {
                                           drink.redeemableSize =
-                                              SizeInOunces.eight;
+                                              regularSizesTuples[index].item1;
                                         } else {
                                           drink.redeemableSize =
                                               SizeInOunces.none;
@@ -596,81 +498,18 @@ class _MenuItemPageState extends State<MenuItemPage> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text("8 oz",
+                                child: Text(
+                                    regularSizesTuples[index]
+                                        .item1 
+                                        .sizeToString(),
                                     style: TextStyle(
                                         color: AppColors.caramel,
                                         fontFamily: kFontFamilyNormal,
                                         fontSize: 24)),
                               ),
                             ],
-                          ),
-                          Row(
-                            children: [
-                              Theme(
-                                data: Theme.of(context).copyWith(
-                                  unselectedWidgetColor: AppColors.dark,
-                                ),
-                                child: Checkbox(
-                                    activeColor: AppColors.dark,
-                                    checkColor: AppColors.cream,
-                                    value: drink.redeemableSize ==
-                                        SizeInOunces.twelve,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        if (value) {
-                                          drink.redeemableSize =
-                                              SizeInOunces.twelve;
-                                        } else {
-                                          drink.redeemableSize =
-                                              SizeInOunces.none;
-                                        }
-                                      });
-                                    }),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("12 oz",
-                                    style: TextStyle(
-                                        color: AppColors.caramel,
-                                        fontFamily: kFontFamilyNormal,
-                                        fontSize: 24)),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Theme(
-                                data: Theme.of(context).copyWith(
-                                  unselectedWidgetColor: AppColors.dark,
-                                ),
-                                child: Checkbox(
-                                    activeColor: AppColors.dark,
-                                    checkColor: AppColors.cream,
-                                    value: drink.redeemableSize ==
-                                        SizeInOunces.sixteen,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        if (value) {
-                                          drink.redeemableSize =
-                                              SizeInOunces.sixteen;
-                                        } else {
-                                          drink.redeemableSize =
-                                              SizeInOunces.none;
-                                        }
-                                      });
-                                    }),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("16 oz",
-                                    style: TextStyle(
-                                        color: AppColors.caramel,
-                                        fontFamily: kFontFamilyNormal,
-                                        fontSize: 24)),
-                              ),
-                            ],
-                          ),
-                        ],
+                          );
+                        }),
                       ),
                       SizedBox(height: 200),
                     ],

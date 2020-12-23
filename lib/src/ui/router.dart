@@ -5,6 +5,7 @@ import 'package:cortado_admin_ios/src/ui/pages/menu/item_list_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_item_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/profile/add_barista_page.dart';
+import 'package:cortado_admin_ios/src/ui/pages/profile/hours_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/profile/initiate_finance_account_page.dart';
 import 'package:fluro/fluro.dart' as fluro;
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ const String kCategoryRoute = '/menu/category-list/category';
 const String kItemRoute = '/menu/category-list/category/item';
 const String kAddBaristaRoute = '/profile/addBarista';
 const String kInitiateFinance = '/profile/initiateFinance';
+const String kHoursRoute = '/profile/hours';
 
 class Routes {
   static void configureRoutes(fluro.Router router) {
@@ -66,6 +68,10 @@ class Routes {
     router.define(kInitiateFinance,
         handler: fluro.Handler(
           handlerFunc: (context, parameters) => InitiateFinanceAccountPage(),
+        ));
+    router.define(kHoursRoute,
+        handler: fluro.Handler(
+          handlerFunc: (context, parameters) => HoursPage(),
         ));
     router.define(kItemListRoute, handler: _menuItemListHandler);
     router.define(kCategoryListRoute, handler: _menuCategoryListHandler);

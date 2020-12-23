@@ -69,6 +69,24 @@ class Format {
     return word[0].toUpperCase() + word.substring(1);
   }
 
+  static String formatMilitaryTime(int militaryTime, BuildContext context) {
+    String timeString = (militaryTime / 100.0).toStringAsFixed(2);
+
+    int hour = int.parse(timeString.substring(0, timeString.indexOf('.')));
+    int minutes = int.parse(timeString.substring(timeString.indexOf('.') + 1));
+
+    TimeOfDay timeOfDay = TimeOfDay(hour: hour, minute: minutes);
+    return timeOfDay.format(context);
+  }
+
+  static int toMilitaryTime(String time) {
+    DateTime date = DateFormat("hh:mma").parse(time.replaceAll(' ', ''));
+    int hour = date.hour == 0 ? 1200 : date.hour * 100;
+
+    int min = date.minute * 100;
+    return hour + min;
+  }
+
   static final dateFormatter = DateFormat('MM/dd/yyyy');
 
   static final dateTimeFormatter = DateFormat.yMd().add_jm();

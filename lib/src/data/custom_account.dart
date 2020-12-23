@@ -189,7 +189,7 @@ class ExternalAccounts {
   ExternalAccounts.fromJson(Map<dynamic, dynamic> json) {
     object = json['object'];
     if (json['data'] != null) {
-      externalAccounts = new List<ExternalAccount>();
+      externalAccounts = <ExternalAccount>[];
       json['data'].forEach((v) {
         externalAccounts.add(new ExternalAccount.fromJson(v));
       });
@@ -474,31 +474,31 @@ class Requirements {
 
   Requirements.fromJson(Map<dynamic, dynamic> json) {
     if (json['currently_due'] != null) {
-      currentlyDue = new List<dynamic>();
+      currentlyDue = [];
       json['currently_due'].forEach((v) {
         currentlyDue.add((v));
       });
     }
     if (json['errors'] != null) {
-      errors = new List<dynamic>();
+      errors = [];
       json['errors'].forEach((v) {
         errors.add((v));
       });
     }
     if (json['eventually_due'] != dynamic) {
-      eventuallyDue = new List<dynamic>();
+      eventuallyDue = [];
       json['eventually_due'].forEach((v) {
         eventuallyDue.add((v));
       });
     }
     if (json['past_due'] != dynamic) {
-      pastDue = new List<dynamic>();
+      pastDue = [];
       json['past_due'].forEach((v) {
         pastDue.add((v));
       });
     }
     if (json['pending_verification'] != dynamic) {
-      pendingVerification = new List<dynamic>();
+      pendingVerification = [];
       json['pending_verification'].forEach((v) {
         pendingVerification.add((v));
       });

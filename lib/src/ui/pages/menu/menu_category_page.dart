@@ -709,11 +709,13 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                     ),
                                   ],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: AutoSizeText(
-                                    food[index].name,
-                                    style: TextStyles.kDefaultLightTextStyle,
+                                Flexible(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: AutoSizeText(
+                                      food[index].name,
+                                      style: TextStyles.kDefaultLightTextStyle,
+                                    ),
                                   ),
                                 ),
                                 Container(
@@ -733,7 +735,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                             onChanged: (soldOut) {
                                               Food foodItem = food[index]
                                                   .copyWith(soldOut: soldOut);
-                                             
+
                                               _itemBloc.add(UpdateItem(
                                                   widget.categoryType,
                                                   widget.category.id,
@@ -969,9 +971,9 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                     servedIced: false,
                                     requiredAddIns: [],
                                     sizePriceMap: {
-                                      "8 oz": '',
-                                      '12 oz': '',
-                                      '16 oz': ''
+                                      SizeInOunces.eight: null,
+                                      SizeInOunces.twelve: null,
+                                      SizeInOunces.sixteen: null,
                                     }),
                               ]);
                               if (drink != null) {
@@ -1072,11 +1074,12 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: AutoSizeText(
                                       drinks[index].name,
+                                      minFontSize: 16,
                                       style: TextStyles.kDefaultLightTextStyle,
                                     ),
                                   ),
-                                  Container(
-                                    alignment: Alignment.centerLeft,
+                                  Align(
+                                    alignment: Alignment.bottomLeft,
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -1109,7 +1112,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                       ],
                                     ),
                                   ),
-                                  Spacer(),
                                   if (drinks[index].redeemableType !=
                                       RedeemableType.none)
                                     Align(
@@ -1119,7 +1121,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                         child: SvgPicture.asset(
                                           'images/coffee_bean.svg',
                                           color: AppColors.cream,
-                                          height: 25,
+                                          height: 18,
                                         ),
                                       ),
                                     ),

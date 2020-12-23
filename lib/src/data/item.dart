@@ -14,7 +14,7 @@ class Drink extends Item {
   int quantity;
   RedeemableType redeemableType;
   SizeInOunces redeemableSize;
-  Map<String, dynamic> sizePriceMap;
+  Map<SizeInOunces, dynamic> sizePriceMap;
   List<AddIn> addIns;
   List<dynamic> requiredAddIns;
   String size;
@@ -39,13 +39,13 @@ class Drink extends Item {
     return {
       'id': id,
       'name': name,
-      'sizePriceMap': sizePriceMap ?? [],
+      'sizePriceMap': convertSizePriceMapToJson(sizePriceMap) ?? [],
       'description': description,
       'size': size,
       'quantity': quantity,
       'soldOut': soldOut ?? false,
       'servedIced': servedIced,
-      'redeemableSize': redeemableSize.statusToString(),
+      'redeemableSize': redeemableSize.sizeToString(),
       'redeemableType': redeemableType.statusToString(),
       'addIns': addIns != null ? _addinsToJson(addIns) : null,
       'requiredAddIns': requiredAddIns
@@ -147,16 +147,53 @@ class AddIn extends Item {
   }
 }
 
-enum SizeInOunces { eight, twelve, sixteen, none }
+convertSizePriceMapToJson(Map<dynamic, dynamic> sizePriceMap) {
+  return sizePriceMap.map(
+      (key, value) => MapEntry((key as SizeInOunces).sizeToString(), value));
+}
 
-SizeInOunces redeemableSizeStringToEnum(String type) {
+enum SizeInOunces {
+  six,
+  sixIced,
+  eight,
+  eightIced,
+  twelve,
+  twelveIced,
+  sixteen,
+  sixteenIced,
+  twenty,
+  twentyIced,
+  twentyFour,
+  twentyFourIced,
+  none
+}
+
+SizeInOunces sizeStringToEnum(String type) {
   switch (type) {
+    case "6 oz":
+      return SizeInOunces.six;
+    case "6 oz Iced":
+      return SizeInOunces.sixIced;
     case "8 oz":
       return SizeInOunces.eight;
+    case "8 oz Iced":
+      return SizeInOunces.eightIced;
     case "12 oz":
       return SizeInOunces.twelve;
+    case "12 oz Iced":
+      return SizeInOunces.twelveIced;
     case "16 oz":
       return SizeInOunces.sixteen;
+    case "16 oz Iced":
+      return SizeInOunces.sixteenIced;
+    case "20 oz":
+      return SizeInOunces.twenty;
+    case "20 oz Iced":
+      return SizeInOunces.twentyIced;
+    case "24 oz":
+      return SizeInOunces.twentyFour;
+    case "24 oz Iced":
+      return SizeInOunces.twentyFourIced;
     default:
       return SizeInOunces.none;
   }
@@ -165,18 +202,43 @@ SizeInOunces redeemableSizeStringToEnum(String type) {
 extension RedeemableSizeExtension on SizeInOunces {
   String get value {
     switch (this) {
+      case SizeInOunces.six:
+        return "6 oz";
+        break;
+      case SizeInOunces.sixIced:
+        return "6 oz Iced";
+        break;
       case SizeInOunces.eight:
         return "8 oz";
+      case SizeInOunces.eightIced:
+        return "8 oz Iced";
+        break;
       case SizeInOunces.twelve:
         return "12 oz";
+      case SizeInOunces.twelveIced:
+        return "12 oz Iced";
+        break;
       case SizeInOunces.sixteen:
         return "16 oz";
+      case SizeInOunces.sixteenIced:
+        return "16 oz Iced";
+        break;
+      case SizeInOunces.twenty:
+        return "20 oz";
+        break;
+      case SizeInOunces.twentyIced:
+        return "20 oz Iced";
+        break;
+      case SizeInOunces.twentyFour:
+        return "24 oz";
+      case SizeInOunces.twentyFourIced:
+        return "24 oz Iced";
       default:
         return "none";
     }
   }
 
-  statusToString() {
+  sizeToString() {
     return this.value;
   }
 }

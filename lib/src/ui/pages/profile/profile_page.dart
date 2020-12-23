@@ -5,7 +5,9 @@ import 'package:cortado_admin_ios/src/bloc/finance/account/finance_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/finance/links/finance_links_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/user_management_bloc.dart';
+import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/custom_account.dart';
+import 'package:cortado_admin_ios/src/ui/pages/profile/hours_page.dart';
 import 'package:cortado_admin_ios/src/ui/router.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_admin_loading_indicator.dart';
@@ -15,9 +17,8 @@ import 'package:cortado_admin_ios/src/ui/widgets/loading_state_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'package:cortado_admin_ios/src/ui/widgets/dialogs.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage(
@@ -42,6 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   BaristaManagementBloc _baristaManagementBloc;
   Uint8List _pictureBytes;
+  List<Tuple2<String, Tuple2>> _readableHours;
 
   @override
   void initState() {
@@ -50,6 +52,34 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_baristaManagementBloc.state is! BaristasLoadSuccess)
       _baristaManagementBloc.add(RetrieveBaristas(
           BlocProvider.of<CoffeeShopBloc>(context).state.coffeeShop.id));
+  }
+
+  @override
+  void didChangeDependencies() {
+    CoffeeShop coffeeShop =
+        BlocProvider.of<CoffeeShopBloc>(context).state.coffeeShop;
+    _readableHours = _reformatHoursToRead(context, coffeeShop.hoursDaily);
+    super.didChangeDependencies();
+  }
+
+  List<Tuple2<String, Tuple2>> _reformatHoursToRead(
+      BuildContext context, Map hours) {
+    List<Tuple2<String, Tuple2>> reformattedHours = [];
+
+    hours.forEach((day, openAndClose) {
+      if (openAndClose[0] != 0) {
+        String open = Format.formatMilitaryTime(openAndClose[0], context);
+
+        String close = Format.formatMilitaryTime(openAndClose[1], context);
+
+        Tuple2 openAndCloseTuple = Tuple2(open, close);
+        reformattedHours.add(Tuple2(day, openAndCloseTuple));
+      }
+    });
+
+    reformattedHours.sort((a, b) => a.item1.compareTo(b.item1));
+
+    return reformattedHours;
   }
 
   _payoutWidget(FinanceStatus status) {
@@ -247,39 +277,37 @@ class _ProfilePageState extends State<ProfilePage> {
                   IconButton(
                     icon: Icon(Icons.edit, color: AppColors.dark),
                     onPressed: () {
-                      updateHoursDialog(
-                          context, coffeeShopState.coffeeShop.hours);
+                      Navigator.of(context).pushNamed(kHoursRoute);
                     },
                   )
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(children: [
-                Text(
-                  "Mon-Fri   " + coffeeShopState.coffeeShop.hours["Mon-Fri"],
-                  style: TextStyle(
-                      color: AppColors.caramel,
-                      fontFamily: kFontFamilyNormal,
-                      fontSize: 18),
-                ),
-                Text(
-                  "Sat   " + coffeeShopState.coffeeShop.hours["Sat"],
-                  style: TextStyle(
-                      color: AppColors.caramel,
-                      fontFamily: kFontFamilyNormal,
-                      fontSize: 18),
-                ),
-                Text(
-                  "Sun   " + coffeeShopState.coffeeShop.hours["Sun"],
-                  style: TextStyle(
-                      color: AppColors.caramel,
-                      fontFamily: kFontFamilyNormal,
-                      fontSize: 18),
-                )
-              ]),
-            )
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _readableHours.map((entry) {
+                  return Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          textFromDayString(entry.item1) + ': ',
+                          style: TextStyle(
+                              color: AppColors.dark,
+                              fontFamily: kFontFamilyNormal,
+                              fontSize: 16),
+                        ),
+                        Text(
+                          entry.item2.item1 + '-' + entry.item2.item2,
+                          style: TextStyle(
+                              color: AppColors.caramel,
+                              fontFamily: kFontFamilyNormal,
+                              fontSize: 16),
+                        )
+                      ],
+                    ),
+                  );
+                }).toList())
           ],
         ),
       ),

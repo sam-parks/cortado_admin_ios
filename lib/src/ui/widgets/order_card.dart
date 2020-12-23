@@ -40,7 +40,7 @@ class _OrderCardState extends State<OrderCard> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: AutoSizeText(
-                    "Customer:  " + widget.customer ?? "",
+                    "Customer:  " + (widget.customer ?? ""),
                     maxLines: 1,
                     style: TextStyle(
                       fontFamily: kFontFamilyNormal,

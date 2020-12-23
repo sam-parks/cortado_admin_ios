@@ -13,6 +13,7 @@ class CoffeeShop {
   final String disabledReason;
   final String picture;
   final Map hours;
+  final Map hoursDaily;
   final String phone;
   final List<String> premiumCoffees;
   final DocumentReference reference;
@@ -34,6 +35,7 @@ class CoffeeShop {
     this.blackCoffees,
     this.createdAt,
     this.description,
+    this.hoursDaily,
     this.disabledReason,
     this.premiumCoffees,
     this.addIns,
@@ -58,6 +60,7 @@ class CoffeeShop {
       String disabledReason,
       String picture,
       Map hours,
+      Map hoursDaily,
       String phone,
       List<String> premiumCoffees,
       DocumentReference reference,
@@ -74,6 +77,7 @@ class CoffeeShop {
         name: name ?? this.name,
         address: address ?? this.address,
         hours: hours ?? this.hours,
+        hoursDaily: hoursDaily ?? this.hoursDaily,
         sizes: sizes ?? this.sizes,
         blackCoffees: blackCoffees ?? this.blackCoffees,
         createdAt: createdAt ?? this.createdAt,
@@ -132,6 +136,7 @@ class CoffeeShop {
         this.food = foodToObjects(data),
         this.sizes = data['sizes'],
         this.addIns = addInsToCategory(data),
+        this.hoursDaily = data['hoursDaily'],
         this.customStripeAccountId = data["customStripeAccountId"],
         this.discounts = data['discounts'] ?? [],
         this.address = data['address'],
@@ -153,6 +158,7 @@ class CoffeeShop {
       'address': address,
       'phone': phone,
       'hours': hours,
+      'hoursDaily': hoursDaily,
       'sizes': sizes,
       'addIns': _addInsToJson(addIns),
       'needsVerificationUpdate': needsVerificationUpdate,
@@ -215,8 +221,8 @@ Drink drinkFromData(Map<dynamic, dynamic> data) {
       quantity: data['quantity'] ?? 1,
       servedIced: data['servedIced'],
       redeemableType: redeemableTypeStringToEnum(data['redeemableType']),
-      redeemableSize: redeemableSizeStringToEnum(data['redeemableSize']),
-      sizePriceMap: data['sizePriceMap']);
+      redeemableSize: sizeStringToEnum(data['redeemableSize']),
+      sizePriceMap: convertSizePriceMap(data['sizePriceMap']));
 
   return drink;
 }
@@ -321,6 +327,11 @@ RedeemableType redeemableTypeStringToEnum(String type) {
     default:
       return RedeemableType.none;
   }
+}
+
+convertSizePriceMap(Map<dynamic, dynamic> stringSizePriceMap) {
+  return stringSizePriceMap
+      .map((key, value) => MapEntry(sizeStringToEnum(key), value));
 }
 
 extension RedeemableTypeExtension on RedeemableType {

@@ -32,11 +32,15 @@ class CoffeeShopBloc extends Bloc<CoffeeShopEvent, CoffeeShopState> {
     CoffeeShopEvent event,
   ) async* {
     if (event is InitializeCoffeeShop) {
-      yield CoffeeShopState.loading();
-      CoffeeShop coffeeShop = await _coffeeShopService.init(event.id);
-      menuBloc.add(SetMenu(
-          coffeeShop, coffeeShop.food, coffeeShop.drinks, coffeeShop.addIns));
-      yield CoffeeShopState.initialized(coffeeShop);
+      try {
+        yield CoffeeShopState.loading();
+        CoffeeShop coffeeShop = await _coffeeShopService.init(event.id);
+        menuBloc.add(SetMenu(
+            coffeeShop, coffeeShop.food, coffeeShop.drinks, coffeeShop.addIns));
+        yield CoffeeShopState.initialized(coffeeShop);
+      } catch (e) {
+        yield CoffeeShopState.uninitialized();
+      }
     }
 
     if (event is UpdateCoffeeShop) {

@@ -36,7 +36,7 @@ void setupApp() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  runZoned(
+  runZonedGuarded(
       () => runApp(
             MultiBlocProvider(
               providers: [
@@ -86,7 +86,7 @@ void setupApp() async {
                 ),
               ),
             ),
-          ), onError: (Object error, StackTrace stackTrace) {
+          ), (Object error, StackTrace stackTrace) {
     try {
       sentry.captureException(exception: error, stackTrace: stackTrace);
       print('Error sent to sentry.io: $error');
