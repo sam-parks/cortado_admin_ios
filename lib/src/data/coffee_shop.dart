@@ -330,6 +330,9 @@ RedeemableType redeemableTypeStringToEnum(String type) {
 }
 
 convertSizePriceMap(Map<dynamic, dynamic> stringSizePriceMap) {
+  if (stringSizePriceMap == null) {
+    return;
+  }
   return stringSizePriceMap
       .map((key, value) => MapEntry(sizeStringToEnum(key), value));
 }
