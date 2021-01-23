@@ -90,6 +90,7 @@ class Format {
   static final dateFormatter = DateFormat('MM/dd/yyyy');
 
   static final dateTimeFormatter = DateFormat.yMd().add_jm();
+  static final timeFormatter = DateFormat.jm();
 }
 
 class TextStyles {

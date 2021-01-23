@@ -13,6 +13,7 @@ class Order {
   String total;
   OrderStatus status;
   String orderNumber;
+  DateTime pickUpTime;
 
   Order(
       {this.orderRef,
@@ -24,6 +25,7 @@ class Order {
       this.customer,
       this.drinks,
       this.food,
+      this.pickUpTime,
       this.status});
 
   Order.fromSnap(Map<dynamic, dynamic> json) {
@@ -33,9 +35,13 @@ class Order {
     coffeeShop = json['coffeeShop'];
     customer = json['customer'];
     customerName = json['customerName'];
+
     Timestamp createdAtTimestamp = json['createdAt'];
     createdAt = DateTime.fromMillisecondsSinceEpoch(
         createdAtTimestamp.millisecondsSinceEpoch);
+    Timestamp pickUpTimeTimestamp = json['pickUpTime'];
+    pickUpTime = DateTime.fromMillisecondsSinceEpoch(
+        pickUpTimeTimestamp.millisecondsSinceEpoch);
     json['drinks'] = json['drinks'] ?? [];
     drinks = List.generate(json['drinks'].length, (index) {
       Map<dynamic, dynamic> drinkMap = json['drinks'][index];
@@ -56,6 +62,7 @@ class Order {
       'orderRef': orderRef,
       'orderNumber': orderNumber,
       'total': total,
+      'pickUpTime': pickUpTime,
       'coffeeShop': coffeeShop,
       'customer': customer,
       'customerName': customerName,

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cortado_admin_ios/src/data/order.dart';
 import 'package:flutter/material.dart';
 
 @immutable
@@ -32,4 +33,11 @@ class ReadyOrder extends OrdersEvent {
   final DocumentReference orderRef;
 
   ReadyOrder(this.orderRef);
+}
+
+class UpdateOrders extends OrdersEvent {
+  final List<Order> orders;
+
+  UpdateOrders(this.orders);
+  
 }

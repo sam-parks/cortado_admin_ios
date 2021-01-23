@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cortado_admin_ios/src/data/order.dart';
 
@@ -7,28 +9,40 @@ class OrderService {
 
   CollectionReference get _ordersCollection => _firestore.collection("orders");
 
-  Future<List<Order>> ordersForShop(DocumentReference coffeeShop) async {
+  StreamController<List<Order>> _ordersController = StreamController();
+
+  Stream<List<Order>> get orders async* {
+    yield* _ordersController.stream;
+  }
+
+  ordersForShop(DocumentReference coffeeShop) async {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
 
-    List<Order> orders = [];
-    QuerySnapshot query = await _ordersCollection
+    _ordersCollection
         .where('coffeeShop', isEqualTo: coffeeShop)
         .where('createdAt', isGreaterThan: today)
-        .get();
-    var remoteSnapshots = query.docs;
-    for (var orderSnap in remoteSnapshots) {
-      Order order = Order.fromSnap(orderSnap.data());
-      order.orderRef = orderSnap.reference;
+        .snapshots()
+        .listen((query) {
+      List<Order> orders = [];
+      var remoteSnapshots = query.docs;
+      for (var orderSnap in remoteSnapshots) {
+        Order order = Order.fromSnap(orderSnap.data());
+        order.orderRef = orderSnap.reference;
 
-      orders.add(order);
-    }
-    orders.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    return orders;
+        orders.add(order);
+      }
+      orders.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      _ordersController.add(orders);
+    });
   }
 
   Future<void> updateOrderStatus(
       OrderStatus status, DocumentReference orderRef) {
     return orderRef.update({'status': status.statusToString()});
+  }
+
+  dispose() {
+    _ordersController.close();
   }
 }

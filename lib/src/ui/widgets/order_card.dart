@@ -6,13 +6,18 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 class OrderCard extends StatefulWidget {
-  OrderCard(
-      {Key key, this.items, this.customer, this.createdAt, this.orderNumber})
-      : super(key: key);
+  OrderCard({
+    Key key,
+    this.items,
+    this.customer,
+    this.createdAt,
+    this.orderNumber,
+  }) : super(key: key);
   final String orderNumber;
   final DateTime createdAt;
   final String customer;
   final List<Item> items;
+
   @override
   _OrderCardState createState() => _OrderCardState();
 }
