@@ -39,7 +39,8 @@ class Order {
     Timestamp createdAtTimestamp = json['createdAt'];
     createdAt = DateTime.fromMillisecondsSinceEpoch(
         createdAtTimestamp.millisecondsSinceEpoch);
-    Timestamp pickUpTimeTimestamp = json['pickUpTime'];
+    Timestamp pickUpTimeTimestamp = json['pickUpTime'] ??
+        Timestamp.fromDate(DateTime.now().add(Duration(minutes: 20)));
     pickUpTime = DateTime.fromMillisecondsSinceEpoch(
         pickUpTimeTimestamp.millisecondsSinceEpoch);
     json['drinks'] = json['drinks'] ?? [];

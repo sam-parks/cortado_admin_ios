@@ -232,7 +232,7 @@ List<AddIn> addInsToList(List<dynamic> addInMaps) {
   List<AddIn> addIns = [];
   addInMaps.forEach((map) {
     addIns.add(
-        AddIn(id: map['id'], name: map['name'], price: map['price'] ?? []));
+        AddIn(id: map['id'], name: map['name'], price: map['price'] ?? '0.00'));
   });
   return addIns;
 }

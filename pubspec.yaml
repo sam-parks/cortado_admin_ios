@@ -67,7 +67,6 @@ dependencies:
   flutter_statusbarcolor: ^0.2.3
   flutter_native_splash: ^0.1.9
   tuple: ^1.0.3
-  time_picker_widget: ^1.0.0+9
 
 
 

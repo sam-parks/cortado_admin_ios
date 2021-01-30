@@ -10,7 +10,6 @@ import 'package:cortado_admin_ios/src/ui/widgets/order_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:time_picker_widget/time_picker_widget.dart';
 
 class OrdersPage extends StatefulWidget {
   OrdersPage({Key key}) : super(key: key);
@@ -48,8 +47,6 @@ class _OrdersPageState extends State<OrdersPage> {
                     valueColor:
                         AlwaysStoppedAnimation<Color>(AppColors.caramel)));
           }
-
-        
 
           List<Order> currentOrders = state.orders
               .where((order) => order.status != OrderStatus.completed)
@@ -157,11 +154,7 @@ class _OrdersPageState extends State<OrdersPage> {
                     width: 300,
                     child: Stack(
                       children: [
-                        OrderCard(
-                            orderNumber: orders[index].orderNumber,
-                            createdAt: orders[index].createdAt,
-                            customer: orders[index].customerName,
-                            items: items),
+                        OrderCard(order: orders[index], items: items),
                         statusButton(orders[index])
                       ],
                     ),
@@ -202,11 +195,7 @@ class _OrdersPageState extends State<OrdersPage> {
                     width: 300,
                     child: Stack(
                       children: [
-                        OrderCard(
-                            orderNumber: orders[index].orderNumber,
-                            createdAt: orders[index].createdAt,
-                            customer: orders[index].customerName,
-                            items: items),
+                        OrderCard(order: orders[index], items: items),
                       ],
                     ),
                   );
@@ -224,29 +213,6 @@ class _OrdersPageState extends State<OrdersPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Row(
-            children: [
-              AutoSizeText(
-                Format.dateTimeFormatter.format(order.pickUpTime) ??
-                    Format.timeFormatter.format(DateTime.now()),
-                style: TextStyles.kLargeCreamTextStyle,
-              ),
-              IconButton(
-                icon: Icon(Icons.edit),
-                onPressed: () async {
-                  TimeOfDay time = await showCustomTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.fromDateTime(
-                          order.pickUpTime ?? DateTime.now()));
-                  final now = new DateTime.now();
-                  order.orderRef.update({
-                    'pickUpTime': DateTime(
-                        now.year, now.month, now.day, time.hour, time.minute)
-                  });
-                },
-              )
-            ],
-          ),
           status == OrderStatus.ordered
               ? Padding(
                   padding: const EdgeInsets.all(8.0),
