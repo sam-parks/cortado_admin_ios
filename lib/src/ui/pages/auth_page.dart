@@ -84,6 +84,7 @@ class _AuthPageState extends State<AuthPage> {
               width: 100,
             ),
           ),
+        
           KeyboardAvoider(
             autoScroll: true,
             child: Center(

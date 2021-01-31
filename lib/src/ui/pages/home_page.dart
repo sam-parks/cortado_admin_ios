@@ -3,6 +3,7 @@ import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:cortado_admin_ios/src/ui/pages/auth_page.dart';
+import 'package:cortado_admin_ios/src/ui/pages/verification_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/side_menu.dart';
 import 'package:flushbar/flushbar.dart';
@@ -102,12 +103,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       );
                       break;
                     case CoffeeShopStatus.initialized:
-                      return SideMenu(
-                        authState.user,
-                        reauth: widget.reauth,
-                        coffeeShop: coffeeShopState.coffeeShop,
-                        screen: widget.screen ?? CortadoAdminScreen.dashboard,
-                      );
+                      if (coffeeShopState.coffeeShop.cortadoVerified)
+                        return SideMenu(
+                          authState.user,
+                          reauth: widget.reauth,
+                          coffeeShop: coffeeShopState.coffeeShop,
+                          screen: widget.screen ?? CortadoAdminScreen.dashboard,
+                        );
+
+                      return VerificationPage();
                       break;
                     default:
                       return AuthPage();
