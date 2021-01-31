@@ -11,6 +11,7 @@ import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/orders/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/statistics/statistics_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/verification/verification_bloc.dart';
 import 'package:cortado_admin_ios/src/ui/app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flavor/flavor.dart';
@@ -59,6 +60,8 @@ void setupApp() async {
                   ),
                   child: MultiBlocProvider(
                       providers: [
+                    BlocProvider<VerificationBloc>(
+                            create: (context) => VerificationBloc()),
                         BlocProvider<FinanceBloc>(
                             lazy: false,
                             create: (context) => FinanceBloc(

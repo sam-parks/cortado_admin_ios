@@ -5,6 +5,7 @@ import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:cortado_admin_ios/src/data/message.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/coffee_shop_tile.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/latte_loader.dart';
 import 'package:flutter/material.dart';
 
 class CoffeeShopsPage extends StatefulWidget {
@@ -41,9 +42,7 @@ class _CoffeeShopsPageState extends State<CoffeeShopsPage> {
         ),
         (_conversations.isEmpty || _coffeeShops.isEmpty)
             ? Center(
-                child: CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(AppColors.caramel)),
+                child: LatteLoader(),
               )
             : Expanded(
                 child: Container(
@@ -54,13 +53,7 @@ class _CoffeeShopsPageState extends State<CoffeeShopsPage> {
                         AsyncSnapshot<Map<String, CortadoUser>>
                             adminsSnapshot) {
                       if (!adminsSnapshot.hasData) {
-                        return Center(
-                            child: SizedBox(
-                                height: 40,
-                                width: 40,
-                                child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        AppColors.caramel))));
+                        return Center(child: LatteLoader());
                       }
                       return ListView.separated(
                         shrinkWrap: true,

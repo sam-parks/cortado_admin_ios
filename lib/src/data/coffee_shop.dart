@@ -24,6 +24,7 @@ class CoffeeShop {
   final List<dynamic> discounts;
   final String customStripeAccountId;
   final bool needsVerificationUpdate;
+  final bool cortadoVerified;
 
   const CoffeeShop({
     this.reference,
@@ -33,6 +34,7 @@ class CoffeeShop {
     this.hours,
     this.sizes,
     this.blackCoffees,
+    this.cortadoVerified,
     this.createdAt,
     this.description,
     this.hoursDaily,
@@ -58,6 +60,7 @@ class CoffeeShop {
       String updatedAt,
       String description,
       String disabledReason,
+      bool cortadoVerified,
       String picture,
       Map hours,
       Map hoursDaily,
@@ -75,6 +78,7 @@ class CoffeeShop {
         id: id ?? this.id,
         reference: reference ?? this.reference,
         name: name ?? this.name,
+        cortadoVerified: cortadoVerified ?? this.cortadoVerified,
         address: address ?? this.address,
         hours: hours ?? this.hours,
         hoursDaily: hoursDaily ?? this.hoursDaily,
@@ -105,6 +109,7 @@ class CoffeeShop {
         address: coffeeShop.address ?? this.address,
         hours: coffeeShop.hours ?? this.hours,
         sizes: coffeeShop.sizes ?? this.sizes,
+        cortadoVerified: coffeeShop.cortadoVerified ?? this.cortadoVerified,
         blackCoffees: coffeeShop.blackCoffees ?? this.blackCoffees,
         createdAt: coffeeShop.createdAt ?? this.createdAt,
         description: coffeeShop.description ?? this.description,
@@ -135,6 +140,7 @@ class CoffeeShop {
         this.drinks = drinksToObjects(data),
         this.food = foodToObjects(data),
         this.sizes = data['sizes'],
+        this.cortadoVerified = data['cortadoVerified'] ?? false,
         this.addIns = addInsToCategory(data),
         this.hoursDaily = data['hoursDaily'],
         this.customStripeAccountId = data["customStripeAccountId"],
@@ -160,6 +166,7 @@ class CoffeeShop {
       'hours': hours,
       'hoursDaily': hoursDaily,
       'sizes': sizes,
+      'cortadoVerified':cortadoVerified,
       'addIns': _addInsToJson(addIns),
       'needsVerificationUpdate': needsVerificationUpdate,
       'drinks': _drinksToJson(drinks),

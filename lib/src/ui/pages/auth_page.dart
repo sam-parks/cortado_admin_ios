@@ -2,6 +2,7 @@ import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dialogs.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/latte_loader.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
@@ -190,11 +191,7 @@ class _AuthPageState extends State<AuthPage> {
                     darkMode: true,
                   ),
                 ),
-                if (state.status == AuthStatus.loading) ...[
-                  CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(AppColors.caramel))
-                ],
+                if (state.status == AuthStatus.loading) ...[LatteLoader()],
                 Flexible(
                   child: Container(
                     alignment: Alignment.bottomCenter,

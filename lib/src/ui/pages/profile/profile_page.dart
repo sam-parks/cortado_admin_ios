@@ -13,6 +13,7 @@ import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_admin_loading_indicator.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/latte_loader.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/loading_state_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -326,10 +327,7 @@ class _ProfilePageState extends State<ProfilePage> {
         return _customAccountContent();
         break;
       case FinanceStatus.loading:
-        return Center(
-          child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.caramel)),
-        );
+        return Center(child: LatteLoader());
         break;
     }
   }
@@ -471,10 +469,7 @@ class _ProfilePageState extends State<ProfilePage> {
       cubit: _baristaManagementBloc,
       builder: (BuildContext context, BaristaManagementState baristaState) {
         if (baristaState is BaristasLoadInProgress)
-          return Center(
-            child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.caramel)),
-          );
+          return Center(child: LatteLoader());
 
         return Stack(
           children: <Widget>[
