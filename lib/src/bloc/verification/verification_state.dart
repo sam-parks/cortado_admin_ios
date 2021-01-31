@@ -11,19 +11,19 @@ class VerificationState extends Equatable {
   const VerificationState.loading()
       : this._(status: VerificationStatus.loading);
 
-  const VerificationState.unverified(String code)
-      : this._(status: VerificationStatus.unverified, code: code);
+  const VerificationState.unverified()
+      : this._(status: VerificationStatus.unverified);
 
-  const VerificationState.verified(String code)
-      : this._(status: VerificationStatus.verified, code: code);
+  const VerificationState.verified()
+      : this._(status: VerificationStatus.verified);
 
-  const VerificationState.error(String code, String error)
-      : this._(status: VerificationStatus.error, error: error, code: code);
+  const VerificationState.error(String error)
+      : this._(status: VerificationStatus.error, error: error);
 
   final VerificationStatus status;
   final String code;
   final String error;
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [status, code, error];
 }

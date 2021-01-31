@@ -166,6 +166,7 @@ class CoffeeShop {
       'hours': hours,
       'hoursDaily': hoursDaily,
       'sizes': sizes,
+      'cortadoVerified':cortadoVerified,
       'addIns': _addInsToJson(addIns),
       'needsVerificationUpdate': needsVerificationUpdate,
       'drinks': _drinksToJson(drinks),

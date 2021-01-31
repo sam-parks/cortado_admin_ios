@@ -72,7 +72,7 @@ dependencies:
 
 
   #BLOC and PROVIDER
-  flutter_bloc: ^6.0.0
+  flutter_bloc: ^6.1.1
   provider: ^4.0.4
   rxdart: ^0.23.1
   sortedmap: ^0.4.2+1

@@ -5,6 +5,7 @@ import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:cortado_admin_ios/src/ui/pages/auth_page.dart';
 import 'package:cortado_admin_ios/src/ui/pages/verification_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/latte_loader.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/side_menu.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
@@ -65,11 +66,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     switch (authState.status) {
       case AuthStatus.loading:
         return Scaffold(
-          body: Container(
-              alignment: Alignment.center,
-              child: CircularProgressIndicator(
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(AppColors.caramel))),
+          body: Container(alignment: Alignment.center, child: LatteLoader()),
         );
         break;
       case AuthStatus.authenticated:
@@ -82,11 +79,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               if (navigationState.navigationStatus ==
                   NavigationStatus.initial) {
                 return Scaffold(
-                  body: Center(
-                    child: CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(AppColors.caramel)),
-                  ),
+                  body: Center(child: LatteLoader()),
                 );
               }
               return BlocBuilder(
@@ -95,14 +88,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   switch (coffeeShopState.status) {
                     case CoffeeShopStatus.loading:
                       return Scaffold(
-                        body: Center(
-                          child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppColors.caramel)),
-                        ),
+                        body: Center(child: LatteLoader()),
                       );
                       break;
                     case CoffeeShopStatus.initialized:
+                      print(coffeeShopState.coffeeShop.cortadoVerified);
                       if (coffeeShopState.coffeeShop.cortadoVerified)
                         return SideMenu(
                           authState.user,

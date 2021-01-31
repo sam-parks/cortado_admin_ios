@@ -4,6 +4,7 @@ import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/latte_loader.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -347,9 +348,7 @@ class _FancyFabState extends State<FancyFab>
   Widget buildListMessage(bool isFullAdmin) {
     return Flexible(
       child: groupChatId == ''
-          ? Center(
-              child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.light)))
+          ? Center(child: LatteLoader())
           : StreamBuilder(
               stream: FirebaseFirestore.instance
                   .collection('messages')
@@ -360,10 +359,7 @@ class _FancyFabState extends State<FancyFab>
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(
-                      child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.caramel)));
+                  return Center(child: LatteLoader());
                 } else {
                   listMessage = snapshot.data.documents;
                   return ListView.builder(

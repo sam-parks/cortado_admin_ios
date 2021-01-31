@@ -38,6 +38,13 @@ class CoffeeShopService {
     return;
   }
 
+  Future<bool> verify(String code, String coffeeShopId) async {
+    CollectionReference adminsCollection = _firestore.collection('admins');
+    DocumentSnapshot snapshot = await adminsCollection.doc(coffeeShopId).get();
+
+    return snapshot.data()['code'] == code;
+  }
+
   Future<Map<String, CortadoUser>> allCoffeeShopAdmins() async {
     Map<String, CortadoUser> admins = {};
     CollectionReference adminsCollection = _firestore.collection('admins');

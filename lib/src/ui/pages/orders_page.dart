@@ -6,6 +6,7 @@ import 'package:cortado_admin_ios/src/data/item.dart';
 import 'package:cortado_admin_ios/src/data/order.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/latte_loader.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/order_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,11 +42,7 @@ class _OrdersPageState extends State<OrdersPage> {
       body: BlocBuilder<OrdersBloc, OrdersState>(
         builder: (BuildContext context, state) {
           if (state is OrdersLoadingState) {
-            return Container(
-                alignment: Alignment.center,
-                child: CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(AppColors.caramel)));
+            return Container(alignment: Alignment.center, child: LatteLoader());
           }
 
           List<Order> currentOrders = state.orders

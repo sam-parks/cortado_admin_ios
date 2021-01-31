@@ -9,6 +9,7 @@ import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/charts/daily_redemptions_bar_chart.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/latte_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -47,8 +48,7 @@ class _MenuPageState extends State<MenuPage> {
           cubit: _menuBloc,
           builder: (BuildContext context, MenuState state) {
             if (state.status == MenuStatus.loading) {
-              return CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.caramel));
+              return LatteLoader();
             }
             return Scrollbar(
               controller: _scrollController,
