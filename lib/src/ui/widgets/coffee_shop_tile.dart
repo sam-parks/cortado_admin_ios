@@ -1,9 +1,7 @@
-import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
+
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
-import 'package:cortado_admin_ios/src/ui/widgets/chat_box.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CoffeeShopTile extends StatefulWidget {
   CoffeeShopTile(
@@ -24,7 +22,6 @@ class CoffeeShopTile extends StatefulWidget {
 class _CoffeeShopTileState extends State<CoffeeShopTile> {
   @override
   Widget build(BuildContext context) {
-    AuthState authState = Provider.of<AuthBloc>(context).state;
     return Padding(
         padding: const EdgeInsets.only(right: 6.0, left: 6.0),
         child: Container(
@@ -51,9 +48,8 @@ class _CoffeeShopTileState extends State<CoffeeShopTile> {
                                 widget.coffeeShop.name,
                                 style: TextStyles.kDefaultLargeDarkTextStyle,
                               ),
-                              widget.peerId == null
-                                  ? Container()
-                                  : Container(
+                              widget.peerId == null ? Container() : Container(),
+                              /* Container(
                                       padding: EdgeInsets.only(left: 30),
                                       child: IconButton(
                                         icon: Icon(Icons.message,
@@ -62,14 +58,15 @@ class _CoffeeShopTileState extends State<CoffeeShopTile> {
                                             context: context,
                                             builder: (context) => Dialog(
                                                   child: ChatBox(
-                                                    userId: authState.user.id,
+                                                    coffeeShopId:
+                                                        authState.user.id,
                                                     peerId: widget.peerId,
                                                     coffeeShopName:
                                                         widget.coffeeShop.name,
                                                     adminName: widget.adminName,
                                                   ),
                                                 )),
-                                      )),
+                                      )), */
                               Spacer()
                             ],
                           ),

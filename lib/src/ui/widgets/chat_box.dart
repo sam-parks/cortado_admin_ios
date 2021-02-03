@@ -1,22 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
-import 'package:cortado_admin_ios/src/data/cortado_user.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/latte_loader.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class ChatBox extends StatefulWidget {
-  ChatBox(
-      {Key key, this.userId, this.peerId, this.coffeeShopName, this.adminName})
+  ChatBox({Key key, this.coffeeShopId, this.peerId, this.customerName})
       : super(key: key);
-  final String userId;
+  final String coffeeShopId;
   final String peerId;
-  final String coffeeShopName;
-  final String adminName;
+  final String customerName;
+
   @override
   _ChatBoxState createState() => _ChatBoxState();
 }
@@ -34,7 +30,7 @@ class _ChatBoxState extends State<ChatBox> {
   @override
   void initState() {
     super.initState();
-    id = widget.userId;
+    id = widget.coffeeShopId;
     peerId = widget.peerId;
 
     groupChatId = '';
@@ -43,40 +39,26 @@ class _ChatBoxState extends State<ChatBox> {
 
   @override
   Widget build(BuildContext context) {
-    AuthState authState = Provider.of<AuthBloc>(context).state;
     return Container(
       height: 400,
       width: 350,
       child: WillPopScope(
         onWillPop: onBackPress,
-        child: Stack(
-          children: [
-            Container(
-              child: Column(
-                children: [
-                  buildHeader(widget.coffeeShopName, widget.adminName),
-                  buildListMessage(
-                      authState.user.userType == UserType.superUser),
-                  buildInput(authState.user.userType == UserType.superUser)
-                ],
-              ),
-              color: AppColors.light,
-            ),
-            Positioned(
-              top: -5,
-              right: 0,
-              child: IconButton(
-                icon: Icon(Icons.cancel, color: AppColors.dark),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ),
-          ],
+        child: Container(
+          child: Column(
+            children: [
+              buildHeader(widget.customerName),
+              buildListMessage(),
+              buildInput()
+            ],
+          ),
+          color: AppColors.light,
         ),
       ),
     );
   }
 
-  Widget buildInput(bool isFullAdmin) {
+  Widget buildInput() {
     return Container(
       child: Row(
         children: <Widget>[
@@ -84,13 +66,10 @@ class _ChatBoxState extends State<ChatBox> {
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 10),
               child: TextField(
+                autofocus: true,
                 onSubmitted: textEditingController.text.isEmpty
                     ? (_) {}
-                    : isFullAdmin
-                        ? (_) => onSendMessage(
-                              textEditingController.text,
-                            )
-                        : (_) => onSendMessage(textEditingController.text),
+                    : (_) => onSendMessage(textEditingController.text),
                 style: TextStyles.kDefaultSmallDarkTextStyle,
                 controller: textEditingController,
                 decoration: InputDecoration.collapsed(
@@ -142,10 +121,15 @@ class _ChatBoxState extends State<ChatBox> {
     if (content.trim() != '') {
       textEditingController.clear();
 
-      var documentReference =
-          FirebaseFirestore.instance.collection('messages').doc(groupChatId);
+      var documentReference = FirebaseFirestore.instance
+          .collection('coffee_shops')
+          .doc(widget.coffeeShopId)
+          .collection('messages')
+          .doc(groupChatId);
 
       var subDocumentReference = FirebaseFirestore.instance
+          .collection('coffee_shops')
+          .doc(widget.coffeeShopId)
           .collection('messages')
           .doc(groupChatId)
           .collection(groupChatId)
@@ -186,12 +170,14 @@ class _ChatBoxState extends State<ChatBox> {
     }
   }
 
-  Widget buildListMessage(bool isFullAdmin) {
+  Widget buildListMessage() {
     return Flexible(
       child: groupChatId == ''
           ? Center(child: LatteLoader())
           : StreamBuilder(
               stream: FirebaseFirestore.instance
+                  .collection('coffee_shops')
+                  .doc(widget.coffeeShopId)
                   .collection('messages')
                   .doc(groupChatId)
                   .collection(groupChatId)
@@ -205,8 +191,8 @@ class _ChatBoxState extends State<ChatBox> {
                   listMessage = snapshot.data.documents;
                   return ListView.builder(
                     padding: EdgeInsets.all(10.0),
-                    itemBuilder: (context, index) => buildItem(
-                        index, snapshot.data.documents[index], isFullAdmin),
+                    itemBuilder: (context, index) =>
+                        buildItem(index, snapshot.data.documents[index]),
                     itemCount: snapshot.data.documents.length,
                     reverse: true,
                     controller: listScrollController,
@@ -217,19 +203,29 @@ class _ChatBoxState extends State<ChatBox> {
     );
   }
 
-  Widget buildHeader(String coffeeShopName, String adminName) {
+  Widget buildHeader(String customerName) {
     return Container(
       padding: const EdgeInsets.all(8),
       alignment: Alignment.centerLeft,
       color: AppColors.dark,
       width: 350,
       height: 40,
-      child: Text(adminName + " from " + coffeeShopName,
-          style: TextStyles.kDefaultLightTextStyle),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(customerName, style: TextStyles.kDefaultLightTextStyle),
+          GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Icon(
+                Icons.cancel,
+                color: AppColors.cream,
+              ))
+        ],
+      ),
     );
   }
 
-  Widget buildItem(int index, DocumentSnapshot document, bool isFullAdmin) {
+  Widget buildItem(int index, DocumentSnapshot document) {
     if (document.data()['idFrom'] == id) {
       // Right (my message)
       return Row(
@@ -238,7 +234,7 @@ class _ChatBoxState extends State<ChatBox> {
           Container(
             child: Text(
               document.data()['content'],
-              style: TextStyle(color: AppColors.dark),
+              style: TextStyle(color: AppColors.light),
             ),
             padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
             width: 200.0,
@@ -247,7 +243,23 @@ class _ChatBoxState extends State<ChatBox> {
                 borderRadius: BorderRadius.circular(8.0)),
             margin: EdgeInsets.only(
                 bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
-          )
+          ),
+
+          isLastMessageRight(index)
+              ? Material(
+                  child: Image.asset(
+                    'images/latte.png',
+                    width: 35.0,
+                    height: 35.0,
+                    color: AppColors.caramel,
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(18.0),
+                  ),
+                  clipBehavior: Clip.hardEdge,
+                )
+              : Container(width: 35.0),
         ],
         mainAxisAlignment: MainAxisAlignment.end,
       );
@@ -260,20 +272,13 @@ class _ChatBoxState extends State<ChatBox> {
               children: <Widget>[
                 isLastMessageLeft(index)
                     ? Material(
-                        child: isFullAdmin
-                            ? Image.asset(
-                                'images/coffee_shop.png',
-                                width: 35.0,
-                                height: 35.0,
-                                fit: BoxFit.fitWidth,
-                              )
-                            : Image.asset(
-                                'images/latte.png',
-                                width: 35.0,
-                                height: 35.0,
-                                color: AppColors.caramel,
-                                fit: BoxFit.cover,
-                              ),
+                        child: Image.asset(
+                          'images/latte.png',
+                          width: 35.0,
+                          height: 35.0,
+                          color: AppColors.caramel,
+                          fit: BoxFit.cover,
+                        ),
                         borderRadius: BorderRadius.all(
                           Radius.circular(18.0),
                         ),

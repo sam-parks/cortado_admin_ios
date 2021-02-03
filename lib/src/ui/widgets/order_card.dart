@@ -1,11 +1,14 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
 import 'package:cortado_admin_ios/src/data/order.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/chat_box.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/time_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class OrderCard extends StatefulWidget {
   OrderCard({Key key, this.order, this.items}) : super(key: key);
@@ -21,6 +24,7 @@ class _OrderCardState extends State<OrderCard> {
 
   @override
   Widget build(BuildContext context) {
+    String coffeeShopId = context.watch<CoffeeShopBloc>().state.coffeeShop.id;
     return Card(
       elevation: 2.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -299,13 +303,34 @@ class _OrderCardState extends State<OrderCard> {
               alignment: Alignment.topLeft,
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
-                child: AutoSizeText(
-                  (widget.order.customerName ?? ""),
-                  maxLines: 1,
-                  style: TextStyle(
-                    fontFamily: kFontFamilyNormal,
-                    fontSize: 18,
-                    color: AppColors.light,
+                child: InkWell(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) => Dialog(
+                              child: ChatBox(
+                                coffeeShopId: coffeeShopId,
+                                peerId: widget.order.customer.id,
+                                customerName: widget.order.customerName,
+                              ),
+                            ));
+                  },
+                  child: Row(
+                    children: [
+                      AutoSizeText(
+                        (widget.order.customerName ?? ""),
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontFamily: kFontFamilyNormal,
+                          fontSize: 18,
+                          color: AppColors.light,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Icon(Icons.chat, color: AppColors.light),
+                      )
+                    ],
                   ),
                 ),
               ),

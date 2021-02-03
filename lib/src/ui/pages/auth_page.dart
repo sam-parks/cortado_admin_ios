@@ -5,7 +5,6 @@ import 'package:cortado_admin_ios/src/ui/widgets/dialogs.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/latte_loader.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyboard_avoider/keyboard_avoider.dart';
 
