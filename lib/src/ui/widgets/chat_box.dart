@@ -234,12 +234,12 @@ class _ChatBoxState extends State<ChatBox> {
           Container(
             child: Text(
               document.data()['content'],
-              style: TextStyle(color: AppColors.light),
+              style: TextStyles.kDefaultDarkTextStyle,
             ),
             padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
             width: 200.0,
             decoration: BoxDecoration(
-                color: AppColors.caramel,
+                color: AppColors.cream,
                 borderRadius: BorderRadius.circular(8.0)),
             margin: EdgeInsets.only(
                 bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
@@ -272,13 +272,7 @@ class _ChatBoxState extends State<ChatBox> {
               children: <Widget>[
                 isLastMessageLeft(index)
                     ? Material(
-                        child: Image.asset(
-                          'images/latte.png',
-                          width: 35.0,
-                          height: 35.0,
-                          color: AppColors.caramel,
-                          fit: BoxFit.cover,
-                        ),
+                        child: Icon(Icons.person, color: AppColors.dark),
                         borderRadius: BorderRadius.all(
                           Radius.circular(18.0),
                         ),
@@ -288,7 +282,7 @@ class _ChatBoxState extends State<ChatBox> {
                 Container(
                   child: Text(
                     document.data()['content'],
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyles.kDefaultLightTextStyle,
                   ),
                   padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                   width: 200.0,
