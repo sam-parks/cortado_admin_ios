@@ -60,15 +60,15 @@ class _CoffeeShopTileState extends State<CoffeeShopTile> {
                                             color: AppColors.light),
                                         onPressed: () => showDialog(
                                             context: context,
-                                            child: Dialog(
-                                              child: ChatBox(
-                                                userId: authState.user.id,
-                                                peerId: widget.peerId,
-                                                coffeeShopName:
-                                                    widget.coffeeShop.name,
-                                                adminName: widget.adminName,
-                                              ),
-                                            )),
+                                            builder: (context) => Dialog(
+                                                  child: ChatBox(
+                                                    userId: authState.user.id,
+                                                    peerId: widget.peerId,
+                                                    coffeeShopName:
+                                                        widget.coffeeShop.name,
+                                                    adminName: widget.adminName,
+                                                  ),
+                                                )),
                                       )),
                               Spacer()
                             ],

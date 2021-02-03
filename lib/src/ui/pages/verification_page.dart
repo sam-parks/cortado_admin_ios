@@ -70,22 +70,27 @@ class _VerificationPageState extends State<VerificationPage> {
                   Positioned(
                       top: 10,
                       left: 10,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SvgPicture.asset(
-                            "images/back_arrow.svg",
-                            width: 30,
-                            color: AppColors.dark,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'Back to Login',
-                              style: TextStyles.kDefaultDarkTextStyle,
+                      child: InkWell(
+                        onTap: () => context
+                            .read<CoffeeShopBloc>()
+                            .add(UninitializeCoffeeShop()),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SvgPicture.asset(
+                              "images/back_arrow.svg",
+                              width: 30,
+                              color: AppColors.dark,
                             ),
-                          )
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Back to Login',
+                                style: TextStyles.kDefaultDarkTextStyle,
+                              ),
+                            )
+                          ],
+                        ),
                       )),
                   Positioned(
                     top: 100,

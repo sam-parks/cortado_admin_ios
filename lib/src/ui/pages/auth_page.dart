@@ -176,21 +176,6 @@ class _AuthPageState extends State<AuthPage> {
                     },
                   ),
                 ),
-                AppleSignInButton(
-                  style: AppleButtonStyle.black,
-                  onPressed: () {
-                    authBloc.add(SignInApplePressed());
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 100),
-                  child: GoogleSignInButton(
-                    onPressed: () {
-                      authBloc.add(SignInGooglePressed());
-                    },
-                    darkMode: true,
-                  ),
-                ),
                 if (state.status == AuthStatus.loading) ...[LatteLoader()],
                 Flexible(
                   child: Container(
