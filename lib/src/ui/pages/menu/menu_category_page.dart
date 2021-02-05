@@ -970,6 +970,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                     redeemableSize: SizeInOunces.none,
                                     servedIced: false,
                                     requiredAddIns: [],
+                                    availableAddIns: [],
                                     sizePriceMap: {
                                       SizeInOunces.eight: null,
                                       SizeInOunces.twelve: null,

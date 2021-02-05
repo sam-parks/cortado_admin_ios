@@ -10,7 +10,6 @@ class CoffeeShopService {
       _firestore.collection('coffee_shops');
 
   Future<CoffeeShop> init(String id) async {
-    print("coffeeShopId: " + id);
     DocumentReference ref = _shopsCollection.doc(id);
     DocumentSnapshot snapshot = await ref.get();
     return CoffeeShop.fromSnapshot(snapshot);
@@ -30,7 +29,6 @@ class CoffeeShopService {
     var shopsQuery = await _shopsCollection.get();
     var remoteSnapshots = shopsQuery.docs;
     for (var snapshot in remoteSnapshots) {
-      print(snapshot.id);
       var coffeeShop = CoffeeShop.fromSnapshot(snapshot);
       yield coffeeShop;
     }

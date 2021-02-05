@@ -63,7 +63,6 @@ class _MenuItemPageState extends State<MenuItemPage> {
     descriptionController.text = widget.item.description;
 
     return List.generate(regularSizes.length, (index) {
-     
       return Tuple2(
           regularSizes[index],
           MoneyMaskedTextController(
@@ -275,6 +274,13 @@ class _MenuItemPageState extends State<MenuItemPage> {
                     );
                   }),
                 ),
+                SizedBox(height: 15),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Text("Available Add Ins",
+                      style: TextStyles.kDefaultLargeDarkTextStyle),
+                ),
+                availableAddins(coffeeShopState, drink),
                 SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -500,7 +506,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
                                     regularSizesTuples[index]
-                                        .item1 
+                                        .item1
                                         .sizeToString(),
                                     style: TextStyle(
                                         color: AppColors.caramel,
@@ -745,6 +751,60 @@ class _MenuItemPageState extends State<MenuItemPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: AutoSizeText(addInCategory.title,
                       maxLines: 1,
+                      minFontSize: 24,
+                      style: TextStyle(
+                          color: AppColors.caramel,
+                          fontFamily: kFontFamilyNormal,
+                          fontSize: 24)),
+                ),
+              ),
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+  availableAddins(CoffeeShopState coffeeShopState, Drink drink) {
+    List<Category> addIns = coffeeShopState.coffeeShop.addIns;
+    return Container(
+      height: 150,
+      child: GridView.count(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        scrollDirection: Axis.horizontal,
+        crossAxisCount: 3,
+        crossAxisSpacing: 1,
+        childAspectRatio: 1 / 4,
+        children: List.generate(addIns.length, (index) {
+          Category addInCategory = addIns[index];
+          print(drink.availableAddIns);
+          return Row(
+            children: [
+              Theme(
+                data: Theme.of(context).copyWith(
+                  unselectedWidgetColor: AppColors.dark,
+                ),
+                child: Checkbox(
+                    activeColor: AppColors.dark,
+                    checkColor: AppColors.cream,
+                    value: drink.availableAddIns.contains(addInCategory.id),
+                    onChanged: (_) {
+                      setState(() {
+                        if (drink.availableAddIns.contains(addInCategory.id)) {
+                          drink.availableAddIns.remove(addInCategory.id);
+                        } else {
+                          drink.availableAddIns.add(addInCategory.id);
+                        }
+                      });
+                    }),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: AutoSizeText(addInCategory.title,
+                      maxLines: 1,
+                      minFontSize: 24,
                       style: TextStyle(
                           color: AppColors.caramel,
                           fontFamily: kFontFamilyNormal,

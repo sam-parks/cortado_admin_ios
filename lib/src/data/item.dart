@@ -17,6 +17,7 @@ class Drink extends Item {
   Map<SizeInOunces, dynamic> sizePriceMap;
   List<AddIn> addIns;
   List<dynamic> requiredAddIns;
+  List<dynamic> availableAddIns;
   String size;
   bool servedIced;
   bool soldOut;
@@ -30,6 +31,7 @@ class Drink extends Item {
       this.addIns,
       this.soldOut,
       this.requiredAddIns,
+      this.availableAddIns,
       this.servedIced,
       this.redeemableSize,
       this.redeemableType,
@@ -42,6 +44,7 @@ class Drink extends Item {
       'sizePriceMap': convertSizePriceMapToJson(sizePriceMap) ?? [],
       'description': description,
       'size': size,
+      'availableAddIns': availableAddIns,
       'quantity': quantity,
       'soldOut': soldOut ?? false,
       'servedIced': servedIced,
@@ -57,6 +60,7 @@ class Drink extends Item {
       String name,
       String description,
       int quantity,
+      List<String> availableAddIns,
       RedeemableType redeemableType,
       SizeInOunces redeemableSize,
       Map<String, dynamic> sizePriceMap,
@@ -67,6 +71,7 @@ class Drink extends Item {
       bool soldOut}) {
     return Drink(
         id: id ?? this.id,
+        availableAddIns: availableAddIns ?? this.availableAddIns,
         name: name ?? this.name,
         description: description ?? this.description,
         quantity: quantity ?? this.quantity,
