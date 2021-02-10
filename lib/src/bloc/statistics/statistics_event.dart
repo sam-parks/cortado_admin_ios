@@ -7,9 +7,8 @@ abstract class StatisticsEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class RetrieveUsersPerDay extends StatisticsEvent {
+class InitializeStatistics extends StatisticsEvent {
   final DocumentReference coffeeShopRef;
 
-  RetrieveUsersPerDay(this.coffeeShopRef);
+  InitializeStatistics(this.coffeeShopRef);
 }
-

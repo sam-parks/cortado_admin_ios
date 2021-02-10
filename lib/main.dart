@@ -60,7 +60,7 @@ void setupApp() async {
                   ),
                   child: MultiBlocProvider(
                       providers: [
-                    BlocProvider<VerificationBloc>(
+                        BlocProvider<VerificationBloc>(
                             create: (context) => VerificationBloc()),
                         BlocProvider<FinanceBloc>(
                             lazy: false,
@@ -72,7 +72,10 @@ void setupApp() async {
                         BlocProvider<BaristaManagementBloc>(
                             create: (context) => BaristaManagementBloc()),
                         BlocProvider<StatisticsBloc>(
-                            lazy: false, create: (context) => StatisticsBloc()),
+                            lazy: false,
+                            create: (context) => StatisticsBloc(
+                                coffeeShopBloc:
+                                    BlocProvider.of<CoffeeShopBloc>(context))),
                         BlocProvider<AuthBloc>(
                             lazy: false,
                             create: (context) => AuthBloc(

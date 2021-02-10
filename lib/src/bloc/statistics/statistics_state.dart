@@ -1,16 +1,23 @@
 part of 'statistics_bloc.dart';
 
-abstract class StatisticsState extends Equatable {
-  const StatisticsState();
+enum StatisticsStatus { loading, initialized }
+
+@CopyWith()
+class StatisticsState extends Equatable {
+  const StatisticsState(
+      {this.status = StatisticsStatus.loading,
+      this.daysOfTheWeekIso = const [],
+      this.weeklyUsers = const [],
+      this.weeklySales = const []});
+
+  final StatisticsStatus status;
+
+  final List<String> daysOfTheWeekIso;
+
+  final List<Series<DailyUsers, String>> weeklyUsers;
+  final List<Series<DailySales, String>> weeklySales;
 
   @override
-  List<Object> get props => [];
-}
-
-class StatisticsInitial extends StatisticsState {}
-
-class UsersPerDayRetrieved extends StatisticsState {
-  final List<Series<DailyUsers, String>> series;
-
-  UsersPerDayRetrieved(this.series);
+  List<Object> get props =>
+      [status, daysOfTheWeekIso, weeklyUsers, weeklySales];
 }
