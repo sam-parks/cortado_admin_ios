@@ -22,7 +22,6 @@ class MessagesService {
     var conversationSnapshots = conversationsQuery.docs;
 
     for (var snapshot in conversationSnapshots) {
-      print(snapshot.id);
       List<Message> conversation = await getConversation(snapshot.id);
       yield conversation;
     }

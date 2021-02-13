@@ -1,9 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cortado_admin_ios/src/bloc/statistics/statistics_bloc.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
-import 'package:cortado_admin_ios/src/ui/widgets/charts/daily_redemptions_bar_chart.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/latte_loader.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ManageUserPage extends StatefulWidget {
   ManageUserPage({Key key, this.coffeeShop}) : super(key: key);
@@ -49,17 +51,7 @@ class _ManageUserPageState extends State<ManageUserPage> {
                     ),
                   ),
                 ),
-                Container(
-                  width: SizeConfig.screenWidth,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _customersPerHourWidget(),
-                      _customerTypeWidget()
-                    ],
-                  ),
-                ),
-                _customerProfilesWidget()
+                _WeeklyUsersWidget()
               ],
             ),
           ),
@@ -67,43 +59,50 @@ class _ManageUserPageState extends State<ManageUserPage> {
       ),
     );
   }
+}
 
-  _customersPerHourWidget() {
-    return Expanded(
-      child: DashboardCard(
-        innerHorizontalPadding: 10,
-        title: "Customers Per Hour",
-        content: Container(
-            alignment: Alignment.bottomCenter,
-            height: 300,
-            width: 300,
-            child: PurchasedCoffeesVerticalBarLabelChart.withSampleData()),
-      ),
-    );
-  }
+class _WeeklyUsersWidget extends StatelessWidget {
+  const _WeeklyUsersWidget({Key key}) : super(key: key);
 
-  _customerTypeWidget() {
-    return Expanded(
-      child: DashboardCard(
-        innerHorizontalPadding: 10,
-        title: "Customer Types",
-        content: Container(
-            alignment: Alignment.bottomCenter,
-            height: 300,
-            width: 300,
-            child: PurchasedCoffeesVerticalBarLabelChart.withSampleData()),
-      ),
-    );
-  }
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<StatisticsBloc, StatisticsState>(
+        builder: (context, state) {
+      if (state.status == StatisticsStatus.loading)
+        return Center(child: LatteLoader());
 
-  _customerProfilesWidget() {
-    return DashboardCard(
-        innerColor: Colors.transparent,
-        width: SizeConfig.screenWidth,
-        title: "Customer Profiles (past month)",
-        content: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            alignment: Alignment.bottomCenter,
-            child: Container()));
+      return DashboardCard(
+          innerColor: Colors.transparent,
+          width: SizeConfig.screenWidth,
+          title: "Customers this week",
+          content: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              alignment: Alignment.bottomCenter,
+              child: GridView.count(
+                  childAspectRatio: 3.0,
+                  crossAxisCount: 3,
+                  children: List.generate(
+                      state.weeklyUserEmails.length,
+                      (index) => Center(
+                            child: Material(
+                              borderRadius: BorderRadius.circular(8),
+                              shadowColor: AppColors.cream,
+                              elevation: 3,
+                              child: ListTile(
+                                leading: Image.asset(
+                                  'images/coffee_bean.png',
+                                  width: 25.0,
+                                  height: 25.0,
+                                  color: AppColors.dark,
+                                ),
+                                title: AutoSizeText(
+                                  state.weeklyUserEmails[index],
+                                  maxLines: 1,
+                                  style: TextStyles.kDefaultCaramelTextStyle,
+                                ),
+                              ),
+                            ),
+                          )))));
+    });
   }
 }

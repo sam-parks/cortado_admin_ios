@@ -46,7 +46,8 @@ class _MenuItemPageState extends State<MenuItemPage> {
   void initState() {
     super.initState();
     _itemBloc = BlocProvider.of<ItemBloc>(context);
-    regularSizesTuples = _initSizesAndDrinkInfo();
+    if (widget.categoryType == CategoryType.drink)
+      regularSizesTuples = _initSizesAndDrinkInfo();
   }
 
   _initSizesAndDrinkInfo() {
@@ -778,7 +779,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
         childAspectRatio: 1 / 4,
         children: List.generate(addIns.length, (index) {
           Category addInCategory = addIns[index];
-          print(drink.availableAddIns);
+
           return Row(
             children: [
               Theme(

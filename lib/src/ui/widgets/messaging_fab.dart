@@ -263,7 +263,6 @@ class _FancyFabState extends State<FancyFab>
   }
 
   onSendMessage(String content, CoffeeShop coffeeShop) {
-    print(content);
     if (content.trim() != '') {
       textEditingController.clear();
 

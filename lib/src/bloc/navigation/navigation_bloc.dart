@@ -80,7 +80,6 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
   void initDynamicLinks() async {
     FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      print(dynamicLink.link);
       final Uri deepLink = dynamicLink?.link;
 
       if (deepLink != null) {}

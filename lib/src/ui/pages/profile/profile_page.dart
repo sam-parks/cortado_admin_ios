@@ -151,165 +151,167 @@ class _ProfilePageState extends State<ProfilePage> {
         title: "Shop/Café Details",
         innerColor: AppColors.light,
         height: SizeConfig.screenHeight * 1.05,
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              width: SizeConfig.screenWidth * .35,
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Text("Café Banner",
-                      style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          color: AppColors.dark,
-                          fontFamily: kFontFamilyNormal,
-                          fontSize: 24)),
-                  Tooltip(
-                    message: 'Upload File',
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.file_upload,
-                        color: AppColors.dark,
-                      ),
-                      onPressed: () {
-                        _startFilePicker();
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              alignment: Alignment.centerLeft,
-              width: SizeConfig.screenWidth * .25,
-              child: _pictureBytes == null
-                  ? Image.asset(
-                      "images/coffee-shop-default.jpg",
-                      fit: BoxFit.fitWidth,
-                    )
-                  : Image.memory(
-                      _pictureBytes,
-                      fit: BoxFit.fitWidth,
-                    ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("Café Name",
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: AppColors.dark,
-                      fontFamily: kFontFamilyNormal,
-                      fontSize: 24)),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                coffeeShopState.coffeeShop.name,
-                style: TextStyle(
-                    color: AppColors.caramel,
-                    fontFamily: kFontFamilyNormal,
-                    fontSize: 18),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("Café Address",
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: AppColors.dark,
-                      fontFamily: kFontFamilyNormal,
-                      fontSize: 24)),
-            ),
-            Padding(
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                width: SizeConfig.screenWidth * .35,
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      coffeeShopState.coffeeShop.address['street'] + ',',
-                      style: TextStyle(
-                          color: AppColors.caramel,
-                          fontFamily: kFontFamilyNormal,
-                          fontSize: 18),
-                    ),
-                    Text(
-                      coffeeShopState.coffeeShop.address['city'] +
-                          ',' +
-                          coffeeShopState.coffeeShop.address['state'] +
-                          " " +
-                          coffeeShopState.coffeeShop.address['zipcode'],
-                      style: TextStyle(
-                          color: AppColors.caramel,
-                          fontFamily: kFontFamilyNormal,
-                          fontSize: 18),
+                    Text("Café Banner",
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: AppColors.dark,
+                            fontFamily: kFontFamilyNormal,
+                            fontSize: 24)),
+                    Tooltip(
+                      message: 'Upload File',
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.file_upload,
+                          color: AppColors.dark,
+                        ),
+                        onPressed: () {
+                          _startFilePicker();
+                        },
+                      ),
                     ),
                   ],
-                )),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("Café Description",
+                ),
+              ),
+              Container(
+                alignment: Alignment.centerLeft,
+                width: SizeConfig.screenWidth * .25,
+                child: _pictureBytes == null
+                    ? Image.asset(
+                        "images/coffee-shop-default.jpg",
+                        fit: BoxFit.fitWidth,
+                      )
+                    : Image.memory(
+                        _pictureBytes,
+                        fit: BoxFit.fitWidth,
+                      ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Café Name",
+                    style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: AppColors.dark,
+                        fontFamily: kFontFamilyNormal,
+                        fontSize: 24)),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  coffeeShopState.coffeeShop.name,
                   style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: AppColors.dark,
+                      color: AppColors.caramel,
                       fontFamily: kFontFamilyNormal,
-                      fontSize: 24)),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                coffeeShopState.coffeeShop.description,
-                style: TextStyle(
-                    color: AppColors.caramel,
-                    fontFamily: kFontFamilyNormal,
-                    fontSize: 18),
+                      fontSize: 18),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Text("Café Hours",
-                      style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          color: AppColors.dark,
-                          fontFamily: kFontFamilyNormal,
-                          fontSize: 24)),
-                  IconButton(
-                    icon: Icon(Icons.edit, color: AppColors.dark),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(kHoursRoute);
-                    },
-                  )
-                ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Café Address",
+                    style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: AppColors.dark,
+                        fontFamily: kFontFamilyNormal,
+                        fontSize: 24)),
               ),
-            ),
-            Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: _readableHours.map((entry) {
-                  return Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          textFromDayString(entry.item1) + ': ',
-                          style: TextStyle(
-                              color: AppColors.dark,
-                              fontFamily: kFontFamilyNormal,
-                              fontSize: 16),
-                        ),
-                        Text(
-                          entry.item2.item1 + '-' + entry.item2.item2,
-                          style: TextStyle(
-                              color: AppColors.caramel,
-                              fontFamily: kFontFamilyNormal,
-                              fontSize: 16),
-                        )
-                      ],
-                    ),
-                  );
-                }).toList())
-          ],
+              Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        coffeeShopState.coffeeShop.address['street'] + ',',
+                        style: TextStyle(
+                            color: AppColors.caramel,
+                            fontFamily: kFontFamilyNormal,
+                            fontSize: 18),
+                      ),
+                      Text(
+                        coffeeShopState.coffeeShop.address['city'] +
+                            ',' +
+                            coffeeShopState.coffeeShop.address['state'] +
+                            " " +
+                            coffeeShopState.coffeeShop.address['zipcode'],
+                        style: TextStyle(
+                            color: AppColors.caramel,
+                            fontFamily: kFontFamilyNormal,
+                            fontSize: 18),
+                      ),
+                    ],
+                  )),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Café Description",
+                    style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: AppColors.dark,
+                        fontFamily: kFontFamilyNormal,
+                        fontSize: 24)),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  coffeeShopState.coffeeShop.description,
+                  style: TextStyle(
+                      color: AppColors.caramel,
+                      fontFamily: kFontFamilyNormal,
+                      fontSize: 18),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text("Café Hours",
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: AppColors.dark,
+                            fontFamily: kFontFamilyNormal,
+                            fontSize: 24)),
+                    IconButton(
+                      icon: Icon(Icons.edit, color: AppColors.dark),
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(kHoursRoute);
+                      },
+                    )
+                  ],
+                ),
+              ),
+              Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _readableHours.map((entry) {
+                    return Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            textFromDayString(entry.item1) + ': ',
+                            style: TextStyle(
+                                color: AppColors.dark,
+                                fontFamily: kFontFamilyNormal,
+                                fontSize: 16),
+                          ),
+                          Text(
+                            entry.item2.item1 + '-' + entry.item2.item2,
+                            style: TextStyle(
+                                color: AppColors.caramel,
+                                fontFamily: kFontFamilyNormal,
+                                fontSize: 16),
+                          )
+                        ],
+                      ),
+                    );
+                  }).toList())
+            ],
+          ),
         ),
       ),
     );

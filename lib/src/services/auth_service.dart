@@ -114,7 +114,6 @@ class AuthService {
       await authResult.user.sendEmailVerification();
     } catch (e) {
       print("An error occured while trying to send email verification");
-      print(e.message);
     }
     return authResult.user;
   }

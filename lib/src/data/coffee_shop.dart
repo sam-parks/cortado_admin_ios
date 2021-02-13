@@ -148,7 +148,7 @@ class CoffeeShop {
         this.discounts = data['discounts'] ?? [],
         this.address = data['address'],
         this.needsVerificationUpdate = data['needsVerificationUpdate'] ?? true,
-        this.blackCoffees = List<String>.from(data['blackCoffees']),
+        this.blackCoffees = List<String>.from(data['blackCoffees'] ?? []),
         this.createdAt = data['createdAt'],
         this.updatedAt = data['updatedAt'],
         this.description = data['description'],
@@ -156,7 +156,7 @@ class CoffeeShop {
         this.hours = data['hours'],
         this.phone = data['phone'],
         this.picture = data['picture'],
-        this.premiumCoffees = List<String>.from(data['premiumCoffees']);
+        this.premiumCoffees = List<String>.from(data['premiumCoffees'] ?? []);
 
   Map<String, dynamic> toJson() {
     return {

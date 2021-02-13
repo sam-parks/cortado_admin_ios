@@ -24,7 +24,6 @@ class _HoursPageState extends State<HoursPage> {
 
   @override
   void didChangeDependencies() {
-    print('did change');
     CoffeeShop coffeeShop =
         BlocProvider.of<CoffeeShopBloc>(context).state.coffeeShop;
     if (readableHours == null)
@@ -119,7 +118,6 @@ class _HoursPageState extends State<HoursPage> {
                                   Tuple2(
                                       readableHours[index].item2.item1, value));
                             });
-                            print(readableHours[index]);
                           },
                           style: TextStyles.kDefaultCreamTextStyle),
                     ),

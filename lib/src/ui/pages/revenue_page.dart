@@ -1,9 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cortado_admin_ios/src/bloc/statistics/statistics_bloc.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/charts/daily_sales_bar_chart.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/latte_loader.dart';
 import 'package:flutter/material.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RevenuePage extends StatefulWidget {
   RevenuePage({Key key}) : super(key: key);
@@ -53,10 +55,10 @@ class _RevenuePageState extends State<RevenuePage> {
                   width: SizeConfig.screenWidth,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [_salesWidget()],
+                    children: [_DailySalesWidget()],
                   ),
                 ),
-                _monthlySalesWidget()
+                // _monthlySalesWidget()
               ],
             ),
           ),
@@ -64,54 +66,28 @@ class _RevenuePageState extends State<RevenuePage> {
       ),
     );
   }
+}
 
-  _salesWidget() {
-    return Expanded(
-        child: DashboardCard(
-      width: SizeConfig.screenWidth,
-      innerHorizontalPadding: 10,
-      title: "Weekly Sales",
-      content: Container(
-        alignment: Alignment.bottomCenter,
-        child: DailySalesChart(_createDailySalesData()),
-      ),
-    ));
-  }
+class _DailySalesWidget extends StatelessWidget {
+  const _DailySalesWidget({Key key}) : super(key: key);
 
-  _createDailySalesData() {
-    /// Create one series with sample hard coded data.
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<StatisticsBloc, StatisticsState>(
+        builder: (context, state) {
+      if (state.status == StatisticsStatus.loading)
+        return Center(child: LatteLoader());
 
-    final data = [
-      DailySales('Monday', 5),
-      DailySales('Tuesday', 25),
-      DailySales('Wednesday', 100),
-      DailySales('Thursday', 75),
-      DailySales('Friday', 75),
-      DailySales('Saturday', 75),
-      DailySales('Sunday', 75),
-    ];
-
-    return [
-      charts.Series<DailySales, String>(
-          id: 'dailySales',
-          domainFn: (DailySales sales, _) => sales.day,
-          measureFn: (DailySales users, _) => users.amount,
-          data: data,
-          fillColorFn: (_, __) => charts.Color.fromHex(code: '#471D00'),
-          // Set a label accessor to control the text of the bar label.
-          labelAccessorFn: (DailySales sales, _) => sales.amount.toString())
-    ];
-  }
-
-  _monthlySalesWidget() {
-    return DashboardCard(
-        innerHorizontalPadding: 10,
-        innerColor: AppColors.light,
+      return Expanded(
+          child: DashboardCard(
         width: SizeConfig.screenWidth,
-        title: "Monthly Sales",
+        innerHorizontalPadding: 10,
+        title: "Weekly Sales",
         content: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10),
           alignment: Alignment.bottomCenter,
-        ));
+          child: DailySalesChart(state.weeklySales),
+        ),
+      ));
+    });
   }
 }
