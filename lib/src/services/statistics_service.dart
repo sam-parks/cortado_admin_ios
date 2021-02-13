@@ -8,7 +8,8 @@ class StatisticsService {
   final FirebaseFirestore _firestore;
   StatisticsService(this._firestore);
 
-  CollectionReference get _metricsCollection => _firestore.collection("orders");
+  CollectionReference get _metricsCollection =>
+      _firestore.collection("metrics");
 
   Future<List<DailyMetrics>> getDailyMetrics(
       String coffeeShopId, List<String> days) async {
@@ -22,7 +23,12 @@ class StatisticsService {
       if (snap.exists)
         dailyMetrics.add(DailyMetrics.fromData(snap.data()));
       else
-        dailyMetrics.add(DailyMetrics.empty);
+        dailyMetrics.add(DailyMetrics(
+            dailySales: 0.00,
+            dailyTips: 0.00,
+            dailyUserRefs: [],
+            dailyUsers: [],
+            updatedAt: DateTime.parse(day)));
     }
 
     return dailyMetrics;

@@ -92,7 +92,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       );
                       break;
                     case CoffeeShopStatus.initialized:
-                      print(coffeeShopState.coffeeShop.cortadoVerified);
                       if (coffeeShopState.coffeeShop.cortadoVerified)
                         return SideMenu(
                           authState.user,

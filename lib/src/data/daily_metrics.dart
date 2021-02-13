@@ -1,19 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class DailyMetrics {
   final double dailySales;
   final double dailyTips;
   final List<dynamic> dailyUsers;
+  final List<dynamic> dailyUserRefs;
   final DateTime updatedAt;
 
   const DailyMetrics(
-      {this.dailySales, this.dailyTips, this.dailyUsers, this.updatedAt});
-
-  static const empty = const DailyMetrics(
-      dailySales: 0.00, dailyTips: 0.00, dailyUsers: [], updatedAt: null);
+      {this.dailySales,
+      this.dailyTips,
+      this.dailyUsers,
+      this.updatedAt,
+      this.dailyUserRefs});
 
   DailyMetrics.fromData(
     Map<String, dynamic> data,
   )   : dailySales = data['dailySales'],
-        dailyTips = data['dailyTips'],
+        dailyTips = (data['dailyTips'] as int).toDouble(),
         dailyUsers = data['dailyUsers'],
-        updatedAt = data["updatedAt"];
+        dailyUserRefs = data['dailyUserRefs'],
+        updatedAt = (data["updatedAt"] as Timestamp).toDate();
 }

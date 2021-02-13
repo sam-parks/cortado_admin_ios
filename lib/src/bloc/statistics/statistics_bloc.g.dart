@@ -12,12 +12,14 @@ extension StatisticsStateCopyWith on StatisticsState {
     StatisticsStatus status,
     List<Series<DailySales, String>> weeklySales,
     List<Series<DailyUsers, String>> weeklyUsers,
+    List<String> weeklyUserEmails,
   }) {
     return StatisticsState(
       daysOfTheWeekIso: daysOfTheWeekIso ?? this.daysOfTheWeekIso,
       status: status ?? this.status,
       weeklySales: weeklySales ?? this.weeklySales,
       weeklyUsers: weeklyUsers ?? this.weeklyUsers,
+      weeklyUserEmails:weeklyUserEmails
     );
   }
 }

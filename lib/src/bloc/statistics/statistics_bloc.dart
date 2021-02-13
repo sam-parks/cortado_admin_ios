@@ -14,6 +14,7 @@ import 'package:cortado_admin_ios/src/utils/date_time_util.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 part 'statistics_event.dart';
 part 'statistics_state.dart';
@@ -51,25 +52,31 @@ class StatisticsBloc extends Bloc<StatisticsEvent, StatisticsState> {
 
     for (int i = 0; i < DateTime.daysPerWeek; i++) {
       daysOfTheWeek
-          .add(beginningOfWeek.add(Duration(days: i)).toIso8601String());
+          .add(beginningOfWeek.add(Duration(days: i)).toIso8601String() + 'Z');
     }
-
-    print(daysOfTheWeek);
 
     List<Series<DailySales, String>> weeklySales = [];
     List<Series<DailyUsers, String>> weeklyUsers = [];
+    List<String> weeklyUserEmails = [];
 
     List<DailyMetrics> dailyMetrics = await _statisticsService.getDailyMetrics(
-        event.coffeeShopRef.id, state.daysOfTheWeekIso);
+        event.coffeeShopRef.id, daysOfTheWeek);
 
     final weeklySalesData = dailyMetrics
-        .map((metric) =>
-            DailySales(metric.updatedAt.toString(), metric.dailySales))
+        .map((metric) => DailySales(
+            DateFormat('dd MMM').format(metric.updatedAt), metric.dailySales))
         .toList();
     final weeklyUsersData = dailyMetrics
-        .map((metric) =>
-            DailyUsers(metric.updatedAt.toString(), metric.dailyUsers.length))
+        .map((metric) => DailyUsers(
+            DateFormat('dd MMM').format(metric.updatedAt),
+            metric.dailyUsers.length))
         .toList();
+
+    dailyMetrics.forEach((metric) {
+      metric.dailyUsers.forEach((email) {
+        if (!weeklyUserEmails.contains(email)) weeklyUserEmails.add(email);
+      });
+    });
 
     weeklySales = [
       charts.Series<DailySales, String>(
@@ -98,6 +105,7 @@ class StatisticsBloc extends Bloc<StatisticsEvent, StatisticsState> {
     return state.copyWith(
         status: StatisticsStatus.initialized,
         weeklySales: weeklySales,
+        weeklyUserEmails: weeklyUserEmails,
         weeklyUsers: weeklyUsers);
   }
 
