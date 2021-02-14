@@ -1,10 +1,8 @@
 import 'package:cortado_admin_ios/src/bloc/navigation/navigation_bloc.dart';
-import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/services/navigation_service.dart';
 import 'package:cortado_admin_ios/src/ui/router.dart';
 import 'package:cortado_admin_ios/src/ui/pages/home_page.dart';
-import 'package:flavor/flavor.dart';
 import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart' as fluro;
 import 'package:flutter/services.dart';
@@ -23,7 +21,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     Routes.configureRoutes(router);
     super.initState();
-    registerLocatorItems(Flavor.instance.environment == Environment.production);
+   
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     SystemChrome.setPreferredOrientations([

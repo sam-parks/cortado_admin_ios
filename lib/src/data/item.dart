@@ -1,4 +1,4 @@
-import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
+import 'package:cortado_admin_ios/src/services/menu_service.dart';
 
 abstract class Item {
   String id;
@@ -41,7 +41,7 @@ class Drink extends Item {
     return {
       'id': id,
       'name': name,
-      'sizePriceMap': convertSizePriceMapToJson(sizePriceMap) ?? [],
+      'sizePriceMap': sizePriceMap ?? [],
       'description': description,
       'size': size,
       'availableAddIns': availableAddIns,
@@ -150,11 +150,6 @@ class AddIn extends Item {
   toJson() {
     return {'id': id, 'name': name, 'price': price, 'description': description};
   }
-}
-
-convertSizePriceMapToJson(Map<dynamic, dynamic> sizePriceMap) {
-  return sizePriceMap.map(
-      (key, value) => MapEntry((key as SizeInOunces).sizeToString(), value));
 }
 
 enum SizeInOunces {

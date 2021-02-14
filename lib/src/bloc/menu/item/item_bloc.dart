@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
+import 'package:cortado_admin_ios/src/data/menu.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:equatable/equatable.dart';
 
@@ -17,45 +17,43 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
     ItemEvent event,
   ) async* {
     if (event is AddItem) {
-      CoffeeShop updatedCoffeeShop = addItemToCoffeeShop(
-          event.type, event.categoryId, event.item, event.coffeeShop);
+      Menu updatedMenu = addItemToCoffeeShop(
+          event.type, event.categoryId, event.item, event.menu);
 
-      yield ItemAdded(updatedCoffeeShop);
+      yield ItemAdded(updatedMenu, event.coffeeShopId);
     }
     if (event is RemoveItem) {
-      CoffeeShop updatedCoffeeShop = removeItemFromCoffeeShop(
-          event.type, event.categoryId, event.item, event.coffeeShop);
-      yield ItemRemoved(updatedCoffeeShop);
+      Menu updatedMenu = removeItemFromCoffeeShop(
+          event.type, event.categoryId, event.item, event.menu);
+      yield ItemRemoved(updatedMenu, event.coffeeShopId);
     }
 
     if (event is UpdateItem) {
-      CoffeeShop updatedCoffeeShop = updateItemForCoffeeShop(
-          event.type, event.categoryId, event.item, event.coffeeShop);
-      yield ItemUpdated(updatedCoffeeShop);
+      Menu updatedMenu = updateItemForCoffeeShop(
+          event.type, event.categoryId, event.item, event.menu);
+      yield ItemUpdated(updatedMenu, event.coffeeShopId);
     }
   }
 
-  CoffeeShop addItemToCoffeeShop(CategoryType categoryType, String categoryId,
-      Item itemToAdd, CoffeeShop coffeeShop) {
+  Menu addItemToCoffeeShop(
+      CategoryType categoryType, String categoryId, Item itemToAdd, Menu menu) {
     switch (categoryType) {
       case CategoryType.drink:
-        coffeeShop.drinks.forEach((category) {
-          coffeeShop.drinks.forEach((category) {
-            if (category.id == categoryId) {
-              category.items.add(itemToAdd);
-            }
-          });
+        menu.drinkTemplates.forEach((category) {
+          if (category.id == categoryId) {
+            category.items.add(itemToAdd);
+          }
         });
         break;
       case CategoryType.addIn:
-        coffeeShop.addIns.forEach((category) {
+        menu.addIns.forEach((category) {
           if (category.id == categoryId) {
             category.items.add(itemToAdd);
           }
         });
         break;
       case CategoryType.food:
-        coffeeShop.food.forEach((category) {
+        menu.foodTemplates.forEach((category) {
           if (category.id == categoryId) {
             category.items.add(itemToAdd);
           }
@@ -63,28 +61,28 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
         break;
     }
 
-    return coffeeShop.copy(coffeeShop);
+    return menu.copy(menu);
   }
 
-  CoffeeShop removeItemFromCoffeeShop(CategoryType categoryType,
-      String categoryId, Item itemToRemove, CoffeeShop coffeeShop) {
+  Menu removeItemFromCoffeeShop(CategoryType categoryType, String categoryId,
+      Item itemToRemove, Menu menu) {
     switch (categoryType) {
       case CategoryType.addIn:
-        coffeeShop.addIns.forEach((category) {
+        menu.addIns.forEach((category) {
           if (category.id == categoryId) {
             category.items.removeWhere((item) => item.id == itemToRemove.id);
           }
         });
         break;
       case CategoryType.drink:
-        coffeeShop.drinks.forEach((category) {
+        menu.drinkTemplates.forEach((category) {
           if (category.id == categoryId) {
             category.items.removeWhere((item) => item.id == itemToRemove.id);
           }
         });
         break;
       case CategoryType.food:
-        coffeeShop.food.forEach((category) {
+        menu.foodTemplates.forEach((category) {
           if (category.id == categoryId) {
             category.items.removeWhere((item) => item.id == itemToRemove.id);
           }
@@ -92,14 +90,14 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
         break;
     }
 
-    return coffeeShop.copy(coffeeShop);
+    return menu.copy(menu);
   }
 
-  CoffeeShop updateItemForCoffeeShop(CategoryType categoryType,
-      String categoryId, Item updatedItem, CoffeeShop coffeeShop) {
+  Menu updateItemForCoffeeShop(CategoryType categoryType, String categoryId,
+      Item updatedItem, Menu menu) {
     switch (categoryType) {
       case CategoryType.drink:
-        coffeeShop.drinks.forEach((category) {
+        menu.drinkTemplates.forEach((category) {
           if (category.id == categoryId) {
             category.items.removeWhere((item) => item.id == updatedItem.id);
             category.items.add(updatedItem);
@@ -107,7 +105,7 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
         });
         break;
       case CategoryType.addIn:
-        coffeeShop.addIns.forEach((category) {
+        menu.addIns.forEach((category) {
           if (category.id == categoryId) {
             category.items.removeWhere((item) => item.id == updatedItem.id);
             category.items.add(updatedItem);
@@ -115,7 +113,7 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
         });
         break;
       case CategoryType.food:
-        coffeeShop.food.forEach((category) {
+        menu.foodTemplates.forEach((category) {
           if (category.id == categoryId) {
             category.items.removeWhere((item) => item.id == updatedItem.id);
             category.items.add(updatedItem);
@@ -124,6 +122,6 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
         break;
     }
 
-    return coffeeShop.copy(coffeeShop);
+    return menu.copy(menu);
   }
 }

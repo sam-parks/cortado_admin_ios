@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cortado_admin_ios/src/services/auth_service.dart';
 import 'package:cortado_admin_ios/src/services/barista_service.dart';
+import 'package:cortado_admin_ios/src/services/menu_service.dart';
 import 'package:cortado_admin_ios/src/services/navigation_service.dart';
 import 'package:cortado_admin_ios/src/services/notification_service.dart';
 import 'package:cortado_admin_ios/src/services/statistics_service.dart';
@@ -17,7 +18,6 @@ registerLocatorItems(bool live) {
   var firestore = FirebaseFirestore.instance;
   var firebaseAuth = FirebaseAuth.instance;
   locator.registerSingleton(firestore);
-  locator.registerLazySingleton(() => true);
   locator.registerLazySingleton(() => NavigationService());
   locator.registerLazySingleton(() => NotificationService());
   locator.registerLazySingleton(() => OrderService(firestore));
@@ -26,5 +26,6 @@ registerLocatorItems(bool live) {
   locator.registerLazySingleton(() => AuthService(firebaseAuth));
   locator.registerLazySingleton(() => StripeService(live));
   locator.registerLazySingleton(() => BaristaService(firestore));
+  locator.registerLazySingleton(() => MenuService(firestore));
   locator.registerLazySingleton(() => StatisticsService(firestore));
 }

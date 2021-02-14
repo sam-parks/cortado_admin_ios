@@ -11,13 +11,15 @@ class AddItem extends ItemEvent {
   final CategoryType type;
   final String categoryId;
   final Item item;
-  final CoffeeShop coffeeShop;
+  final Menu menu;
+  final String coffeeShopId;
 
   AddItem(
     this.type,
     this.categoryId,
     this.item,
-    this.coffeeShop,
+    this.menu,
+    this.coffeeShopId,
   );
 }
 
@@ -25,16 +27,20 @@ class UpdateItem extends ItemEvent {
   final CategoryType type;
   final String categoryId;
   final Item item;
-  final CoffeeShop coffeeShop;
+  final Menu menu;
+  final String coffeeShopId;
 
-  UpdateItem(this.type, this.categoryId, this.item, this.coffeeShop);
+  UpdateItem(
+      this.type, this.categoryId, this.item, this.menu, this.coffeeShopId);
 }
 
 class RemoveItem extends ItemEvent {
   final CategoryType type;
   final String categoryId;
   final Item item;
-  final CoffeeShop coffeeShop;
+  final Menu menu;
+  final String coffeeShopId;
 
-  RemoveItem(this.type, this.categoryId, this.item, this.coffeeShop);
+  RemoveItem(
+      this.type, this.categoryId, this.item, this.menu, this.coffeeShopId);
 }

@@ -1,7 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/bloc/auth/auth_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/data/cortado_user.dart';
+import 'package:cortado_admin_ios/src/data/menu.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cortado_admin_ios/src/constants.dart';
 import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
@@ -208,14 +210,13 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: close_sinks
-    AuthBloc authBloc = BlocProvider.of<AuthBloc>(context);
-    CoffeeShopState coffeeShopState =
-        BlocProvider.of<CoffeeShopBloc>(context).state;
+    Menu menu = context.watch<MenuBloc>().state.menu;
+    CoffeeShopState coffeeShopState = context.watch<CoffeeShopBloc>().state;
+    AuthState authState = context.watch<AuthBloc>().state;
+    UserType userType = authState.user.userType;
 
-    _drinksAdded = coffeeShopState.coffeeShop.drinks.isNotEmpty;
-    _foodAdded = coffeeShopState.coffeeShop.food.isNotEmpty;
-    UserType userType = BlocProvider.of<AuthBloc>(context).state.user.userType;
+    _drinksAdded = menu.drinkTemplates.isNotEmpty;
+    _foodAdded = menu.foodTemplates.isNotEmpty;
     _payoutInfoComplete =
         !coffeeShopState.coffeeShop.needsVerificationUpdate ?? false;
     return Scaffold(
@@ -239,7 +240,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             AutoSizeText(
-                              "Hello " + authBloc.state.user.displayName,
+                              "Hello " + authState.user.displayName,
                               maxLines: 1,
                               style: TextStyles.kWelcomeTitleTextStyle,
                             ),

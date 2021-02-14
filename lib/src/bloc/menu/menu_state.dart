@@ -1,20 +1,18 @@
-import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
+import 'package:cortado_admin_ios/src/data/menu.dart';
 import 'package:flutter/material.dart';
 
 enum MenuStatus { initialized, loading, updated }
 
 @immutable
 class MenuState {
-  const MenuState._({this.status, this.coffeeShop = CoffeeShop.empty});
+  const MenuState._({this.status, this.menu = Menu.empty});
 
   const MenuState.loading() : this._(status: MenuStatus.loading);
 
-  const MenuState.initialized(coffeeShop)
-      : this._(status: MenuStatus.initialized);
+  const MenuState.initialized(menu)
+      : this._(status: MenuStatus.initialized, menu: menu);
 
-  const MenuState.updated(coffeeShop)
-      : this._(status: MenuStatus.updated, coffeeShop: coffeeShop);
+  final Menu menu;
 
-  final CoffeeShop coffeeShop;
   final MenuStatus status;
 }

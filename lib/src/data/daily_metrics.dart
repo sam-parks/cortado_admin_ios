@@ -16,7 +16,9 @@ class DailyMetrics {
 
   DailyMetrics.fromData(
     Map<String, dynamic> data,
-  )   : dailySales = data['dailySales'],
+  )   : dailySales = data['dailySales'] is int
+            ? (data['dailySales'] as int).toDouble()
+            : data['dailySales'],
         dailyTips = (data['dailyTips'] as int).toDouble(),
         dailyUsers = data['dailyUsers'],
         dailyUserRefs = data['dailyUserRefs'],

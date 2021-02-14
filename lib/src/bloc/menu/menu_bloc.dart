@@ -2,53 +2,132 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
-import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
-import 'package:cortado_admin_ios/src/bloc/menu/item/item_bloc.dart';
+import 'package:cortado_admin_ios/src/data/category.dart';
+import 'package:cortado_admin_ios/src/data/menu.dart';
+
 import 'package:cortado_admin_ios/src/locator.dart';
-import 'package:cortado_admin_ios/src/services/coffee_shop_service.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/menu_event.dart';
-import 'package:flutter/material.dart';
+import 'package:cortado_admin_ios/src/services/menu_service.dart';
+import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 
 class MenuBloc extends Bloc<MenuEvent, MenuState> {
-  MenuBloc({@required this.categoryBloc, @required this.itemBloc})
-      : super(MenuState.loading()) {
-    _categoryStateSubscription = categoryBloc.listen((categoryState) {
-      this.add(UpdateMenu(categoryBloc.state.coffeeShop));
+  MenuBloc() : super(MenuState.loading()) {
+    _menuSubscription = _menuService.items.listen((categoryTuple) {
+      switch (categoryTuple.item1) {
+        case CategoryType.drink:
+          List<Category> drinkTemplates =
+              _updateCategories(CategoryType.drink, categoryTuple.item2);
+
+          Menu updatedMenu =
+              state.menu.copyWith(drinkTemplates: drinkTemplates);
+          this.add(UpdateMenu(updatedMenu));
+          break;
+        case CategoryType.food:
+          List<Category> foodTemplates =
+              _updateCategories(CategoryType.food, categoryTuple.item2);
+
+          Menu updatedMenu = state.menu.copyWith(foodTemplates: foodTemplates);
+          this.add(UpdateMenu(updatedMenu));
+          break;
+        case CategoryType.addIn:
+          List<Category> addIns =
+              _updateCategories(CategoryType.addIn, categoryTuple.item2);
+
+          Menu updatedMenu = state.menu.copyWith(addIns: addIns);
+          this.add(UpdateMenu(updatedMenu));
+          break;
+      }
     });
 
-    _itemStateSubscription = itemBloc.listen((itemState) {
-   
-      this.add(UpdateMenu(itemBloc.state.coffeeShop));
+    _discountSubscription = _menuService.discounts.listen((discounts) {
+      Menu updatedMenu = state.menu.copyWith(discounts: discounts);
+      this.add(UpdateMenu(updatedMenu));
     });
   }
 
-  final CategoryBloc categoryBloc;
-  StreamSubscription _categoryStateSubscription;
+  StreamSubscription _menuSubscription;
 
-  final ItemBloc itemBloc;
-  StreamSubscription _itemStateSubscription;
+  StreamSubscription _discountSubscription;
 
-  CoffeeShopService get _coffeeShopService => locator.get();
+  MenuService get _menuService => locator.get();
 
   @override
   Stream<MenuState> mapEventToState(
     MenuEvent event,
   ) async* {
     if (event is SetMenu) {
-      yield MenuState.initialized(event.coffeeShop);
+      yield MenuState.loading();
+      String coffeeShopId = event.coffeeShop.id;
+      _menuService.getFoodCategories(coffeeShopId);
+      _menuService.getDrinkCategories(coffeeShopId);
+      _menuService.getAddInCategories(coffeeShopId);
+      _menuService.getDiscounts(coffeeShopId);
     }
 
     if (event is UpdateMenu) {
-      yield MenuState.loading();
-      _coffeeShopService.updateCoffeeShop(event.coffeeShop);
-      yield MenuState.updated(event.coffeeShop);
+      yield MenuState.initialized(event.menu);
+    }
+  }
+
+  // ignore: missing_return
+  List<Category> _updateCategories(CategoryType type, Category category) {
+    Menu menu = state.menu;
+    List<String> categoryIds = [];
+    List<Category> updatedCategories;
+
+    switch (type) {
+      case CategoryType.drink:
+        if (menu.drinkTemplates.isEmpty) {
+          updatedCategories = List.from(menu.drinkTemplates)..add(category);
+          return updatedCategories;
+        }
+        categoryIds = menu.drinkTemplates.map((e) => e.id).toList();
+        if (categoryIds.contains(category.id)) {
+          updatedCategories = List.from(menu.addIns)
+            ..removeWhere((element) => element.id == category.id)
+            ..add(category);
+        } else {
+          updatedCategories = List.from(menu.drinkTemplates)..add(category);
+        }
+        return updatedCategories;
+        break;
+      case CategoryType.food:
+        if (menu.foodTemplates.isEmpty) {
+          updatedCategories = List.from(menu.foodTemplates)..add(category);
+          return updatedCategories;
+        }
+        categoryIds = menu.foodTemplates.map((e) => e.id).toList();
+        if (categoryIds.contains(category.id)) {
+          updatedCategories = List.from(menu.foodTemplates)
+            ..removeWhere((element) => element.id == category.id)
+            ..add(category);
+        } else {
+          updatedCategories = List.from(menu.foodTemplates)..add(category);
+        }
+        return updatedCategories;
+        break;
+      case CategoryType.addIn:
+        if (menu.addIns.isEmpty) {
+          updatedCategories = List.from(menu.addIns)..add(category);
+          return updatedCategories;
+        }
+        categoryIds = menu.addIns.map((e) => e.id).toList();
+        if (categoryIds.contains(category.id)) {
+          updatedCategories = List.from(menu.addIns)
+            ..removeWhere((element) => element.id == category.id)
+            ..add(category);
+        } else {
+          updatedCategories = List.from(menu.addIns)..add(category);
+        }
+        return updatedCategories;
+        break;
     }
   }
 
   @override
   Future<void> close() {
-    _categoryStateSubscription.cancel();
-    _itemStateSubscription.cancel();
+    _menuSubscription.cancel();
+    _discountSubscription.cancel();
     return super.close();
   }
 }

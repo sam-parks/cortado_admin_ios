@@ -10,24 +10,26 @@ abstract class CategoryEvent extends Equatable {
 class AddCategory extends CategoryEvent {
   final CategoryType type;
   final Category category;
-  final CoffeeShop coffeeShop;
+  final Menu menu;
+  final String coffeeShopId;
 
-  AddCategory(this.type, this.category, this.coffeeShop);
+  AddCategory(this.type, this.category, this.menu, this.coffeeShopId);
 }
 
 class UpdateCategory extends CategoryEvent {
   final CategoryType type;
   final Category category;
+  final Menu menu;
+  final String coffeeShopId;
 
-  final CoffeeShop coffeeShop;
-
-  UpdateCategory(this.type, this.category, this.coffeeShop);
+  UpdateCategory(this.type, this.category, this.menu, this.coffeeShopId);
 }
 
 class RemoveCategory extends CategoryEvent {
   final CategoryType type;
   final Category category;
-  final CoffeeShop coffeeShop;
+  final Menu menu;
+  final String coffeeShopId;
 
-  RemoveCategory(this.type, this.category, this.coffeeShop);
+  RemoveCategory(this.type, this.category, this.menu, this.coffeeShopId);
 }

@@ -11,6 +11,7 @@ import 'package:cortado_admin_ios/src/bloc/orders/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/statistics/statistics_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/user_management/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/verification/verification_bloc.dart';
+import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/ui/app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flavor/flavor.dart';
@@ -36,7 +37,7 @@ void setupApp() async {
           'https://43fa764612904e009d575309e9fc74e3@o347591.ingest.sentry.io/5368007');
 
   WidgetsFlutterBinding.ensureInitialized();
-
+  registerLocatorItems(Flavor.instance.environment == Environment.production);
   runZonedGuarded(
       () => runApp(
             MultiBlocProvider(
@@ -52,9 +53,7 @@ void setupApp() async {
               ],
               child: BlocProvider(
                 lazy: false,
-                create: (context) => MenuBloc(
-                    categoryBloc: BlocProvider.of<CategoryBloc>(context),
-                    itemBloc: BlocProvider.of<ItemBloc>(context)),
+                create: (context) => MenuBloc(),
                 child: BlocProvider(
                   lazy: false,
                   create: (context) => CoffeeShopBloc(

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
-import 'package:cortado_admin_ios/src/data/item.dart';
 
 class CoffeeShop {
   final String id;
@@ -17,9 +16,6 @@ class CoffeeShop {
   final String phone;
   final List<String> premiumCoffees;
   final DocumentReference reference;
-  final List<Category> addIns;
-  final List<Category> drinks;
-  final List<Category> food;
   final List<dynamic> sizes;
   final List<dynamic> discounts;
   final String customStripeAccountId;
@@ -40,10 +36,7 @@ class CoffeeShop {
     this.hoursDaily,
     this.disabledReason,
     this.premiumCoffees,
-    this.addIns,
     this.updatedAt,
-    this.drinks,
-    this.food,
     this.needsVerificationUpdate,
     this.customStripeAccountId,
     this.discounts,
@@ -88,10 +81,7 @@ class CoffeeShop {
         description: description ?? this.description,
         disabledReason: disabledReason ?? this.disabledReason,
         premiumCoffees: premiumCoffees ?? this.premiumCoffees,
-        addIns: addIns ?? this.addIns,
         updatedAt: updatedAt ?? this.updatedAt,
-        drinks: drinks ?? this.drinks,
-        food: food ?? this.food,
         needsVerificationUpdate:
             needsVerificationUpdate ?? this.needsVerificationUpdate,
         customStripeAccountId:
@@ -116,10 +106,7 @@ class CoffeeShop {
         description: coffeeShop.description ?? this.description,
         disabledReason: coffeeShop.disabledReason ?? this.disabledReason,
         premiumCoffees: coffeeShop.premiumCoffees ?? this.premiumCoffees,
-        addIns: coffeeShop.addIns ?? this.addIns,
         updatedAt: coffeeShop.updatedAt ?? this.updatedAt,
-        drinks: coffeeShop.drinks ?? this.drinks,
-        food: coffeeShop.food ?? this.food,
         needsVerificationUpdate:
             coffeeShop.needsVerificationUpdate ?? this.needsVerificationUpdate,
         customStripeAccountId:
@@ -138,11 +125,8 @@ class CoffeeShop {
   CoffeeShop.fromData(Map<dynamic, dynamic> data, {this.reference})
       : this.id = reference.id,
         this.name = data['name'],
-        this.drinks = drinksToObjects(data),
-        this.food = foodToObjects(data),
         this.sizes = data['sizes'],
         this.cortadoVerified = data['cortadoVerified'] ?? false,
-        this.addIns = addInsToCategory(data),
         this.hoursDaily = data['hoursDaily'],
         this.customStripeAccountId = data["customStripeAccountId"],
         this.discounts = data['discounts'] ?? [],
@@ -168,10 +152,7 @@ class CoffeeShop {
       'hoursDaily': hoursDaily,
       'sizes': sizes,
       'cortadoVerified': cortadoVerified,
-      'addIns': _addInsToJson(addIns),
       'needsVerificationUpdate': needsVerificationUpdate,
-      'drinks': _drinksToJson(drinks),
-      'food': _foodToJson(food),
       'customStripeAccountId': customStripeAccountId,
       'discounts': discounts,
       'blackCoffees': blackCoffees,
@@ -183,182 +164,6 @@ class CoffeeShop {
       'picture': picture
     };
   }
-
-  List<Map<dynamic, dynamic>> _addInsToJson(List<Category> addIns) {
-    List<Map<dynamic, dynamic>> addInMaps = [];
-    addIns.forEach((addInCat) {
-      addInCat.items = addInCat.items.cast<AddIn>();
-      addInMaps.add(addInCat.toJson());
-    });
-    return addInMaps;
-  }
-
-  List<Map<dynamic, dynamic>> _drinksToJson(List<Category> drinks) {
-    List<Map<dynamic, dynamic>> drinkMaps = [];
-
-    drinks.forEach((drinkCat) {
-      drinkCat.items = drinkCat.items.cast<Drink>();
-      drinkMaps.add(drinkCat.toJson());
-    });
-    return drinkMaps;
-  }
-
-  List<Map<dynamic, dynamic>> _foodToJson(List<Category> drinks) {
-    List<Map<dynamic, dynamic>> foodMaps = [];
-    drinks.forEach((foodCat) {
-      foodCat.items = foodCat.items.cast<Food>();
-      foodMaps.add(foodCat.toJson());
-    });
-    return foodMaps;
-  }
 }
 
-categoryFromData(
-    String id, List<Item> items, String title, String description) {
-  return Category(id, items, title, description);
-}
 
-Drink drinkFromData(Map<dynamic, dynamic> data) {
-  Drink drink = Drink(
-      addIns: addInsToList(data['addIns']),
-      requiredAddIns: data['requiredAddIns'] ?? [],
-      availableAddIns: data['availableAddIns'] ?? [],
-      id: data['id'],
-      name: data['name'],
-      size: data['size'],
-      soldOut: data['soldOut'] ?? false,
-      quantity: data['quantity'] ?? 1,
-      servedIced: data['servedIced'],
-      redeemableType: redeemableTypeStringToEnum(data['redeemableType']),
-      redeemableSize: sizeStringToEnum(data['redeemableSize']),
-      sizePriceMap: convertSizePriceMap(data['sizePriceMap']));
-
-  return drink;
-}
-
-List<AddIn> addInsToList(List<dynamic> addInMaps) {
-  if (addInMaps == null) return [];
-  List<AddIn> addIns = [];
-  addInMaps.forEach((map) {
-    addIns.add(
-        AddIn(id: map['id'], name: map['name'], price: map['price'] ?? '0.00'));
-  });
-  return addIns;
-}
-
-Food foodFromData(Map<dynamic, dynamic> data) {
-  return Food(
-      id: data['id'],
-      name: data['name'],
-      notes: data['notes'],
-      soldOut: data['soldOut'] ?? false,
-      quantity: data['quantity'] ?? 1,
-      price: data['price'] ?? []);
-}
-
-List<Category> drinksToObjects(Map<dynamic, dynamic> data) {
-  List<dynamic> drinkList = data['drinks'] ?? [];
-  if (drinkList.isEmpty) {
-    return [];
-  }
-  if (data['drinks'][0]['items'] == null) {
-    return [];
-  }
-  return List.generate(
-          data['drinks'].length,
-          (catIndex) => categoryFromData(
-              data['drinks'][catIndex]['id'],
-              List.generate(data['drinks'][catIndex]['items']?.length, (index) {
-                Map<dynamic, dynamic> drinkMap =
-                    data['drinks'][catIndex]['items'][index];
-
-                return drinkMap != null ? drinkFromData(drinkMap) : [];
-              }),
-              data['drinks'][catIndex]['title'],
-              data['drinks'][catIndex]['description'])) ??
-      [];
-}
-
-List<Category> foodToObjects(Map<dynamic, dynamic> data) {
-  List<dynamic> foodList = data['food'] ?? [];
-  if (foodList.isEmpty) {
-    return [];
-  }
-  if (data['food'][0]['items'] == null) {
-    return [];
-  }
-  return List.generate(
-          data['food'].length,
-          (catIndex) => categoryFromData(
-              data['food'][catIndex]['id'],
-              List.generate(
-                  data['food'][catIndex]['items']?.length,
-                  (index) =>
-                      foodFromData(data['food'][catIndex]['items'][index])),
-              data['food'][catIndex]['title'],
-              data['food'][catIndex]['description'])) ??
-      [];
-}
-
-List<Category> addInsToCategory(Map<dynamic, dynamic> data) {
-  List<dynamic> addInsList = data['addIns'] ?? [];
-  if (addInsList.isEmpty) {
-    return [];
-  }
-  if (data['addIns'][0]['items'] == null) {
-    return [];
-  }
-  return List.generate(
-          data['addIns'].length,
-          (catIndex) => categoryFromData(
-              data['addIns'][catIndex]['id'],
-              List.generate(
-                  data['addIns'][catIndex]['items']?.length,
-                  (index) =>
-                      addInFromData(data['addIns'][catIndex]['items'][index])),
-              data['addIns'][catIndex]['title'],
-              data['addIns'][catIndex]['description'])) ??
-      [];
-}
-
-AddIn addInFromData(Map<dynamic, dynamic> data) {
-  return AddIn(id: data['id'], name: data['name'], price: data['price']);
-}
-
-enum RedeemableType { black, premium, none }
-
-RedeemableType redeemableTypeStringToEnum(String type) {
-  switch (type) {
-    case "black":
-      return RedeemableType.black;
-    case "premium":
-      return RedeemableType.black;
-    default:
-      return RedeemableType.none;
-  }
-}
-
-convertSizePriceMap(Map<dynamic, dynamic> stringSizePriceMap) {
-  if (stringSizePriceMap == null) {
-    return;
-  }
-  return stringSizePriceMap
-      .map((key, value) => MapEntry(sizeStringToEnum(key), value));
-}
-
-extension RedeemableTypeExtension on RedeemableType {
-  String get value {
-    switch (this) {
-      case RedeemableType.black:
-        return "black";
-      case RedeemableType.premium:
-        return "premium";
-      default:
-        return "none";
-    }
-  }
-
-  statusToString() {
-    return this.value;
-  }
-}

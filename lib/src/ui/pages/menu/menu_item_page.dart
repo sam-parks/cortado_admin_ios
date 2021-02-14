@@ -1,9 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/item/item_bloc.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
-import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
+import 'package:cortado_admin_ios/src/data/menu.dart';
+import 'package:cortado_admin_ios/src/services/menu_service.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/utils/validate.dart';
@@ -281,14 +283,14 @@ class _MenuItemPageState extends State<MenuItemPage> {
                   child: Text("Available Add Ins",
                       style: TextStyles.kDefaultLargeDarkTextStyle),
                 ),
-                availableAddins(coffeeShopState, drink),
+                availableAddins(drink),
                 SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: Text("Required Add Ins",
                       style: TextStyles.kDefaultLargeDarkTextStyle),
                 ),
-                requiredAddIns(coffeeShopState, drink),
+                requiredAddIns(drink),
                 SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -701,21 +703,24 @@ class _MenuItemPageState extends State<MenuItemPage> {
 
   _updateAddItem(Item item, CoffeeShopState coffeeShopState) {
     if (_formKey.currentState.validate()) {
+      Menu menu = context.read<MenuBloc>().state.menu;
+      String coffeeShopId = context.read<CoffeeShopBloc>().state.coffeeShop.id;
       if (widget.newCategory)
         Navigator.of(context).pop(item);
       else {
         if (widget.editing)
           _itemBloc.add(UpdateItem(widget.categoryType, widget.category.id,
-              item, coffeeShopState.coffeeShop));
+              item, menu, coffeeShopId));
         else
           _itemBloc.add(AddItem(widget.categoryType, widget.category.id, item,
-              coffeeShopState.coffeeShop));
+              menu, coffeeShopId));
       }
     }
   }
 
-  requiredAddIns(CoffeeShopState coffeeShopState, Drink drink) {
-    List<Category> addIns = coffeeShopState.coffeeShop.addIns;
+  requiredAddIns(Drink drink) {
+    Menu menu = context.read<MenuBloc>().state.menu;
+    List<Category> addIns = menu.addIns;
     return Container(
       height: 150,
       child: GridView.count(
@@ -766,8 +771,9 @@ class _MenuItemPageState extends State<MenuItemPage> {
     );
   }
 
-  availableAddins(CoffeeShopState coffeeShopState, Drink drink) {
-    List<Category> addIns = coffeeShopState.coffeeShop.addIns;
+  availableAddins(Drink drink) {
+    Menu menu = context.read<MenuBloc>().state.menu;
+    List<Category> addIns = menu.addIns;
     return Container(
       height: 150,
       child: GridView.count(

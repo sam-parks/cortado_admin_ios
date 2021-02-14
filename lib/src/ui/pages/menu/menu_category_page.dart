@@ -4,8 +4,9 @@ import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/item/item_bloc.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
-import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
+import 'package:cortado_admin_ios/src/data/menu.dart';
+import 'package:cortado_admin_ios/src/services/menu_service.dart';
 import 'package:cortado_admin_ios/src/ui/router.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/utils/validate.dart';
@@ -36,8 +37,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   // ignore: close_sinks
   CategoryBloc _categoryBloc;
   // ignore: close_sinks
-  CoffeeShopBloc _coffeeShopBloc;
-  // ignore: close_sinks
   MenuBloc _menuBloc;
   // ignore: close_sinks
   ItemBloc _itemBloc;
@@ -58,7 +57,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
     if (widget.category.id == null) widget.category.id = Uuid().v4();
 
     _categoryBloc = BlocProvider.of<CategoryBloc>(context);
-    _coffeeShopBloc = BlocProvider.of<CoffeeShopBloc>(context);
     _menuBloc = BlocProvider.of<MenuBloc>(context);
     _itemBloc = BlocProvider.of<ItemBloc>(context);
 
@@ -106,7 +104,9 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
     if (widget.newCategory) {
       addIns = List.castFrom<Item, AddIn>(widget.category.items);
     } else {
-      Category category = _coffeeShopBloc.state.coffeeShop.addIns
+      Menu menu = context.read<MenuBloc>().state.menu;
+
+      Category category = menu.addIns
           .firstWhere((category) => category.id == widget.category.id);
       addIns = List.castFrom<Item, AddIn>(category.items);
     }
@@ -319,12 +319,21 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                           color: AppColors.cream,
                                         ),
                                         onPressed: () {
+                                          Menu menu = context
+                                              .read<MenuBloc>()
+                                              .state
+                                              .menu;
+                                          String coffeeShopId = context
+                                              .read<CoffeeShopBloc>()
+                                              .state
+                                              .coffeeShop
+                                              .id;
                                           _itemBloc.add(RemoveItem(
                                               widget.categoryType,
                                               widget.category.id,
                                               addIns[index],
-                                              _coffeeShopBloc
-                                                  .state.coffeeShop));
+                                              menu,
+                                              coffeeShopId));
                                         },
                                       ),
                                     ),
@@ -347,13 +356,23 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                 addIns[index],
                                               ]);
 
+                                          Menu menu = context
+                                              .read<MenuBloc>()
+                                              .state
+                                              .menu;
+                                          String coffeeShopId = context
+                                              .read<CoffeeShopBloc>()
+                                              .state
+                                              .coffeeShop
+                                              .id;
+
                                           if (addIn != null) {
                                             _itemBloc.add(UpdateItem(
                                                 widget.categoryType,
                                                 widget.category.id,
                                                 addIn,
-                                                _coffeeShopBloc
-                                                    .state.coffeeShop));
+                                                menu,
+                                                coffeeShopId));
                                           }
                                         },
                                       ),
@@ -419,9 +438,11 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         String id = widget.category.id;
                         Category category =
                             Category(id, addIns, title, description);
-
-                        _categoryBloc.add(UpdateCategory(CategoryType.addIn,
-                            category, _coffeeShopBloc.state.coffeeShop));
+                        Menu menu = context.read<MenuBloc>().state.menu;
+                        String coffeeShopId =
+                            context.read<CoffeeShopBloc>().state.coffeeShop.id;
+                        _categoryBloc.add(UpdateCategory(
+                            CategoryType.addIn, category, menu, coffeeShopId));
                       }
                     },
                   ),
@@ -441,8 +462,15 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             Category category = Category(
                                 Uuid().v4(), addIns, title, description);
 
+                            Menu menu = context.read<MenuBloc>().state.menu;
+                            String coffeeShopId = context
+                                .read<CoffeeShopBloc>()
+                                .state
+                                .coffeeShop
+                                .id;
+
                             _categoryBloc.add(AddCategory(CategoryType.addIn,
-                                category, _coffeeShopBloc.state.coffeeShop));
+                                category, menu, coffeeShopId));
                           }
                         },
                       ),
@@ -458,7 +486,8 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
     if (widget.newCategory) {
       food = List.castFrom<Item, Food>(widget.category.items);
     } else {
-      Category category = _coffeeShopBloc.state.coffeeShop.food
+      Menu menu = context.read<MenuBloc>().state.menu;
+      Category category = menu.foodTemplates
           .firstWhere((category) => category.id == widget.category.id);
       food = List.castFrom<Item, Food>(category.items);
     }
@@ -668,12 +697,21 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                           color: AppColors.cream,
                                         ),
                                         onPressed: () {
+                                          Menu menu = context
+                                              .read<MenuBloc>()
+                                              .state
+                                              .menu;
+                                          String coffeeShopId = context
+                                              .read<CoffeeShopBloc>()
+                                              .state
+                                              .coffeeShop
+                                              .id;
                                           _itemBloc.add(RemoveItem(
                                               widget.categoryType,
                                               widget.category.id,
                                               food[index],
-                                              _coffeeShopBloc
-                                                  .state.coffeeShop));
+                                              menu,
+                                              coffeeShopId));
                                         },
                                       ),
                                     ),
@@ -696,13 +734,22 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                 food[index],
                                               ]);
 
+                                          Menu menu = context
+                                              .read<MenuBloc>()
+                                              .state
+                                              .menu;
+                                          String coffeeShopId = context
+                                              .read<CoffeeShopBloc>()
+                                              .state
+                                              .coffeeShop
+                                              .id;
                                           if (foodItem != null) {
                                             _itemBloc.add(UpdateItem(
                                                 widget.categoryType,
                                                 widget.category.id,
                                                 foodItem,
-                                                _coffeeShopBloc
-                                                    .state.coffeeShop));
+                                                menu,
+                                                coffeeShopId));
                                           }
                                         },
                                       ),
@@ -736,12 +783,22 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                               Food foodItem = food[index]
                                                   .copyWith(soldOut: soldOut);
 
+                                              Menu menu = context
+                                                  .read<MenuBloc>()
+                                                  .state
+                                                  .menu;
+                                              String coffeeShopId = context
+                                                  .read<CoffeeShopBloc>()
+                                                  .state
+                                                  .coffeeShop
+                                                  .id;
+
                                               _itemBloc.add(UpdateItem(
                                                   widget.categoryType,
                                                   widget.category.id,
                                                   foodItem,
-                                                  _coffeeShopBloc
-                                                      .state.coffeeShop));
+                                                  menu,
+                                                  coffeeShopId));
                                             }),
                                       ),
                                       Text("Sold Out?",
@@ -777,8 +834,12 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         Category category =
                             Category(id, food, title, description);
 
-                        _categoryBloc.add(UpdateCategory(CategoryType.food,
-                            category, _coffeeShopBloc.state.coffeeShop));
+                        Menu menu = context.read<MenuBloc>().state.menu;
+                        String coffeeShopId =
+                            context.read<CoffeeShopBloc>().state.coffeeShop.id;
+
+                        _categoryBloc.add(UpdateCategory(
+                            CategoryType.food, category, menu, coffeeShopId));
                       }
                     },
                   ),
@@ -798,8 +859,15 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             Category category =
                                 Category(Uuid().v4(), food, title, description);
 
+                            Menu menu = context.read<MenuBloc>().state.menu;
+                            String coffeeShopId = context
+                                .read<CoffeeShopBloc>()
+                                .state
+                                .coffeeShop
+                                .id;
+
                             _categoryBloc.add(AddCategory(CategoryType.food,
-                                category, _coffeeShopBloc.state.coffeeShop));
+                                category, menu, coffeeShopId));
                           }
                         },
                       ),
@@ -815,7 +883,8 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
     if (widget.newCategory) {
       drinks = List.castFrom<Item, Drink>(widget.category.items);
     } else {
-      Category category = _coffeeShopBloc.state.coffeeShop.drinks
+      Menu menu = context.read<MenuBloc>().state.menu;
+      Category category = menu.drinkTemplates
           .firstWhere((category) => category.id == widget.category.id);
       drinks = List.castFrom<Item, Drink>(category.items);
     }
@@ -1031,12 +1100,21 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                             color: AppColors.cream,
                                           ),
                                           onPressed: () {
+                                            Menu menu = context
+                                                .read<MenuBloc>()
+                                                .state
+                                                .menu;
+                                            String coffeeShopId = context
+                                                .read<CoffeeShopBloc>()
+                                                .state
+                                                .coffeeShop
+                                                .id;
                                             _itemBloc.add(RemoveItem(
                                                 widget.categoryType,
                                                 widget.category.id,
                                                 drinks[index],
-                                                _coffeeShopBloc
-                                                    .state.coffeeShop));
+                                                menu,
+                                                coffeeShopId));
                                           },
                                         ),
                                       ),
@@ -1058,13 +1136,23 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                   widget.category,
                                                   drinks[index],
                                                 ]);
+
+                                            Menu menu = context
+                                                .read<MenuBloc>()
+                                                .state
+                                                .menu;
+                                            String coffeeShopId = context
+                                                .read<CoffeeShopBloc>()
+                                                .state
+                                                .coffeeShop
+                                                .id;
                                             if (drink != null) {
                                               _itemBloc.add(UpdateItem(
                                                   widget.categoryType,
                                                   widget.category.id,
                                                   drink,
-                                                  _coffeeShopBloc
-                                                      .state.coffeeShop));
+                                                  menu,
+                                                  coffeeShopId));
                                             }
                                           },
                                         ),
@@ -1099,12 +1187,22 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                     .copyWith(soldOut: soldOut);
                                                 assert(
                                                     drink.soldOut == soldOut);
+
+                                                Menu menu = context
+                                                    .read<MenuBloc>()
+                                                    .state
+                                                    .menu;
+                                                String coffeeShopId = context
+                                                    .read<CoffeeShopBloc>()
+                                                    .state
+                                                    .coffeeShop
+                                                    .id;
                                                 _itemBloc.add(UpdateItem(
                                                     widget.categoryType,
                                                     widget.category.id,
                                                     drink,
-                                                    _coffeeShopBloc
-                                                        .state.coffeeShop));
+                                                    menu,
+                                                    coffeeShopId));
                                               }),
                                         ),
                                         Text("Sold Out?",
@@ -1152,8 +1250,12 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         Category category =
                             Category(id, drinks, title, description);
 
-                        _categoryBloc.add(UpdateCategory(CategoryType.drink,
-                            category, _coffeeShopBloc.state.coffeeShop));
+                        Menu menu = context.read<MenuBloc>().state.menu;
+                        String coffeeShopId =
+                            context.read<CoffeeShopBloc>().state.coffeeShop.id;
+
+                        _categoryBloc.add(UpdateCategory(
+                            CategoryType.drink, category, menu, coffeeShopId));
                       }
                     },
                   ),
@@ -1173,8 +1275,15 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                             Category category = Category(
                                 Uuid().v4(), drinks, title, description);
 
+                            Menu menu = context.read<MenuBloc>().state.menu;
+                            String coffeeShopId = context
+                                .read<CoffeeShopBloc>()
+                                .state
+                                .coffeeShop
+                                .id;
+
                             _categoryBloc.add(AddCategory(CategoryType.drink,
-                                category, _coffeeShopBloc.state.coffeeShop));
+                                category, menu, coffeeShopId));
                           }
                         },
                       ),

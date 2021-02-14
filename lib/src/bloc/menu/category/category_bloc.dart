@@ -2,68 +2,68 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
+import 'package:cortado_admin_ios/src/data/menu.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
-import 'package:cortado_admin_ios/src/data/coffee_shop.dart';
 import 'package:equatable/equatable.dart';
 
 part 'category_event.dart';
 part 'category_state.dart';
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
-  CategoryBloc() : super(CategoryInitial(null));
+  CategoryBloc() : super(CategoryInitial(null, null));
 
   @override
   Stream<CategoryState> mapEventToState(
     CategoryEvent event,
   ) async* {
     if (event is AddCategory) {
-      CoffeeShop updatedCoffeeShop =
-          addCategoryToCoffeeShop(event.type, event.category, event.coffeeShop);
+      Menu updatedMenu =
+          addCategoryToCoffeeShop(event.type, event.category, event.menu);
 
-      yield CategoryAdded(updatedCoffeeShop);
+      yield CategoryAdded(updatedMenu, event.coffeeShopId);
     }
     if (event is RemoveCategory) {
-      CoffeeShop updatedCoffeeShop = removeCategoryFromCoffeeShop(
-          event.type, event.category, event.coffeeShop);
-      yield CategoryRemoved(updatedCoffeeShop);
+      Menu updatedMenu =
+          removeCategoryFromCoffeeShop(event.type, event.category, event.menu);
+      yield CategoryRemoved(updatedMenu, event.coffeeShopId);
     }
 
     if (event is UpdateCategory) {
-      CoffeeShop updatedCoffeeShop = updateCategoryForCoffeeShop(
-          event.type, event.category, event.coffeeShop);
-      yield CategoryUpdated(updatedCoffeeShop);
+      Menu updatedMenu =
+          updateCategoryForCoffeeShop(event.type, event.category, event.menu);
+      yield CategoryUpdated(updatedMenu, event.coffeeShopId);
     }
   }
 
-  CoffeeShop addCategoryToCoffeeShop(
-      CategoryType categoryType, Category category, CoffeeShop coffeeShop) {
+  Menu addCategoryToCoffeeShop(
+      CategoryType categoryType, Category category, Menu menu) {
     switch (categoryType) {
       case CategoryType.drink:
-        coffeeShop.drinks.add(category);
+        menu.drinkTemplates.add(category);
         break;
       case CategoryType.food:
-        coffeeShop.food.add(category);
+        menu.foodTemplates.add(category);
         break;
       case CategoryType.addIn:
-        coffeeShop.addIns.add(category);
+        menu.addIns.add(category);
         break;
     }
-    return coffeeShop.copy(coffeeShop);
+    return menu.copy(menu);
   }
 
-  CoffeeShop removeCategoryFromCoffeeShop(
-      CategoryType categoryType, Category category, CoffeeShop coffeeShop) {
+  Menu removeCategoryFromCoffeeShop(
+      CategoryType categoryType, Category category, Menu menu) {
     switch (categoryType) {
       case CategoryType.drink:
-        coffeeShop.drinks.remove(category);
+        menu.drinkTemplates.remove(category);
         break;
       case CategoryType.food:
-        coffeeShop.food.remove(category);
+        menu.foodTemplates.remove(category);
         break;
       case CategoryType.addIn:
-        coffeeShop.addIns.remove(category);
-        coffeeShop.drinks.forEach((drinkCategory) {
+        menu.addIns.remove(category);
+        menu.drinkTemplates.forEach((drinkCategory) {
           drinkCategory.items.forEach((item) {
             Drink drink = item;
             if (drink.requiredAddIns.contains(category.id))
@@ -72,28 +72,28 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         });
         break;
     }
-    return coffeeShop.copy(coffeeShop);
+    return menu.copy(menu);
   }
 
-  CoffeeShop updateCategoryForCoffeeShop(CategoryType categoryType,
-      Category updatedCategory, CoffeeShop coffeeShop) {
+  Menu updateCategoryForCoffeeShop(
+      CategoryType categoryType, Category updatedCategory, Menu menu) {
     switch (categoryType) {
       case CategoryType.drink:
-        coffeeShop.drinks
+        menu.drinkTemplates
             .removeWhere((category) => category.id == updatedCategory.id);
-        coffeeShop.drinks.add(updatedCategory);
+        menu.drinkTemplates.add(updatedCategory);
         break;
       case CategoryType.food:
-        coffeeShop.food
+        menu.foodTemplates
             .removeWhere((category) => category.id == updatedCategory.id);
-        coffeeShop.food.add(updatedCategory);
+        menu.foodTemplates.add(updatedCategory);
         break;
       case CategoryType.addIn:
-        coffeeShop.addIns
+        menu.addIns
             .removeWhere((category) => category.id == updatedCategory.id);
-        coffeeShop.addIns.add(updatedCategory);
+        menu.addIns.add(updatedCategory);
         break;
     }
-    return coffeeShop.copy(coffeeShop);
+    return menu.copy(menu);
   }
 }
