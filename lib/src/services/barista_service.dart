@@ -20,7 +20,8 @@ class BaristaService {
       List<DocumentReference> baristaRefs = List.castFrom(baristas);
       for (var baristaRef in baristaRefs) {
         DocumentSnapshot baristaSnap = await baristaRef.get();
-        baristaList.add(CortadoUser.fromSnap(baristaSnap));
+        if (baristaSnap.exists)
+          baristaList.add(CortadoUser.fromSnap(baristaSnap));
       }
 
       return baristaList;

@@ -12,11 +12,30 @@ import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 
 class MenuBloc extends Bloc<MenuEvent, MenuState> {
   MenuBloc() : super(MenuState.loading()) {
-    _menuSubscription = _menuService.items.listen((categoryTuple) {
+    _categorySubscription = _menuService.categories.listen((categoryTuple) {
+      switch (categoryTuple.item1) {
+        case CategoryType.drink:
+          Menu updatedMenu =
+              state.menu.copyWith(drinkTemplates: categoryTuple.item2);
+          this.add(UpdateMenu(updatedMenu));
+          break;
+        case CategoryType.food:
+          Menu updatedMenu =
+              state.menu.copyWith(foodTemplates: categoryTuple.item2);
+          this.add(UpdateMenu(updatedMenu));
+          break;
+        case CategoryType.addIn:
+          Menu updatedMenu = state.menu.copyWith(addIns: categoryTuple.item2);
+          this.add(UpdateMenu(updatedMenu));
+          break;
+      }
+    });
+
+    _itemSubscription = _menuService.items.listen((categoryTuple) {
       switch (categoryTuple.item1) {
         case CategoryType.drink:
           List<Category> drinkTemplates =
-              _updateCategories(CategoryType.drink, categoryTuple.item2);
+              _updateSingularCategory(CategoryType.drink, categoryTuple.item2);
 
           Menu updatedMenu =
               state.menu.copyWith(drinkTemplates: drinkTemplates);
@@ -24,14 +43,14 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
           break;
         case CategoryType.food:
           List<Category> foodTemplates =
-              _updateCategories(CategoryType.food, categoryTuple.item2);
+              _updateSingularCategory(CategoryType.food, categoryTuple.item2);
 
           Menu updatedMenu = state.menu.copyWith(foodTemplates: foodTemplates);
           this.add(UpdateMenu(updatedMenu));
           break;
         case CategoryType.addIn:
           List<Category> addIns =
-              _updateCategories(CategoryType.addIn, categoryTuple.item2);
+              _updateSingularCategory(CategoryType.addIn, categoryTuple.item2);
 
           Menu updatedMenu = state.menu.copyWith(addIns: addIns);
           this.add(UpdateMenu(updatedMenu));
@@ -44,9 +63,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       this.add(UpdateMenu(updatedMenu));
     });
   }
-
-  StreamSubscription _menuSubscription;
-
+  StreamSubscription _categorySubscription;
+  StreamSubscription _itemSubscription;
   StreamSubscription _discountSubscription;
 
   MenuService get _menuService => locator.get();
@@ -58,9 +76,10 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     if (event is SetMenu) {
       yield MenuState.loading();
       String coffeeShopId = event.coffeeShop.id;
-      _menuService.getFoodCategories(coffeeShopId);
-      _menuService.getDrinkCategories(coffeeShopId);
-      _menuService.getAddInCategories(coffeeShopId);
+      _menuService.getCategories(coffeeShopId);
+      _menuService.getFoodItems(coffeeShopId);
+      _menuService.getDrinkItems(coffeeShopId);
+      _menuService.getAddInItems(coffeeShopId);
       _menuService.getDiscounts(coffeeShopId);
     }
 
@@ -70,7 +89,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   }
 
   // ignore: missing_return
-  List<Category> _updateCategories(CategoryType type, Category category) {
+  List<Category> _updateSingularCategory(CategoryType type, Category category) {
     Menu menu = state.menu;
     List<String> categoryIds = [];
     List<Category> updatedCategories;
@@ -83,7 +102,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         }
         categoryIds = menu.drinkTemplates.map((e) => e.id).toList();
         if (categoryIds.contains(category.id)) {
-          updatedCategories = List.from(menu.addIns)
+          updatedCategories = List.from(menu.drinkTemplates)
             ..removeWhere((element) => element.id == category.id)
             ..add(category);
         } else {
@@ -126,7 +145,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
   @override
   Future<void> close() {
-    _menuSubscription.cancel();
+    _categorySubscription.cancel();
+    _itemSubscription.cancel();
     _discountSubscription.cancel();
     return super.close();
   }

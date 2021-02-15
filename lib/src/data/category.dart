@@ -8,20 +8,17 @@ class Category {
 
   Category(this.id, this.items, this.title, this.description);
 
-  
-
   Category.fromData(Map<dynamic, dynamic> data, List<Item> items)
       : this.id = data['id'],
         this.items = items,
         this.title = data['title'],
         this.description = data['description'];
 
-  Map<dynamic, dynamic> toJson() {
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'title': title,
       'description': description,
-      'items': itemsToJson(items)
     };
   }
 }

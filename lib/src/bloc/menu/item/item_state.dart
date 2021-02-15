@@ -1,32 +1,18 @@
 part of 'item_bloc.dart';
 
 abstract class ItemState extends Equatable {
-  const ItemState(this.menu, this.coffeeShopId);
-  final String coffeeShopId;
-  final Menu menu;
+  const ItemState();
 
   @override
-  List<Object> get props => [menu, coffeeShopId];
+  List<Object> get props => [];
 }
 
-class ItemInitial extends ItemState {
-  ItemInitial() : super(null, null);
-}
+class ItemLoading extends ItemState {}
 
-class ItemAdded extends ItemState {
-  final Menu menu;
-  final String coffeeShopId;
-  ItemAdded(this.menu, this.coffeeShopId) : super(menu, coffeeShopId);
-}
+class ItemInitial extends ItemState {}
 
-class ItemRemoved extends ItemState {
-  final Menu menu;
-  final String coffeeShopId;
-  ItemRemoved(this.menu, this.coffeeShopId) : super(menu, coffeeShopId);
-}
+class ItemAdded extends ItemState {}
 
-class ItemUpdated extends ItemState {
-  final Menu menu;
-  final String coffeeShopId;
-  ItemUpdated(this.menu, this.coffeeShopId) : super(menu, coffeeShopId);
-}
+class ItemRemoved extends ItemState {}
+
+class ItemUpdated extends ItemState {}

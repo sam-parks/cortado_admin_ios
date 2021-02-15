@@ -1181,7 +1181,8 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                           child: Checkbox(
                                               activeColor: AppColors.caramel,
                                               checkColor: AppColors.light,
-                                              value: drinks[index].soldOut,
+                                              value: drinks[index].soldOut ??
+                                                  false,
                                               onChanged: (soldOut) {
                                                 Drink drink = drinks[index]
                                                     .copyWith(soldOut: soldOut);

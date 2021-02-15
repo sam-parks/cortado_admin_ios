@@ -22,13 +22,88 @@ class MenuService {
     yield* _discountController.stream;
   }
 
+  Stream<Tuple2<CategoryType, List<Category>>> get categories async* {
+    yield* _categoryController.stream;
+  }
+
+  StreamController<Tuple2<CategoryType, List<Category>>> _categoryController =
+      StreamController<Tuple2<CategoryType, List<Category>>>();
+
   StreamController<Tuple2<CategoryType, Category>> _itemController =
       StreamController<Tuple2<CategoryType, Category>>();
 
   StreamController<List<Discount>> _discountController =
       StreamController<List<Discount>>();
 
-  getFoodCategories(String coffeeShopId) async {
+  getCategories(String coffeeShopId) async {
+    _menusCollection
+        .doc(coffeeShopId)
+        .collection('food')
+        .snapshots()
+        .listen((categorySnaps) async {
+      List<Category> categories = [];
+      for (var catSnap in categorySnaps.docs) {
+        QuerySnapshot itemsSnapshot = await _menusCollection
+            .doc(coffeeShopId)
+            .collection('food')
+            .doc(catSnap.id)
+            .collection('items')
+            .get();
+        List<Item> templates =
+            List.generate(itemsSnapshot.docs.length, (index) {
+          return foodFromData(itemsSnapshot.docs[index].data());
+        });
+        categories.add(Category.fromData(catSnap.data(), templates));
+      }
+      _categoryController.add(Tuple2(CategoryType.food, categories));
+    });
+
+    _menusCollection
+        .doc(coffeeShopId)
+        .collection('drinks')
+        .snapshots()
+        .listen((categorySnaps) async {
+      List<Category> categories = [];
+      for (var catSnap in categorySnaps.docs) {
+        QuerySnapshot itemsSnapshot = await _menusCollection
+            .doc(coffeeShopId)
+            .collection('drinks')
+            .doc(catSnap.id)
+            .collection('items')
+            .get();
+        List<Item> templates =
+            List.generate(itemsSnapshot.docs.length, (index) {
+          return drinkFromData(itemsSnapshot.docs[index].data());
+        });
+        categories.add(Category.fromData(catSnap.data(), templates));
+      }
+      _categoryController.add(Tuple2(CategoryType.drink, categories));
+    });
+
+    _menusCollection
+        .doc(coffeeShopId)
+        .collection('addIns')
+        .snapshots()
+        .listen((categorySnaps) async {
+      List<Category> categories = [];
+      for (var catSnap in categorySnaps.docs) {
+        QuerySnapshot itemsSnapshot = await _menusCollection
+            .doc(coffeeShopId)
+            .collection('addIns')
+            .doc(catSnap.id)
+            .collection('items')
+            .get();
+        List<Item> templates =
+            List.generate(itemsSnapshot.docs.length, (index) {
+          return addInFromData(itemsSnapshot.docs[index].data());
+        });
+        categories.add(Category.fromData(catSnap.data(), templates));
+      }
+      _categoryController.add(Tuple2(CategoryType.addIn, categories));
+    });
+  }
+
+  getFoodItems(String coffeeShopId) async {
     QuerySnapshot categoriesSnapshot =
         await _menusCollection.doc(coffeeShopId).collection('food').get();
 
@@ -50,7 +125,7 @@ class MenuService {
     }
   }
 
-  getDrinkCategories(String coffeeShopId) async {
+  getDrinkItems(String coffeeShopId) async {
     QuerySnapshot categoriesSnapshot =
         await _menusCollection.doc(coffeeShopId).collection('drinks').get();
 
@@ -72,7 +147,7 @@ class MenuService {
     }
   }
 
-  Future<List<Category>> getAddInCategories(String coffeeShopId) async {
+  getAddInItems(String coffeeShopId) async {
     List<Category> addInCategories = [];
     QuerySnapshot categoriesSnapshot =
         await _menusCollection.doc(coffeeShopId).collection('addIns').get();
@@ -90,7 +165,8 @@ class MenuService {
           return addInFromData(itemsSnapshot.docs[index].data());
         });
 
-        addInCategories.add(Category.fromData(catSnap.data(), templates));
+        _itemController.add(Tuple2(
+            CategoryType.addIn, Category.fromData(catSnap.data(), templates)));
       });
     }
     return addInCategories;
@@ -109,6 +185,249 @@ class MenuService {
       _discountController.add(discounts);
     });
   }
+
+  addCategory(
+      String coffeeShopId, CategoryType categoryType, Category category) async {
+    switch (categoryType) {
+      case CategoryType.drink:
+        await _menusCollection
+            .doc(coffeeShopId)
+            .collection('drinks')
+            .doc(category.id)
+            .set(category.toJson());
+
+        category.items.forEach((drink) {
+          _menusCollection
+              .doc(coffeeShopId)
+              .collection('drinks')
+              .doc(category.id)
+              .collection('items')
+              .doc(drink.id)
+              .set((drink as Drink).toJson());
+        });
+        break;
+      case CategoryType.food:
+        await _menusCollection
+            .doc(coffeeShopId)
+            .collection('food')
+            .doc(category.id)
+            .set(category.toJson());
+
+        category.items.forEach((foodItem) {
+          _menusCollection
+              .doc(coffeeShopId)
+              .collection('food')
+              .doc(category.id)
+              .collection('items')
+              .doc(foodItem.id)
+              .set((foodItem as Food).toJson());
+        });
+        break;
+      case CategoryType.addIn:
+        await _menusCollection
+            .doc(coffeeShopId)
+            .collection('addIns')
+            .doc(category.id)
+            .set(category.toJson());
+
+        category.items.forEach((addIn) {
+          _menusCollection
+              .doc(coffeeShopId)
+              .collection('addIns')
+              .doc(category.id)
+              .collection('items')
+              .doc(addIn.id)
+              .set((addIn as AddIn).toJson());
+        });
+        break;
+    }
+  }
+
+  removeCategory(
+      String coffeeShopId, CategoryType categoryType, Category category) async {
+    switch (categoryType) {
+      case CategoryType.drink:
+        await _menusCollection
+            .doc(coffeeShopId)
+            .collection('drinks')
+            .doc(category.id)
+            .delete();
+
+        break;
+      case CategoryType.food:
+        await _menusCollection
+            .doc(coffeeShopId)
+            .collection('food')
+            .doc(category.id)
+            .delete();
+
+        break;
+      case CategoryType.addIn:
+        await _menusCollection
+            .doc(coffeeShopId)
+            .collection('addIns')
+            .doc(category.id)
+            .delete();
+
+        break;
+    }
+  }
+
+  updateCategory(
+      String coffeeShopId, CategoryType categoryType, Category category) async {
+    switch (categoryType) {
+      case CategoryType.drink:
+        await _menusCollection
+            .doc(coffeeShopId)
+            .collection('drinks')
+            .doc(category.id)
+            .set(category.toJson());
+
+        category.items.forEach((drink) {
+          _menusCollection
+              .doc(coffeeShopId)
+              .collection('drinks')
+              .doc(category.id)
+              .collection('items')
+              .doc(drink.id)
+              .set((drink as Drink).toJson());
+        });
+        break;
+      case CategoryType.food:
+        await _menusCollection
+            .doc(coffeeShopId)
+            .collection('food')
+            .doc(category.id)
+            .set(category.toJson());
+
+        category.items.forEach((foodItem) {
+          _menusCollection
+              .doc(coffeeShopId)
+              .collection('food')
+              .doc(category.id)
+              .collection('items')
+              .doc(foodItem.id)
+              .set((foodItem as Food).toJson());
+        });
+        break;
+      case CategoryType.addIn:
+        await _menusCollection
+            .doc(coffeeShopId)
+            .collection('addIns')
+            .doc(category.id)
+            .set(category.toJson());
+
+        category.items.forEach((addIn) {
+          _menusCollection
+              .doc(coffeeShopId)
+              .collection('addIns')
+              .doc(category.id)
+              .collection('items')
+              .doc(addIn.id)
+              .set((addIn as AddIn).toJson());
+        });
+        break;
+    }
+  }
+
+  addItemInCategory(String coffeeShopId, CategoryType categoryType,
+      String categoryId, Item itemToAdd) {
+    switch (categoryType) {
+      case CategoryType.drink:
+        return _menusCollection
+            .doc(coffeeShopId)
+            .collection('drinks')
+            .doc(categoryId)
+            .collection('items')
+            .doc(itemToAdd.id)
+            .set((itemToAdd as Drink).toJson());
+        break;
+      case CategoryType.food:
+        return _menusCollection
+            .doc(coffeeShopId)
+            .collection('food')
+            .doc(categoryId)
+            .collection('items')
+            .doc(itemToAdd.id)
+            .set((itemToAdd as Food).toJson());
+        break;
+      case CategoryType.addIn:
+        return _menusCollection
+            .doc(coffeeShopId)
+            .collection('addIns')
+            .doc(categoryId)
+            .collection('items')
+            .doc(itemToAdd.id)
+            .set((itemToAdd as AddIn).toJson());
+        break;
+    }
+  }
+
+  updateItemInCategory(String coffeeShopId, CategoryType categoryType,
+      String categoryId, Item itemToUpdate) {
+    switch (categoryType) {
+      case CategoryType.drink:
+        return _menusCollection
+            .doc(coffeeShopId)
+            .collection('drinks')
+            .doc(categoryId)
+            .collection('items')
+            .doc(itemToUpdate.id)
+            .update((itemToUpdate as Drink).toJson());
+        break;
+      case CategoryType.food:
+        return _menusCollection
+            .doc(coffeeShopId)
+            .collection('food')
+            .doc(categoryId)
+            .collection('items')
+            .doc(itemToUpdate.id)
+            .update((itemToUpdate as Food).toJson());
+        break;
+      case CategoryType.addIn:
+        return _menusCollection
+            .doc(coffeeShopId)
+            .collection('addIns')
+            .doc(categoryId)
+            .collection('items')
+            .doc(itemToUpdate.id)
+            .update((itemToUpdate as AddIn).toJson());
+        break;
+    }
+  }
+
+  removeItemInCategory(String coffeeShopId, CategoryType categoryType,
+      String categoryId, Item itemToRemove) {
+    switch (categoryType) {
+      case CategoryType.drink:
+        return _menusCollection
+            .doc(coffeeShopId)
+            .collection('drinks')
+            .doc(categoryId)
+            .collection('items')
+            .doc(itemToRemove.id)
+            .delete();
+        break;
+      case CategoryType.food:
+        return _menusCollection
+            .doc(coffeeShopId)
+            .collection('food')
+            .doc(categoryId)
+            .collection('items')
+            .doc(itemToRemove.id)
+            .delete();
+        break;
+      case CategoryType.addIn:
+        return _menusCollection
+            .doc(coffeeShopId)
+            .collection('addIns')
+            .doc(categoryId)
+            .collection('items')
+            .doc(itemToRemove.id)
+            .delete();
+        break;
+    }
+  }
 }
 
 Drink drinkFromData(Map<dynamic, dynamic> data) {
@@ -124,7 +443,7 @@ Drink drinkFromData(Map<dynamic, dynamic> data) {
       servedIced: data['servedIced'],
       redeemableType: redeemableTypeStringToEnum(data['redeemableType']),
       redeemableSize: sizeStringToEnum(data['redeemableSize']),
-      sizePriceMap: convertSizePriceMapToJson(data['sizePriceMap']));
+      sizePriceMap: convertSizePriceMap(data['sizePriceMap']));
 
   return drink;
 }
@@ -139,10 +458,10 @@ List<AddIn> addInsToList(List<dynamic> addInMaps) {
   return addIns;
 }
 
-Map<SizeInOunces, dynamic> convertSizePriceMapToJson(
+Map<SizeInOunces, dynamic> convertSizePriceMap(
     Map<dynamic, dynamic> sizePriceMap) {
-  return sizePriceMap
-      .map((key, value) => MapEntry(sizeStringToEnum(key), value));
+  return sizePriceMap.map((key, value) => MapEntry(
+      sizeStringToEnum(key), value == '' || value == null ? '0.00' : value));
 }
 
 Food foodFromData(Map<dynamic, dynamic> data) {

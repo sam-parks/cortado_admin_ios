@@ -1,35 +1,28 @@
 part of 'category_bloc.dart';
 
-abstract class CategoryState extends Equatable {
-  const CategoryState(this.menu, this.coffeeShopId);
-  final String coffeeShopId;
-  final Menu menu;
-
-  @override
-  List<Object> get props => [menu, coffeeShopId];
-}
+abstract class CategoryState extends Equatable {}
 
 class CategoryInitial extends CategoryState {
-  CategoryInitial(Menu menu, String id) : super(menu, id);
+  @override
+  List<Object> get props => [];
 }
 
 class CategoryAdded extends CategoryState {
-  final String coffeeShopId;
-  final Menu menu;
-
-  CategoryAdded(this.menu, this.coffeeShopId) : super(menu, coffeeShopId);
+  @override
+  List<Object> get props => [];
 }
 
 class CategoryRemoved extends CategoryState {
-  final String coffeeShopId;
-  final Menu menu;
-
-  CategoryRemoved(this.menu, this.coffeeShopId) : super(menu, coffeeShopId);
+  @override
+  List<Object> get props => [];
 }
 
 class CategoryUpdated extends CategoryState {
-  final String coffeeShopId;
-  final Menu menu;
+  @override
+  List<Object> get props => [];
+}
 
-  CategoryUpdated(this.menu, this.coffeeShopId) : super(menu, coffeeShopId);
+class CategoryLoading extends CategoryState {
+  @override
+  List<Object> get props => [];
 }

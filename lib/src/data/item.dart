@@ -41,7 +41,7 @@ class Drink extends Item {
     return {
       'id': id,
       'name': name,
-      'sizePriceMap': sizePriceMap ?? [],
+      'sizePriceMap': convertSizePriceMapToJson(sizePriceMap) ?? [],
       'description': description,
       'size': size,
       'availableAddIns': availableAddIns,
@@ -53,6 +53,13 @@ class Drink extends Item {
       'addIns': addIns != null ? _addinsToJson(addIns) : null,
       'requiredAddIns': requiredAddIns
     };
+  }
+
+  Map<String, dynamic> convertSizePriceMapToJson(
+      Map<dynamic, dynamic> sizePriceMap) {
+    return sizePriceMap.map((key, value) => MapEntry(
+        (key as SizeInOunces).value,
+        value == '' || value == null ? '0.00' : value));
   }
 
   Drink copyWith(

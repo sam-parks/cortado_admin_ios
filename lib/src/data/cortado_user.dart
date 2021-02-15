@@ -81,7 +81,7 @@ class CortadoUser {
 
   CortadoUser.fromData(Map<String, dynamic> data,
       {this.reference, this.firebaseUser})
-      : firstName = data['firstName'],
+      : firstName = data['firstName'] ?? '',
         lastName = data['lastName'],
         userType = userTypeFromString(data['userType']),
         termsAgreed = data['termsAgreed'] ?? true,
