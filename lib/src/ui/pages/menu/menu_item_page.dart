@@ -1,11 +1,15 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cortado_admin_ios/src/bloc/coffee_shop/coffee_shop_bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/menu/add_in_item/add_in_item_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
+import 'package:cortado_admin_ios/src/bloc/menu/food_item/food_item_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/item/item_bloc.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
-import 'package:cortado_admin_ios/src/data/item.dart';
+import 'package:cortado_admin_ios/src/data/item_template.dart';
 import 'package:cortado_admin_ios/src/data/menu.dart';
 import 'package:cortado_admin_ios/src/services/menu_service.dart';
+import 'package:cortado_admin_ios/src/ui/pages/menu/add_in_form.dart';
+import 'package:cortado_admin_ios/src/ui/pages/menu/food_form.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/utils/validate.dart';
@@ -28,7 +32,7 @@ class MenuItemPage extends StatefulWidget {
   final Category category;
   final CategoryType categoryType;
   final bool editing;
-  final Item item;
+  final ItemTemplate item;
   final bool newCategory;
 
   @override
@@ -69,9 +73,9 @@ class _MenuItemPageState extends State<MenuItemPage> {
       return Tuple2(
           regularSizes[index],
           MoneyMaskedTextController(
-            initialValue: double.parse(
-                (widget.item as Drink).sizePriceMap[regularSizes[index]] ??
-                    '0.00'),
+            initialValue: double.parse((widget.item as DrinkTemplate)
+                    .sizePriceMap[regularSizes[index]] ??
+                '0.00'),
             decimalSeparator: '.',
             thousandSeparator: ',',
           ));
@@ -79,7 +83,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
   }
 
   _drinkItemForm(CoffeeShopState coffeeShopState) {
-    Drink drink = widget.item;
+    DrinkTemplate drink = widget.item;
 
     return Form(
       key: _formKey,
@@ -112,7 +116,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
                     autofocus: true,
                     controller: nameController,
                     onChanged: (value) {
-                      drink.name = value.trim();
+                      drink = drink.copyWith(name: value.trim());
                     },
                     style: TextStyle(
                       fontSize: 20,
@@ -148,7 +152,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
                     textInputAction: TextInputAction.done,
                     controller: descriptionController,
                     onChanged: (value) {
-                      drink.description = value.trim();
+                      drink = drink.copyWith(description: value.trim());
                     },
                     style: TextStyle(
                       fontSize: 20,
@@ -310,65 +314,59 @@ class _MenuItemPageState extends State<MenuItemPage> {
                             checkColor: AppColors.cream,
                             value: drink.servedIced,
                             onChanged: (serveIced) {
-                              if (serveIced)
-                                setState(() {
-                                  drink.servedIced = true;
-                                  Map<SizeInOunces, dynamic> icedMap = {};
-                                  if (drink.sizePriceMap
-                                      .containsKey(SizeInOunces.six))
-                                    icedMap.addAll({
-                                      SizeInOunces.sixIced:
-                                          regularSizesTuples[0].item2.text
-                                    });
-                                  if (drink.sizePriceMap
-                                      .containsKey(SizeInOunces.eight))
-                                    icedMap.addAll({
-                                      SizeInOunces.eightIced:
-                                          regularSizesTuples[1].item2.text
-                                    });
-                                  if (drink.sizePriceMap
-                                      .containsKey(SizeInOunces.twelve))
-                                    icedMap.addAll({
-                                      SizeInOunces.twelveIced:
-                                          regularSizesTuples[2].item2.text
-                                    });
-                                  if (drink.sizePriceMap
-                                      .containsKey(SizeInOunces.sixteen))
-                                    icedMap.addAll({
-                                      SizeInOunces.sixteenIced:
-                                          regularSizesTuples[3].item2.text
-                                    });
-                                  if (drink.sizePriceMap
-                                      .containsKey(SizeInOunces.twenty))
-                                    icedMap.addAll({
-                                      SizeInOunces.twentyIced:
-                                          regularSizesTuples[4].item2.text
-                                    });
-                                  if (drink.sizePriceMap
-                                      .containsKey(SizeInOunces.twentyFour))
-                                    icedMap.addAll({
-                                      SizeInOunces.twentyFourIced:
-                                          regularSizesTuples[5].item2.text
-                                    });
+                              if (serveIced) {
+                                drink = drink.copyWith(servedIced: true);
+                                Map<SizeInOunces, dynamic> icedMap = {};
+                                if (drink.sizePriceMap
+                                    .containsKey(SizeInOunces.six))
+                                  icedMap.addAll({
+                                    SizeInOunces.sixIced:
+                                        regularSizesTuples[0].item2.text
+                                  });
+                                if (drink.sizePriceMap
+                                    .containsKey(SizeInOunces.eight))
+                                  icedMap.addAll({
+                                    SizeInOunces.eightIced:
+                                        regularSizesTuples[1].item2.text
+                                  });
+                                if (drink.sizePriceMap
+                                    .containsKey(SizeInOunces.twelve))
+                                  icedMap.addAll({
+                                    SizeInOunces.twelveIced:
+                                        regularSizesTuples[2].item2.text
+                                  });
+                                if (drink.sizePriceMap
+                                    .containsKey(SizeInOunces.sixteen))
+                                  icedMap.addAll({
+                                    SizeInOunces.sixteenIced:
+                                        regularSizesTuples[3].item2.text
+                                  });
+                                if (drink.sizePriceMap
+                                    .containsKey(SizeInOunces.twenty))
+                                  icedMap.addAll({
+                                    SizeInOunces.twentyIced:
+                                        regularSizesTuples[4].item2.text
+                                  });
+                                if (drink.sizePriceMap
+                                    .containsKey(SizeInOunces.twentyFour))
+                                  icedMap.addAll({
+                                    SizeInOunces.twentyFourIced:
+                                        regularSizesTuples[5].item2.text
+                                  });
 
-                                  drink.sizePriceMap.addAll(icedMap);
-                                });
-                              else
-                                setState(() {
-                                  drink.servedIced = false;
-                                  drink.sizePriceMap
-                                      .remove(SizeInOunces.sixIced);
-                                  drink.sizePriceMap
-                                      .remove(SizeInOunces.eightIced);
-                                  drink.sizePriceMap
-                                      .remove(SizeInOunces.twelveIced);
-                                  drink.sizePriceMap
-                                      .remove(SizeInOunces.sixteenIced);
-                                  drink.sizePriceMap
-                                      .remove(SizeInOunces.twentyIced);
-                                  drink.sizePriceMap
-                                      .remove(SizeInOunces.twentyFourIced);
-                                });
+                                drink.sizePriceMap.addAll(icedMap);
+                              } else
+                                drink = drink.copyWith(servedIced: true);
+                              drink.sizePriceMap.remove(SizeInOunces.sixIced);
+                              drink.sizePriceMap.remove(SizeInOunces.eightIced);
+                              drink.sizePriceMap
+                                  .remove(SizeInOunces.twelveIced);
+                              drink.sizePriceMap
+                                  .remove(SizeInOunces.sixteenIced);
+                              drink.sizePriceMap
+                                  .remove(SizeInOunces.twentyIced);
+                              drink.sizePriceMap
+                                  .remove(SizeInOunces.twentyFourIced);
                             }),
                       ),
                       Padding(
@@ -406,15 +404,15 @@ class _MenuItemPageState extends State<MenuItemPage> {
                                 onChanged: (blackRedeemable) {
                                   if (blackRedeemable)
                                     setState(() {
-                                      drink.redeemableType =
-                                          RedeemableType.black;
-                                      drink.redeemableSize = SizeInOunces.eight;
+                                      drink = drink.copyWith(
+                                          redeemableType: RedeemableType.black,
+                                          redeemableSize: SizeInOunces.eight);
                                     });
                                   else
                                     setState(() {
-                                      drink.redeemableType =
-                                          RedeemableType.none;
-                                      drink.redeemableSize = SizeInOunces.none;
+                                      drink = drink.copyWith(
+                                          redeemableType: RedeemableType.none,
+                                          redeemableSize: SizeInOunces.none);
                                     });
                                 }),
                           ),
@@ -445,15 +443,16 @@ class _MenuItemPageState extends State<MenuItemPage> {
                                 onChanged: (premiumRedeemable) {
                                   if (premiumRedeemable)
                                     setState(() {
-                                      drink.redeemableType =
-                                          RedeemableType.premium;
-                                      drink.redeemableSize = SizeInOunces.eight;
+                                      drink = drink.copyWith(
+                                          redeemableType:
+                                              RedeemableType.premium,
+                                          redeemableSize: SizeInOunces.eight);
                                     });
                                   else
                                     setState(() {
-                                      drink.redeemableType =
-                                          RedeemableType.none;
-                                      drink.redeemableSize = SizeInOunces.none;
+                                      drink = drink.copyWith(
+                                          redeemableType: RedeemableType.none,
+                                          redeemableSize: SizeInOunces.none);
                                     });
                                 }),
                           ),
@@ -496,11 +495,14 @@ class _MenuItemPageState extends State<MenuItemPage> {
                                     onChanged: (value) {
                                       setState(() {
                                         if (value) {
-                                          drink.redeemableSize =
-                                              regularSizesTuples[index].item1;
+                                          drink = drink.copyWith(
+                                              redeemableSize:
+                                                  regularSizesTuples[index]
+                                                      .item1);
                                         } else {
-                                          drink.redeemableSize =
-                                              SizeInOunces.none;
+                                          drink = drink.copyWith(
+                                              redeemableSize:
+                                                  SizeInOunces.none);
                                         }
                                       });
                                     }),
@@ -545,163 +547,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
     );
   }
 
-  _foodItemForm(CoffeeShopState coffeeShopState) {
-    final priceController = MoneyMaskedTextController(
-      initialValue: 0.00,
-      decimalSeparator: '.',
-      thousandSeparator: ',',
-    );
-
-    TextEditingController nameController = TextEditingController();
-
-    TextEditingController descriptionController = TextEditingController();
-    Food food = widget.item;
-
-    nameController.text = food.name;
-    descriptionController.text = food.description;
-    priceController.text = food.price;
-
-    return Form(
-      key: _formKey,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: AppColors.caramel,
-        ),
-        backgroundColor: AppColors.light,
-        resizeToAvoidBottomInset: false,
-        body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 100),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Text(
-                  "Food Item Info",
-                  style: TextStyles.kDefaultLargeDarkTextStyle,
-                ),
-              ),
-              Container(
-                child: TextFormField(
-                  validator: (value) {
-                    return Validate.requiredField(value, "Required field.");
-                  },
-                  autofocus: true,
-                  controller: nameController,
-                  onChanged: (value) {
-                    food.name = value.trim();
-                  },
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: AppColors.dark,
-                    fontFamily: kFontFamilyNormal,
-                    letterSpacing: .75,
-                  ),
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.dark, width: 2.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.dark, width: 2.0),
-                    ),
-                    labelText: "Name",
-                    labelStyle: TextStyle(
-                      fontSize: 20,
-                      color: AppColors.caramel,
-                      fontFamily: kFontFamilyNormal,
-                      letterSpacing: .75,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 5),
-              Container(
-                child: TextField(
-                  maxLines: 6,
-                  keyboardType: TextInputType.multiline,
-                  textInputAction: TextInputAction.done,
-                  controller: descriptionController,
-                  onChanged: (value) {
-                    food.description = value.trim();
-                  },
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: AppColors.dark,
-                    fontFamily: kFontFamilyNormal,
-                    letterSpacing: .75,
-                  ),
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.dark, width: 2.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.dark, width: 2.0),
-                    ),
-                    labelText: "Description",
-                    labelStyle: TextStyle(
-                      fontSize: 20,
-                      color: AppColors.caramel,
-                      fontFamily: kFontFamilyNormal,
-                      letterSpacing: .75,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 5),
-              Container(
-                child: TextFormField(
-                  validator: (value) {
-                    return Validate.requiredField(value, "Required field.");
-                  },
-                  keyboardType: TextInputType.number,
-                  autofocus: true,
-                  controller: priceController,
-                  onChanged: (value) {
-                    food.price = priceController.text;
-                  },
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: AppColors.dark,
-                    fontFamily: kFontFamilyNormal,
-                    letterSpacing: .75,
-                  ),
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.dark, width: 2.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.dark, width: 2.0),
-                    ),
-                    labelText: "Price",
-                    labelStyle: TextStyle(
-                      fontSize: 20,
-                      color: AppColors.caramel,
-                      fontFamily: kFontFamilyNormal,
-                      letterSpacing: .75,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(30),
-          child: CortadoFatButton(
-            text: widget.editing ? "Update Food Item" : "Create Food Item",
-            textStyle: TextStyles.kDefaultLightTextStyle,
-            backgroundColor: AppColors.caramel,
-            width: 300,
-            onTap: () => _updateAddItem(food, coffeeShopState),
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      ),
-    );
-  }
-
-  _updateAddItem(Item item, CoffeeShopState coffeeShopState) {
+  _updateAddItem(ItemTemplate item, CoffeeShopState coffeeShopState) {
     if (_formKey.currentState.validate()) {
       Menu menu = context.read<MenuBloc>().state.menu;
       String coffeeShopId = context.read<CoffeeShopBloc>().state.coffeeShop.id;
@@ -718,7 +564,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
     }
   }
 
-  requiredAddIns(Drink drink) {
+  requiredAddIns(DrinkTemplate drink) {
     Menu menu = context.read<MenuBloc>().state.menu;
     List<Category> addIns = menu.addIns;
     return Container(
@@ -771,7 +617,7 @@ class _MenuItemPageState extends State<MenuItemPage> {
     );
   }
 
-  availableAddins(Drink drink) {
+  availableAddins(DrinkTemplate drink) {
     Menu menu = context.read<MenuBloc>().state.menu;
     List<Category> addIns = menu.addIns;
     return Container(
@@ -825,160 +671,6 @@ class _MenuItemPageState extends State<MenuItemPage> {
     );
   }
 
-  _addInItemForm(CoffeeShopState coffeeShopState) {
-    final priceController = MoneyMaskedTextController(
-      initialValue: 0.00,
-      decimalSeparator: '.',
-      thousandSeparator: ',',
-    );
-    TextEditingController nameController = TextEditingController();
-    TextEditingController descriptionController = TextEditingController();
-    AddIn addIn = widget.item;
-
-    nameController.text = addIn.name;
-    descriptionController.text = addIn.description;
-    priceController.text = addIn.price;
-
-    return Form(
-      key: _formKey,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: AppColors.caramel,
-        ),
-        backgroundColor: AppColors.light,
-        resizeToAvoidBottomInset: false,
-        body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 100),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Text(
-                  "Add In Info",
-                  style: TextStyles.kDefaultLargeDarkTextStyle,
-                ),
-              ),
-              Container(
-                child: TextFormField(
-                  validator: (value) {
-                    return Validate.requiredField(value, "Required field.");
-                  },
-                  autofocus: true,
-                  controller: nameController,
-                  onChanged: (value) {
-                    addIn.name = value.trim();
-                  },
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: AppColors.dark,
-                    fontFamily: kFontFamilyNormal,
-                    letterSpacing: .75,
-                  ),
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.dark, width: 2.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.dark, width: 2.0),
-                    ),
-                    labelText: "Name",
-                    labelStyle: TextStyle(
-                      fontSize: 20,
-                      color: AppColors.caramel,
-                      fontFamily: kFontFamilyNormal,
-                      letterSpacing: .75,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 5),
-              Container(
-                child: TextField(
-                  maxLines: 6,
-                  keyboardType: TextInputType.multiline,
-                  textInputAction: TextInputAction.done,
-                  controller: descriptionController,
-                  onChanged: (value) {
-                    addIn.description = value.trim();
-                  },
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: AppColors.dark,
-                    fontFamily: kFontFamilyNormal,
-                    letterSpacing: .75,
-                  ),
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.dark, width: 2.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.dark, width: 2.0),
-                    ),
-                    labelText: "Description",
-                    labelStyle: TextStyle(
-                      fontSize: 20,
-                      color: AppColors.caramel,
-                      fontFamily: kFontFamilyNormal,
-                      letterSpacing: .75,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 5),
-              Container(
-                child: TextFormField(
-                  validator: (value) {
-                    return Validate.requiredField(value, "Required field.");
-                  },
-                  keyboardType: TextInputType.number,
-                  autofocus: true,
-                  controller: priceController,
-                  onChanged: (value) {
-                    addIn.price = priceController.text;
-                  },
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: AppColors.dark,
-                    fontFamily: kFontFamilyNormal,
-                    letterSpacing: .75,
-                  ),
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.dark, width: 2.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.dark, width: 2.0),
-                    ),
-                    labelText: "Price",
-                    labelStyle: TextStyle(
-                      fontSize: 20,
-                      color: AppColors.caramel,
-                      fontFamily: kFontFamilyNormal,
-                      letterSpacing: .75,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(30),
-          child: CortadoFatButton(
-            text: widget.editing ? "Update Add In" : "Create Add In",
-            textStyle: TextStyles.kDefaultLightTextStyle,
-            backgroundColor: AppColors.caramel,
-            width: 300,
-            onTap: () => _updateAddItem(addIn, coffeeShopState),
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     CoffeeShopState coffeeShopState =
@@ -996,10 +688,32 @@ class _MenuItemPageState extends State<MenuItemPage> {
               return _drinkItemForm(coffeeShopState);
               break;
             case CategoryType.food:
-              return _foodItemForm(coffeeShopState);
+              return BlocProvider(
+                  create: (context) => FoodItemBloc(),
+                  child: Builder(
+                    builder: (context) {
+                      return FoodForm(
+                        editing: widget.editing,
+                        categoryId: widget.category.id,
+                        food: widget.item,
+                        newCategory: widget.newCategory,
+                      );
+                    },
+                  ));
               break;
             case CategoryType.addIn:
-              return _addInItemForm(coffeeShopState);
+              return BlocProvider(
+                  create: (context) => AddInItemBloc(),
+                  child: Builder(
+                    builder: (context) {
+                      return AddInForm(
+                        editing: widget.editing,
+                        categoryId: widget.category.id,
+                        addIn: widget.item,
+                        newCategory: widget.newCategory,
+                      );
+                    },
+                  ));
               break;
             default:
               return Container();

@@ -1,8 +1,8 @@
+import 'package:cortado_admin_ios/src/data/item_template.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/router.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
-import 'package:cortado_admin_ios/src/data/item.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -61,12 +61,12 @@ class _ItemListPageState extends State<ItemListPage> {
             Spacer(),
             GestureDetector(
                 onTap: () async {
-                /*   var drink = await Navigator.of(context)
+                  /*   var drink = await Navigator.of(context)
                       .pushNamed(kItemRoute, arguments: [
                     false,
                     CategoryType.drink,
                     widget.category,
-                    Drink(
+                    DrinkTemplate(
                         servedIced: false,
                         id: Uuid().v4(),
                         redeemableType: RedeemableType.none,
@@ -77,7 +77,7 @@ class _ItemListPageState extends State<ItemListPage> {
                 child: Row(
                   children: [
                     Text(
-                      "Create Drink",
+                      "Create DrinkTemplate",
                       style: TextStyles.kDefaultSmallTextCreamStyle,
                     ),
                     Padding(
@@ -99,7 +99,8 @@ class _ItemListPageState extends State<ItemListPage> {
                 controller: scrollController,
                 itemCount: widget.category.items.length,
                 itemBuilder: (context, index) {
-                  List<Drink> drinks = widget.category.items.cast<Drink>();
+                  List<DrinkTemplate> drinks =
+                      widget.category.items.cast<DrinkTemplate>();
                   return Container(
                     height: 60,
                     margin: const EdgeInsets.symmetric(vertical: 10),
@@ -175,7 +176,7 @@ class _ItemListPageState extends State<ItemListPage> {
                     false,
                     CategoryType.food,
                     widget.category,
-                    Food(
+                    FoodTemplate(
                       id: Uuid().v4(),
                     ),
                   ]);
@@ -189,7 +190,7 @@ class _ItemListPageState extends State<ItemListPage> {
                 child: Row(
                   children: [
                     Text(
-                      "Create Food",
+                      "Create FoodTemplate",
                       style: TextStyles.kDefaultSmallTextCreamStyle,
                     ),
                     Padding(
@@ -211,7 +212,8 @@ class _ItemListPageState extends State<ItemListPage> {
                 controller: scrollController,
                 itemCount: widget.category.items.length,
                 itemBuilder: (context, index) {
-                  List<Food> food = widget.category.items.cast<Food>();
+                  List<FoodTemplate> food =
+                      widget.category.items.cast<FoodTemplate>();
                   return Container(
                     height: 60,
                     margin: const EdgeInsets.symmetric(vertical: 10),
@@ -276,34 +278,22 @@ class _ItemListPageState extends State<ItemListPage> {
               style: TextStyles.kDefaultCreamTextStyle,
             ),
             Spacer(),
-            GestureDetector(
-                onTap: () async {
-                  /* var addIn = await Navigator.of(context)
-                      .pushNamed(kItemRoute, arguments: [
-                    false,
-                    CategoryType.addIn,
-                    widget.category,
-                    AddIn(
-                      id: Uuid().v4(),
-                    ),
-                  ]); */
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      "Create Add In",
-                      style: TextStyles.kDefaultSmallTextCreamStyle,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.add_circle_outline,
-                        color: AppColors.cream,
-                        size: 20,
-                      ),
-                    ),
-                  ],
-                ))
+            Row(
+              children: [
+                Text(
+                  "Create Add In",
+                  style: TextStyles.kDefaultSmallTextCreamStyle,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.add_circle_outline,
+                    color: AppColors.cream,
+                    size: 20,
+                  ),
+                ),
+              ],
+            )
           ],
         ),
         Expanded(

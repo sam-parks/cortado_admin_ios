@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
 import 'package:cortado_admin_ios/src/data/discount.dart';
-import 'package:cortado_admin_ios/src/data/item.dart';
+import 'package:cortado_admin_ios/src/data/item_template.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:tuple/tuple.dart';
 
@@ -49,9 +49,9 @@ class MenuService {
             .doc(catSnap.id)
             .collection('items')
             .get();
-        List<Item> templates =
+        List<ItemTemplate> templates =
             List.generate(itemsSnapshot.docs.length, (index) {
-          return foodFromData(itemsSnapshot.docs[index].data());
+          return foodTemplateFromData(itemsSnapshot.docs[index].data());
         });
         categories.add(Category.fromData(catSnap.data(), templates));
       }
@@ -71,9 +71,9 @@ class MenuService {
             .doc(catSnap.id)
             .collection('items')
             .get();
-        List<Item> templates =
+        List<ItemTemplate> templates =
             List.generate(itemsSnapshot.docs.length, (index) {
-          return drinkFromData(itemsSnapshot.docs[index].data());
+          return drinkTemplateFromData(itemsSnapshot.docs[index].data());
         });
         categories.add(Category.fromData(catSnap.data(), templates));
       }
@@ -93,7 +93,7 @@ class MenuService {
             .doc(catSnap.id)
             .collection('items')
             .get();
-        List<Item> templates =
+        List<ItemTemplate> templates =
             List.generate(itemsSnapshot.docs.length, (index) {
           return addInFromData(itemsSnapshot.docs[index].data());
         });
@@ -115,9 +115,9 @@ class MenuService {
           .collection('items')
           .snapshots()
           .listen((itemsSnapshot) {
-        List<Item> templates =
+        List<ItemTemplate> templates =
             List.generate(itemsSnapshot.docs.length, (index) {
-          return foodFromData(itemsSnapshot.docs[index].data());
+          return foodTemplateFromData(itemsSnapshot.docs[index].data());
         });
         _itemController.add(Tuple2(
             CategoryType.food, Category.fromData(catSnap.data(), templates)));
@@ -137,9 +137,9 @@ class MenuService {
           .collection('items')
           .snapshots()
           .listen((itemsSnapshot) {
-        List<Item> templates =
+        List<ItemTemplate> templates =
             List.generate(itemsSnapshot.docs.length, (index) {
-          return drinkFromData(itemsSnapshot.docs[index].data());
+          return drinkTemplateFromData(itemsSnapshot.docs[index].data());
         });
         _itemController.add(Tuple2(
             CategoryType.drink, Category.fromData(catSnap.data(), templates)));
@@ -160,7 +160,7 @@ class MenuService {
           .collection('items')
           .snapshots()
           .listen((itemsSnapshot) {
-        List<Item> templates =
+        List<ItemTemplate> templates =
             List.generate(itemsSnapshot.docs.length, (index) {
           return addInFromData(itemsSnapshot.docs[index].data());
         });
@@ -203,7 +203,7 @@ class MenuService {
               .doc(category.id)
               .collection('items')
               .doc(drink.id)
-              .set((drink as Drink).toJson());
+              .set((drink as DrinkTemplate).toJson());
         });
         break;
       case CategoryType.food:
@@ -220,7 +220,7 @@ class MenuService {
               .doc(category.id)
               .collection('items')
               .doc(foodItem.id)
-              .set((foodItem as Food).toJson());
+              .set((foodItem as FoodTemplate).toJson());
         });
         break;
       case CategoryType.addIn:
@@ -290,7 +290,7 @@ class MenuService {
               .doc(category.id)
               .collection('items')
               .doc(drink.id)
-              .set((drink as Drink).toJson());
+              .set((drink as DrinkTemplate).toJson());
         });
         break;
       case CategoryType.food:
@@ -307,7 +307,7 @@ class MenuService {
               .doc(category.id)
               .collection('items')
               .doc(foodItem.id)
-              .set((foodItem as Food).toJson());
+              .set((foodItem as FoodTemplate).toJson());
         });
         break;
       case CategoryType.addIn:
@@ -331,7 +331,7 @@ class MenuService {
   }
 
   addItemInCategory(String coffeeShopId, CategoryType categoryType,
-      String categoryId, Item itemToAdd) {
+      String categoryId, ItemTemplate itemToAdd) {
     switch (categoryType) {
       case CategoryType.drink:
         return _menusCollection
@@ -340,16 +340,17 @@ class MenuService {
             .doc(categoryId)
             .collection('items')
             .doc(itemToAdd.id)
-            .set((itemToAdd as Drink).toJson());
+            .set((itemToAdd as DrinkTemplate).toJson());
         break;
       case CategoryType.food:
+        FoodTemplate foodTemplate = itemToAdd;
         return _menusCollection
             .doc(coffeeShopId)
             .collection('food')
             .doc(categoryId)
             .collection('items')
             .doc(itemToAdd.id)
-            .set((itemToAdd as Food).toJson());
+            .set(foodTemplate.toJson());
         break;
       case CategoryType.addIn:
         return _menusCollection
@@ -364,7 +365,7 @@ class MenuService {
   }
 
   updateItemInCategory(String coffeeShopId, CategoryType categoryType,
-      String categoryId, Item itemToUpdate) {
+      String categoryId, ItemTemplate itemToUpdate) {
     switch (categoryType) {
       case CategoryType.drink:
         return _menusCollection
@@ -373,7 +374,7 @@ class MenuService {
             .doc(categoryId)
             .collection('items')
             .doc(itemToUpdate.id)
-            .update((itemToUpdate as Drink).toJson());
+            .update((itemToUpdate as DrinkTemplate).toJson());
         break;
       case CategoryType.food:
         return _menusCollection
@@ -382,7 +383,7 @@ class MenuService {
             .doc(categoryId)
             .collection('items')
             .doc(itemToUpdate.id)
-            .update((itemToUpdate as Food).toJson());
+            .update((itemToUpdate as FoodTemplate).toJson());
         break;
       case CategoryType.addIn:
         return _menusCollection
@@ -397,7 +398,7 @@ class MenuService {
   }
 
   removeItemInCategory(String coffeeShopId, CategoryType categoryType,
-      String categoryId, Item itemToRemove) {
+      String categoryId, ItemTemplate itemToRemove) {
     switch (categoryType) {
       case CategoryType.drink:
         return _menusCollection
@@ -428,24 +429,6 @@ class MenuService {
         break;
     }
   }
-}
-
-Drink drinkFromData(Map<dynamic, dynamic> data) {
-  Drink drink = Drink(
-      addIns: addInsToList(data['addIns']),
-      requiredAddIns: data['requiredAddIns'] ?? [],
-      availableAddIns: data['availableAddIns'] ?? [],
-      id: data['id'],
-      name: data['name'],
-      size: data['size'],
-      soldOut: data['soldOut'] ?? false,
-      quantity: data['quantity'] ?? 1,
-      servedIced: data['servedIced'],
-      redeemableType: redeemableTypeStringToEnum(data['redeemableType']),
-      redeemableSize: sizeStringToEnum(data['redeemableSize']),
-      sizePriceMap: convertSizePriceMap(data['sizePriceMap']));
-
-  return drink;
 }
 
 List<AddIn> addInsToList(List<dynamic> addInMaps) {
@@ -464,14 +447,26 @@ Map<SizeInOunces, dynamic> convertSizePriceMap(
       sizeStringToEnum(key), value == '' || value == null ? '0.00' : value));
 }
 
-Food foodFromData(Map<dynamic, dynamic> data) {
-  return Food(
+DrinkTemplate drinkTemplateFromData(Map<dynamic, dynamic> data) {
+  DrinkTemplate drinkTemplate = DrinkTemplate(
       id: data['id'],
       name: data['name'],
-      notes: data['notes'],
-      soldOut: data['soldOut'] ?? false,
-      quantity: data['quantity'] ?? 1,
-      price: data['price'] ?? []);
+      servedIced: data['servedIced'] ?? false,
+      redeemableSize: sizeStringToEnum(data['redeemableSize']),
+      description: data['description'],
+      requiredAddIns: data['requiredAddIns'] ?? [],
+      availableAddIns: data['availableAddIns'] ?? [],
+      redeemableType: redeemableTypeStringToEnum(data['redeemableType']),
+      sizePriceMap: data['sizePriceMap']);
+  return drinkTemplate;
+}
+
+FoodTemplate foodTemplateFromData(Map<dynamic, dynamic> data) {
+  return FoodTemplate(
+      id: data['id'],
+      name: data['name'],
+      price: data['price'],
+      description: data['description']);
 }
 
 AddIn addInFromData(Map<dynamic, dynamic> data) {

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:cortado_admin_ios/src/data/item.dart';
+import 'package:cortado_admin_ios/src/data/item_template.dart';
 import 'package:cortado_admin_ios/src/data/menu.dart';
 import 'package:cortado_admin_ios/src/locator.dart';
 import 'package:cortado_admin_ios/src/services/menu_service.dart';

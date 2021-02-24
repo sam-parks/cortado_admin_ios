@@ -4,7 +4,7 @@ import 'package:cortado_admin_ios/src/bloc/menu/bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/category/category_bloc.dart';
 import 'package:cortado_admin_ios/src/bloc/menu/item/item_bloc.dart';
 import 'package:cortado_admin_ios/src/data/category.dart';
-import 'package:cortado_admin_ios/src/data/item.dart';
+import 'package:cortado_admin_ios/src/data/item_template.dart';
 import 'package:cortado_admin_ios/src/data/menu.dart';
 import 'package:cortado_admin_ios/src/services/menu_service.dart';
 import 'package:cortado_admin_ios/src/ui/router.dart';
@@ -102,13 +102,13 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   _addInForm() {
     List<AddIn> addIns;
     if (widget.newCategory) {
-      addIns = List.castFrom<Item, AddIn>(widget.category.items);
+      addIns = List.castFrom<ItemTemplate, AddIn>(widget.category.items);
     } else {
       Menu menu = context.read<MenuBloc>().state.menu;
 
       Category category = menu.addIns
           .firstWhere((category) => category.id == widget.category.id);
-      addIns = List.castFrom<Item, AddIn>(category.items);
+      addIns = List.castFrom<ItemTemplate, AddIn>(category.items);
     }
 
     addIns.sort((a, b) => a.id.compareTo(b.id));
@@ -482,14 +482,14 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   }
 
   _foodform() {
-    List<Food> food;
+    List<FoodTemplate> food;
     if (widget.newCategory) {
-      food = List.castFrom<Item, Food>(widget.category.items);
+      food = List.castFrom<ItemTemplate, FoodTemplate>(widget.category.items);
     } else {
       Menu menu = context.read<MenuBloc>().state.menu;
       Category category = menu.foodTemplates
           .firstWhere((category) => category.id == widget.category.id);
-      food = List.castFrom<Item, Food>(category.items);
+      food = List.castFrom<ItemTemplate, FoodTemplate>(category.items);
     }
 
     food.sort((a, b) => a.id.compareTo(b.id));
@@ -636,7 +636,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                 widget.newCategory,
                                 CategoryType.food,
                                 widget.category,
-                                Food(
+                                FoodTemplate(
                                   id: Uuid().v4(),
                                 ),
                               ]);
@@ -780,8 +780,9 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                             checkColor: AppColors.light,
                                             value: food[index].soldOut,
                                             onChanged: (soldOut) {
-                                              Food foodItem = food[index]
-                                                  .copyWith(soldOut: soldOut);
+                                              FoodTemplate foodItem =
+                                                  food[index].copyWith(
+                                                      soldOut: soldOut);
 
                                               Menu menu = context
                                                   .read<MenuBloc>()
@@ -879,14 +880,15 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
   }
 
   _drinkForm() {
-    List<Drink> drinks;
+    List<DrinkTemplate> drinks;
     if (widget.newCategory) {
-      drinks = List.castFrom<Item, Drink>(widget.category.items);
+      drinks =
+          List.castFrom<ItemTemplate, DrinkTemplate>(widget.category.items);
     } else {
       Menu menu = context.read<MenuBloc>().state.menu;
       Category category = menu.drinkTemplates
           .firstWhere((category) => category.id == widget.category.id);
-      drinks = List.castFrom<Item, Drink>(category.items);
+      drinks = List.castFrom<ItemTemplate, DrinkTemplate>(category.items);
     }
 
     drinks.sort((a, b) => a.id.compareTo(b.id));
@@ -1033,7 +1035,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                 widget.newCategory,
                                 CategoryType.drink,
                                 widget.category,
-                                Drink(
+                                DrinkTemplate(
                                     id: Uuid().v4(),
                                     redeemableType: RedeemableType.none,
                                     redeemableSize: SizeInOunces.none,
@@ -1076,9 +1078,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                           controller: _scrollController,
                           itemCount: drinks.length,
                           itemBuilder: (context, index) {
-                            if (drinks[index].name == null) {
-                              return Container();
-                            }
                             return Container(
                               margin: const EdgeInsets.all(8.0),
                               decoration: BoxDecoration(
@@ -1162,7 +1161,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: AutoSizeText(
-                                      drinks[index].name,
+                                      drinks[index].name ?? '',
                                       minFontSize: 16,
                                       style: TextStyles.kDefaultLightTextStyle,
                                     ),
@@ -1184,8 +1183,9 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                               value: drinks[index].soldOut ??
                                                   false,
                                               onChanged: (soldOut) {
-                                                Drink drink = drinks[index]
-                                                    .copyWith(soldOut: soldOut);
+                                                DrinkTemplate drink =
+                                                    drinks[index].copyWith(
+                                                        soldOut: soldOut);
                                                 assert(
                                                     drink.soldOut == soldOut);
 
@@ -1297,3 +1297,4 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
 }
 
 enum CategoryType { drink, food, addIn }
+

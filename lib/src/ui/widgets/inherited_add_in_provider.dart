@@ -1,4 +1,4 @@
-import 'package:cortado_admin_ios/src/data/item.dart';
+import 'package:cortado_admin_ios/src/data/item_template.dart';
 import 'package:flutter/material.dart';
 
 class InheritedAddInProvider extends InheritedWidget {

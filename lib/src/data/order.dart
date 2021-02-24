@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cortado_admin_ios/src/data/item.dart';
+import 'package:cortado_admin_ios/src/data/item_template.dart';
 import 'package:cortado_admin_ios/src/services/menu_service.dart';
 
 class Order {
@@ -56,6 +57,30 @@ class Order {
       return foodMap != null ? foodFromData(foodMap) : [];
     });
     status = getOrderStatusFromString(json['status']);
+  }
+
+  Food foodFromData(Map<dynamic, dynamic> data) {
+    return Food(
+      id: data['id'],
+      name: data['name'],
+      price: data['price'],
+    );
+  }
+
+  Drink drinkFromData(Map<dynamic, dynamic> data) {
+    Drink drink = Drink(
+      addIns: addInsToList(data['addIns']),
+      id: data['id'],
+      name: data['name'],
+      servedIced: data['servedIced'] ?? false,
+      size: data["size"],
+      price: data['price'],
+      quantity: data['quantity'],
+      redeemableSize: sizeStringToEnum(data['redeemableSize']),
+      redeemableType: redeemableTypeStringToEnum(data['redeemableType']),
+    );
+
+    return drink;
   }
 
   toJson() {

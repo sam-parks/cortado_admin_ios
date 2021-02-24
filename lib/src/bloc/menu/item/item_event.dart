@@ -7,10 +7,16 @@ abstract class ItemEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class ChangeItemLocally extends ItemEvent {
+  final ItemTemplate itemTemplate;
+
+  ChangeItemLocally(this.itemTemplate);
+}
+
 class AddItem extends ItemEvent {
   final CategoryType type;
   final String categoryId;
-  final Item item;
+  final ItemTemplate item;
   final Menu menu;
   final String coffeeShopId;
 
@@ -26,7 +32,7 @@ class AddItem extends ItemEvent {
 class UpdateItem extends ItemEvent {
   final CategoryType type;
   final String categoryId;
-  final Item item;
+  final ItemTemplate item;
   final Menu menu;
   final String coffeeShopId;
 
@@ -37,7 +43,7 @@ class UpdateItem extends ItemEvent {
 class RemoveItem extends ItemEvent {
   final CategoryType type;
   final String categoryId;
-  final Item item;
+  final ItemTemplate item;
   final Menu menu;
   final String coffeeShopId;
 
