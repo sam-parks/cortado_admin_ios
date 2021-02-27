@@ -7,22 +7,16 @@ abstract class AddInItemEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class InitializeItem extends AddInItemEvent {
+class InitializeAddInItem extends AddInItemEvent {
   final AddIn addIn;
 
-  InitializeItem(this.addIn);
+  InitializeAddInItem(this.addIn);
 }
 
 class ChangeName extends AddInItemEvent {
   final String name;
 
   ChangeName(this.name);
-}
-
-class ChangeDescription extends AddInItemEvent {
-  final String description;
-
-  ChangeDescription(this.description);
 }
 
 class ChangePrice extends AddInItemEvent {

@@ -7,16 +7,18 @@ import 'package:cortado_admin_ios/src/data/menu.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/latte_loader.dart';
+import 'package:cortado_admin_ios/src/utils/currency_input_formatter.dart';
 import 'package:cortado_admin_ios/src/utils/validate.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddInForm extends StatefulWidget {
-  AddInForm(
-      {Key key, this.addIn, this.editing, this.categoryId, this.newCategory})
+  AddInForm({Key key, this.editing, this.categoryId, this.newCategory})
       : super(key: key);
-  final AddIn addIn;
+
   final bool editing;
   final String categoryId;
   final bool newCategory;
@@ -30,6 +32,7 @@ class _AddInFormState extends State<AddInForm> {
   void initState() {
     priceController = MoneyMaskedTextController(
       initialValue: 0.00,
+      leftSymbol: '\$',
       decimalSeparator: '.',
       thousandSeparator: ',',
     );
@@ -47,6 +50,8 @@ class _AddInFormState extends State<AddInForm> {
       resizeToAvoidBottomInset: false,
       body: BlocBuilder<AddInItemBloc, AddInItemState>(
         builder: (context, state) {
+          if (state.addIn == null) return Center(child: LatteLoader());
+
           priceController.text = state.addIn.price;
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 100),
@@ -96,54 +101,22 @@ class _AddInFormState extends State<AddInForm> {
                     ),
                   ),
                 ),
-                SizedBox(height: 5),
+                SizedBox(height: 10),
                 Container(
                   child: TextFormField(
-                    initialValue: state.addIn.description,
-                    maxLines: 6,
-                    keyboardType: TextInputType.multiline,
-                    textInputAction: TextInputAction.done,
-                    onChanged: (value) {
-                      context
-                          .read<AddInItemBloc>()
-                          .add(ChangeDescription(value));
-                    },
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: AppColors.dark,
-                      fontFamily: kFontFamilyNormal,
-                      letterSpacing: .75,
-                    ),
-                    decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: AppColors.dark, width: 2.0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: AppColors.dark, width: 2.0),
-                      ),
-                      labelText: "Description",
-                      labelStyle: TextStyle(
-                        fontSize: 20,
-                        color: AppColors.caramel,
-                        fontFamily: kFontFamilyNormal,
-                        letterSpacing: .75,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 5),
-                Container(
-                  child: TextFormField(
+                    initialValue: state.addIn.price,
                     validator: (value) {
                       return Validate.requiredField(value, "Required field.");
                     },
                     keyboardType: TextInputType.number,
-                    autofocus: true,
-                    controller: priceController,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      CurrencyInputFormatter()
+                    ],
                     onChanged: (value) {
-                      context.read<AddInItemBloc>().add(ChangePrice(value));
+                      context
+                          .read<AddInItemBloc>()
+                          .add(ChangePrice(value.substring(1)));
                     },
                     style: TextStyle(
                       fontSize: 20,
@@ -178,7 +151,7 @@ class _AddInFormState extends State<AddInForm> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(30),
         child: CortadoFatButton(
-          text: widget.editing ? "Update AddIn Item" : "Create AddIn Item",
+          text: widget.editing ? "Update Add In" : "Create Add In",
           textStyle: TextStyles.kDefaultLightTextStyle,
           backgroundColor: AppColors.caramel,
           width: 300,

@@ -77,7 +77,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           _foodAdded = value;
                         })),
                 title: AutoSizeText(
-                  "Add FoodTemplate",
+                  "Add Food Items",
                   maxLines: 1,
                   style: TextStyle(
                       decoration: TextDecoration.underline,

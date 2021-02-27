@@ -13,7 +13,7 @@ abstract class ItemTemplate {
 class DrinkTemplate extends ItemTemplate with EquatableMixin {
   final String id;
   final String name;
-  final Map sizePriceMap;
+  final Map<SizeInOunces, dynamic> sizePriceMap;
   final String description;
   final RedeemableType redeemableType;
   final SizeInOunces redeemableSize;
@@ -31,8 +31,8 @@ class DrinkTemplate extends ItemTemplate with EquatableMixin {
     this.sizePriceMap,
     this.servedIced,
     this.redeemableType,
-    this.soldOut = false,
     this.requiredAddIns,
+    this.soldOut = false,
   }) : super(id, name, null, description);
 
   toJson() {
@@ -43,40 +43,58 @@ class DrinkTemplate extends ItemTemplate with EquatableMixin {
       'redeemableType': redeemableType.statusToString(),
       'redeemableSize': redeemableSize.sizeToString(),
       'servedIced': servedIced,
+      'requiredAddIns': requiredAddIns,
+      'availableAddIns': availableAddIns,
+      'sizePriceMap': sizePriceMapToString(sizePriceMap),
       'soldOut': soldOut
     };
+  }
+
+  Map<String, String> sizePriceMapToString(
+      Map<SizeInOunces, dynamic> sizePriceMap) {
+    return sizePriceMap
+        .map((key, value) => MapEntry(key.sizeToString(), value));
   }
 
   DrinkTemplate copyWith(
       {String id,
       String name,
       String description,
-      int quantity,
       List<String> availableAddIns,
       RedeemableType redeemableType,
       SizeInOunces redeemableSize,
-      Map<String, dynamic> sizePriceMap,
-      List<AddIn> addIns,
+      Map<SizeInOunces, dynamic> sizePriceMap,
       List<dynamic> requiredAddIns,
-      String size,
       bool servedIced,
       bool soldOut}) {
     return DrinkTemplate(
-        id: id ?? this.id,
-        availableAddIns: availableAddIns ?? this.availableAddIns,
-        name: name ?? this.name,
-        description: description ?? this.description,
-        redeemableType: redeemableType ?? this.redeemableType,
-        redeemableSize: redeemableSize ?? this.redeemableSize,
-        sizePriceMap: sizePriceMap ?? this.sizePriceMap,
-        requiredAddIns: requiredAddIns ?? this.requiredAddIns,
-        servedIced: servedIced ?? this.servedIced,
-        soldOut: soldOut ?? this.soldOut);
+      id: id ?? this.id,
+      availableAddIns: availableAddIns ?? this.availableAddIns,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      redeemableType: redeemableType ?? this.redeemableType,
+      redeemableSize: redeemableSize ?? this.redeemableSize,
+      sizePriceMap: sizePriceMap ?? this.sizePriceMap,
+      requiredAddIns: requiredAddIns ?? this.requiredAddIns,
+      servedIced: servedIced ?? this.servedIced,
+      soldOut: soldOut ?? this.soldOut,
+    );
   }
 
   @override
-  List<Object> get props =>
-      [id, name, description, price, redeemableType, soldOut];
+  List<Object> get props => [
+        id,
+        name,
+        description,
+        price,
+        redeemableType,
+        sizePriceMap,
+        availableAddIns,
+        redeemableSize,
+        requiredAddIns,
+        servedIced,
+        soldOut
+      ];
 }
 
 class FoodTemplate extends ItemTemplate with EquatableMixin {
@@ -128,6 +146,18 @@ class AddIn extends ItemTemplate {
   final String price;
 
   AddIn({this.id, this.name, this.price = "0.00"}) : super(id, name, price, '');
+
+  AddIn copyWith({
+    String id,
+    String name,
+    String price,
+  }) {
+    return AddIn(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      price: price ?? this.price,
+    );
+  }
 
   toJson() {
     return {

@@ -7,16 +7,17 @@ import 'package:cortado_admin_ios/src/data/menu.dart';
 import 'package:cortado_admin_ios/src/ui/pages/menu/menu_category_page.dart';
 import 'package:cortado_admin_ios/src/ui/style.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
+import 'package:cortado_admin_ios/src/ui/widgets/latte_loader.dart';
+import 'package:cortado_admin_ios/src/utils/currency_input_formatter.dart';
 import 'package:cortado_admin_ios/src/utils/validate.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FoodForm extends StatefulWidget {
-  FoodForm(
-      {Key key, this.food, this.editing, this.categoryId, this.newCategory})
+  FoodForm({Key key, this.editing, this.categoryId, this.newCategory})
       : super(key: key);
-  final FoodTemplate food;
+
   final bool editing;
   final String categoryId;
   final bool newCategory;
@@ -25,20 +26,6 @@ class FoodForm extends StatefulWidget {
 }
 
 class _FoodFormState extends State<FoodForm> {
-  MoneyMaskedTextController priceController;
-  @override
-  void initState() {
-    context.read<FoodItemBloc>().add(InitializeItem(widget.food));
-
-    priceController = MoneyMaskedTextController(
-      initialValue: 0.00,
-      decimalSeparator: '.',
-      thousandSeparator: ',',
-    );
-
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +36,8 @@ class _FoodFormState extends State<FoodForm> {
       resizeToAvoidBottomInset: false,
       body: BlocBuilder<FoodItemBloc, FoodItemState>(
         builder: (context, state) {
-          priceController.text = state.foodTemplate.price;
+          if (state.foodTemplate == null) return Center(child: LatteLoader());
+
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 100),
             child: Column(
@@ -69,7 +57,6 @@ class _FoodFormState extends State<FoodForm> {
                     validator: (value) {
                       return Validate.requiredField(value, "Required field.");
                     },
-                    autofocus: true,
                     onChanged: (value) {
                       context.read<FoodItemBloc>().add(ChangeName(value));
                     },
@@ -138,14 +125,20 @@ class _FoodFormState extends State<FoodForm> {
                 SizedBox(height: 5),
                 Container(
                   child: TextFormField(
+                    initialValue: state.foodTemplate.price,
                     validator: (value) {
                       return Validate.requiredField(value, "Required field.");
                     },
                     keyboardType: TextInputType.number,
                     autofocus: true,
-                    controller: priceController,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      CurrencyInputFormatter()
+                    ],
                     onChanged: (value) {
-                      context.read<FoodItemBloc>().add(ChangePrice(value));
+                      context
+                          .read<FoodItemBloc>()
+                          .add(ChangePrice(value.substring(1)));
                     },
                     style: TextStyle(
                       fontSize: 20,

@@ -14,14 +14,14 @@ class AddInItemBloc extends Bloc<AddInItemEvent, AddInItemState> {
   Stream<AddInItemState> mapEventToState(
     AddInItemEvent event,
   ) async* {
-    if (event is InitializeItem) {
-     yield state.copyWith(addIn: event.addIn);
+    if (event is InitializeAddInItem) {
+      yield state.copyWith(addIn: event.addIn);
     } else if (event is ChangeName) {
-      yield state.copyWith(name: event.name);
-    } else if (event is ChangeDescription) {
-      yield state.copyWith(description: event.description);
+      AddIn addIn = state.addIn.copyWith(name: event.name);
+      yield state.copyWith(addIn: addIn);
     } else if (event is ChangePrice) {
-      yield state.copyWith(name: event.price);
+      AddIn addIn = state.addIn.copyWith(price: event.price);
+      yield state.copyWith(addIn: addIn);
     }
   }
 }

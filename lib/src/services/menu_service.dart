@@ -441,7 +441,7 @@ List<AddIn> addInsToList(List<dynamic> addInMaps) {
   return addIns;
 }
 
-Map<SizeInOunces, dynamic> convertSizePriceMap(
+Map<SizeInOunces, dynamic> convertSizePriceMapToObject(
     Map<dynamic, dynamic> sizePriceMap) {
   return sizePriceMap.map((key, value) => MapEntry(
       sizeStringToEnum(key), value == '' || value == null ? '0.00' : value));
@@ -457,7 +457,7 @@ DrinkTemplate drinkTemplateFromData(Map<dynamic, dynamic> data) {
       requiredAddIns: data['requiredAddIns'] ?? [],
       availableAddIns: data['availableAddIns'] ?? [],
       redeemableType: redeemableTypeStringToEnum(data['redeemableType']),
-      sizePriceMap: data['sizePriceMap']);
+      sizePriceMap: convertSizePriceMapToObject(data['sizePriceMap']));
   return drinkTemplate;
 }
 

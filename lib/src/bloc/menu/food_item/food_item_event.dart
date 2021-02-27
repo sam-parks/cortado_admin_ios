@@ -7,10 +7,10 @@ abstract class FoodItemEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class InitializeItem extends FoodItemEvent {
+class InitializeFoodItem extends FoodItemEvent {
   final FoodTemplate foodTemplate;
 
-  InitializeItem(this.foodTemplate);
+  InitializeFoodItem(this.foodTemplate);
 }
 
 class ChangeName extends FoodItemEvent {

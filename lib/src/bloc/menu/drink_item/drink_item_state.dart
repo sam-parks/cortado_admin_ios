@@ -1,10 +1,25 @@
 part of 'drink_item_bloc.dart';
 
-abstract class DrinkItemState extends Equatable {
-  const DrinkItemState();
-  
-  @override
-  List<Object> get props => [];
-}
+@CopyWith()
+class DrinkItemState extends Equatable {
+  const DrinkItemState(
+      {this.drinkTemplate,
+      this.regularSizes = const [
+        SizeInOunces.six,
+        SizeInOunces.eight,
+        SizeInOunces.twelve,
+        SizeInOunces.sixteen,
+        SizeInOunces.twenty,
+        SizeInOunces.twentyFour
+      ]});
 
-class DrinkItemInitial extends DrinkItemState {}
+  final DrinkTemplate drinkTemplate;
+
+  final List<SizeInOunces> regularSizes;
+
+  @override
+  List<Object> get props => [
+        drinkTemplate,
+        regularSizes,
+      ];
+}

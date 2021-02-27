@@ -14,20 +14,19 @@ class FoodItemBloc extends Bloc<FoodItemEvent, FoodItemState> {
   Stream<FoodItemState> mapEventToState(
     FoodItemEvent event,
   ) async* {
-    if (event is InitializeItem) {
+    if (event is InitializeFoodItem) {
       yield state.copyWith(foodTemplate: event.foodTemplate);
     } else if (event is ChangeName) {
       FoodTemplate foodTemplate = state.foodTemplate.copyWith(name: event.name);
-      yield state.copyWith(name: event.name, foodTemplate: foodTemplate);
+      yield state.copyWith(foodTemplate: foodTemplate);
     } else if (event is ChangeDescription) {
       FoodTemplate foodTemplate =
           state.foodTemplate.copyWith(description: event.description);
-      yield state.copyWith(
-          description: event.description, foodTemplate: foodTemplate);
+      yield state.copyWith(foodTemplate: foodTemplate);
     } else if (event is ChangePrice) {
       FoodTemplate foodTemplate =
           state.foodTemplate.copyWith(price: event.price);
-      yield state.copyWith(name: event.price, foodTemplate: foodTemplate);
+      yield state.copyWith(foodTemplate: foodTemplate);
     }
   }
 }
