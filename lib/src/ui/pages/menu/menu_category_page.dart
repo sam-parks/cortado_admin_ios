@@ -34,13 +34,6 @@ class MenuCategoryPage extends StatefulWidget {
 }
 
 class _MenuCategoryPageState extends State<MenuCategoryPage> {
-  // ignore: close_sinks
-  CategoryBloc _categoryBloc;
-  // ignore: close_sinks
-  MenuBloc _menuBloc;
-  // ignore: close_sinks
-  ItemBloc _itemBloc;
-
   ScrollController _scrollController = ScrollController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -56,10 +49,6 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
 
     if (widget.category.id == null) widget.category.id = Uuid().v4();
 
-    _categoryBloc = BlocProvider.of<CategoryBloc>(context);
-    _menuBloc = BlocProvider.of<MenuBloc>(context);
-    _itemBloc = BlocProvider.of<ItemBloc>(context);
-
     editing = widget.editing;
     newCategory = widget.newCategory;
 
@@ -70,42 +59,37 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder(
-        cubit: _menuBloc,
-        builder: (context, state) {
-          return BlocConsumer(
-            cubit: _categoryBloc,
-            listener: (context, state) {
-              if (state is CategoryAdded || state is CategoryUpdated) {
-                Navigator.of(context).pop();
-              }
-            },
-            builder: (BuildContext context, CategoryState state) {
-              switch (widget.categoryType) {
-                case CategoryType.drink:
-                  return _drinkForm();
-                  break;
-                case CategoryType.food:
-                  return _foodform();
-                  break;
-                case CategoryType.addIn:
-                  return _addInForm();
-                  break;
-                default:
-                  return Container();
-              }
-            },
-          );
-        });
+    return BlocBuilder<MenuBloc, MenuState>(builder: (context, menuState) {
+      return BlocConsumer<CategoryBloc, CategoryState>(
+        listener: (context, state) {
+          if (state is CategoryAdded || state is CategoryUpdated) {
+            Navigator.of(context).pop();
+          }
+        },
+        builder: (BuildContext context, CategoryState state) {
+          switch (widget.categoryType) {
+            case CategoryType.drink:
+              return _drinkForm(menuState.menu);
+              break;
+            case CategoryType.food:
+              return _foodform(menuState.menu);
+              break;
+            case CategoryType.addIn:
+              return _addInForm(menuState.menu);
+              break;
+            default:
+              return Container();
+          }
+        },
+      );
+    });
   }
 
-  _addInForm() {
+  _addInForm(Menu menu) {
     List<AddIn> addIns;
     if (widget.newCategory) {
       addIns = List.castFrom<ItemTemplate, AddIn>(widget.category.items);
     } else {
-      Menu menu = context.read<MenuBloc>().state.menu;
-
       Category category = menu.addIns
           .firstWhere((category) => category.id == widget.category.id);
       addIns = List.castFrom<ItemTemplate, AddIn>(category.items);
@@ -328,12 +312,13 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                               .state
                                               .coffeeShop
                                               .id;
-                                          _itemBloc.add(RemoveItem(
-                                              widget.categoryType,
-                                              widget.category.id,
-                                              addIns[index],
-                                              menu,
-                                              coffeeShopId));
+                                          context.read<ItemBloc>().add(
+                                              RemoveItem(
+                                                  widget.categoryType,
+                                                  widget.category.id,
+                                                  addIns[index],
+                                                  menu,
+                                                  coffeeShopId));
                                         },
                                       ),
                                     ),
@@ -367,12 +352,13 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                               .id;
 
                                           if (addIn != null) {
-                                            _itemBloc.add(UpdateItem(
-                                                widget.categoryType,
-                                                widget.category.id,
-                                                addIn,
-                                                menu,
-                                                coffeeShopId));
+                                            context.read<ItemBloc>().add(
+                                                UpdateItem(
+                                                    widget.categoryType,
+                                                    widget.category.id,
+                                                    addIn,
+                                                    menu,
+                                                    coffeeShopId));
                                           }
                                         },
                                       ),
@@ -441,7 +427,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         Menu menu = context.read<MenuBloc>().state.menu;
                         String coffeeShopId =
                             context.read<CoffeeShopBloc>().state.coffeeShop.id;
-                        _categoryBloc.add(UpdateCategory(
+                        context.read<CategoryBloc>().add(UpdateCategory(
                             CategoryType.addIn, category, menu, coffeeShopId));
                       }
                     },
@@ -469,8 +455,11 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                 .coffeeShop
                                 .id;
 
-                            _categoryBloc.add(AddCategory(CategoryType.addIn,
-                                category, menu, coffeeShopId));
+                            context.read<CategoryBloc>().add(AddCategory(
+                                CategoryType.addIn,
+                                category,
+                                menu,
+                                coffeeShopId));
                           }
                         },
                       ),
@@ -481,12 +470,11 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
         ));
   }
 
-  _foodform() {
+  _foodform(Menu menu) {
     List<FoodTemplate> food;
     if (widget.newCategory) {
       food = List.castFrom<ItemTemplate, FoodTemplate>(widget.category.items);
     } else {
-      Menu menu = context.read<MenuBloc>().state.menu;
       Category category = menu.foodTemplates
           .firstWhere((category) => category.id == widget.category.id);
       food = List.castFrom<ItemTemplate, FoodTemplate>(category.items);
@@ -706,12 +694,13 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                               .state
                                               .coffeeShop
                                               .id;
-                                          _itemBloc.add(RemoveItem(
-                                              widget.categoryType,
-                                              widget.category.id,
-                                              food[index],
-                                              menu,
-                                              coffeeShopId));
+                                          context.read<ItemBloc>().add(
+                                              RemoveItem(
+                                                  widget.categoryType,
+                                                  widget.category.id,
+                                                  food[index],
+                                                  menu,
+                                                  coffeeShopId));
                                         },
                                       ),
                                     ),
@@ -744,12 +733,13 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                               .coffeeShop
                                               .id;
                                           if (foodItem != null) {
-                                            _itemBloc.add(UpdateItem(
-                                                widget.categoryType,
-                                                widget.category.id,
-                                                foodItem,
-                                                menu,
-                                                coffeeShopId));
+                                            context.read<ItemBloc>().add(
+                                                UpdateItem(
+                                                    widget.categoryType,
+                                                    widget.category.id,
+                                                    foodItem,
+                                                    menu,
+                                                    coffeeShopId));
                                           }
                                         },
                                       ),
@@ -794,12 +784,13 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                   .coffeeShop
                                                   .id;
 
-                                              _itemBloc.add(UpdateItem(
-                                                  widget.categoryType,
-                                                  widget.category.id,
-                                                  foodItem,
-                                                  menu,
-                                                  coffeeShopId));
+                                              context.read<ItemBloc>().add(
+                                                  UpdateItem(
+                                                      widget.categoryType,
+                                                      widget.category.id,
+                                                      foodItem,
+                                                      menu,
+                                                      coffeeShopId));
                                             }),
                                       ),
                                       Text("Sold Out?",
@@ -839,7 +830,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         String coffeeShopId =
                             context.read<CoffeeShopBloc>().state.coffeeShop.id;
 
-                        _categoryBloc.add(UpdateCategory(
+                        context.read<CategoryBloc>().add(UpdateCategory(
                             CategoryType.food, category, menu, coffeeShopId));
                       }
                     },
@@ -867,8 +858,11 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                 .coffeeShop
                                 .id;
 
-                            _categoryBloc.add(AddCategory(CategoryType.food,
-                                category, menu, coffeeShopId));
+                            context.read<CategoryBloc>().add(AddCategory(
+                                CategoryType.food,
+                                category,
+                                menu,
+                                coffeeShopId));
                           }
                         },
                       ),
@@ -879,13 +873,12 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
         ));
   }
 
-  _drinkForm() {
+  _drinkForm(Menu menu) {
     List<DrinkTemplate> drinks;
     if (widget.newCategory) {
       drinks =
           List.castFrom<ItemTemplate, DrinkTemplate>(widget.category.items);
     } else {
-      Menu menu = context.read<MenuBloc>().state.menu;
       Category category = menu.drinkTemplates
           .firstWhere((category) => category.id == widget.category.id);
       drinks = List.castFrom<ItemTemplate, DrinkTemplate>(category.items);
@@ -1043,9 +1036,9 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                     requiredAddIns: [],
                                     availableAddIns: [],
                                     sizePriceMap: {
-                                      SizeInOunces.eight: null,
-                                      SizeInOunces.twelve: null,
-                                      SizeInOunces.sixteen: null,
+                                      SizeInOunces.eight: "0.00",
+                                      SizeInOunces.twelve: "0.00",
+                                      SizeInOunces.sixteen: "0.00",
                                     }),
                               ]);
                               if (drink != null) {
@@ -1108,12 +1101,13 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                 .state
                                                 .coffeeShop
                                                 .id;
-                                            _itemBloc.add(RemoveItem(
-                                                widget.categoryType,
-                                                widget.category.id,
-                                                drinks[index],
-                                                menu,
-                                                coffeeShopId));
+                                            context.read<ItemBloc>().add(
+                                                RemoveItem(
+                                                    widget.categoryType,
+                                                    widget.category.id,
+                                                    drinks[index],
+                                                    menu,
+                                                    coffeeShopId));
                                           },
                                         ),
                                       ),
@@ -1146,12 +1140,13 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                 .coffeeShop
                                                 .id;
                                             if (drink != null) {
-                                              _itemBloc.add(UpdateItem(
-                                                  widget.categoryType,
-                                                  widget.category.id,
-                                                  drink,
-                                                  menu,
-                                                  coffeeShopId));
+                                              context.read<ItemBloc>().add(
+                                                  UpdateItem(
+                                                      widget.categoryType,
+                                                      widget.category.id,
+                                                      drink,
+                                                      menu,
+                                                      coffeeShopId));
                                             }
                                           },
                                         ),
@@ -1198,12 +1193,13 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                                     .state
                                                     .coffeeShop
                                                     .id;
-                                                _itemBloc.add(UpdateItem(
-                                                    widget.categoryType,
-                                                    widget.category.id,
-                                                    drink,
-                                                    menu,
-                                                    coffeeShopId));
+                                                context.read<ItemBloc>().add(
+                                                    UpdateItem(
+                                                        widget.categoryType,
+                                                        widget.category.id,
+                                                        drink,
+                                                        menu,
+                                                        coffeeShopId));
                                               }),
                                         ),
                                         Text("Sold Out?",
@@ -1255,7 +1251,7 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                         String coffeeShopId =
                             context.read<CoffeeShopBloc>().state.coffeeShop.id;
 
-                        _categoryBloc.add(UpdateCategory(
+                        context.read<CategoryBloc>().add(UpdateCategory(
                             CategoryType.drink, category, menu, coffeeShopId));
                       }
                     },
@@ -1283,8 +1279,11 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
                                 .coffeeShop
                                 .id;
 
-                            _categoryBloc.add(AddCategory(CategoryType.drink,
-                                category, menu, coffeeShopId));
+                            context.read<CategoryBloc>().add(AddCategory(
+                                CategoryType.drink,
+                                category,
+                                menu,
+                                coffeeShopId));
                           }
                         },
                       ),
@@ -1297,4 +1296,3 @@ class _MenuCategoryPageState extends State<MenuCategoryPage> {
 }
 
 enum CategoryType { drink, food, addIn }
-

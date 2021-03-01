@@ -194,9 +194,11 @@ class _DrinkFormState extends State<DrinkForm> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: TextFormField(
-                                            initialValue: state
-                                                    .drinkTemplate.sizePriceMap[
-                                                state.regularSizes[index]],
+                                            initialValue: state.drinkTemplate
+                                                        .sizePriceMap[
+                                                    state
+                                                        .regularSizes[index]] ??
+                                                '0.00',
                                             inputFormatters: [
                                               FilteringTextInputFormatter
                                                   .digitsOnly,
@@ -347,13 +349,15 @@ class _DrinkFormState extends State<DrinkForm> {
                                       RedeemableType.premium,
                                   onChanged: (premiumRedeemable) {
                                     if (premiumRedeemable)
-                                      ChangeRedeemableType(
-                                          RedeemableType.premium,
-                                          state.drinkTemplate.redeemableSize ==
-                                                  null
-                                              ? SizeInOunces.eight
-                                              : state.drinkTemplate
-                                                  .redeemableSize);
+                                      context.read<DrinkItemBloc>().add(
+                                          ChangeRedeemableType(
+                                              RedeemableType.premium,
+                                              state.drinkTemplate
+                                                          .redeemableSize ==
+                                                      null
+                                                  ? SizeInOunces.eight
+                                                  : state.drinkTemplate
+                                                      .redeemableSize));
                                     else
                                       context.read<DrinkItemBloc>().add(
                                           ChangeRedeemableType(

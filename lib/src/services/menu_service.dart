@@ -452,6 +452,7 @@ DrinkTemplate drinkTemplateFromData(Map<dynamic, dynamic> data) {
       id: data['id'],
       name: data['name'],
       servedIced: data['servedIced'] ?? false,
+      soldOut: data['soldOut'],
       redeemableSize: sizeStringToEnum(data['redeemableSize']),
       description: data['description'],
       requiredAddIns: data['requiredAddIns'] ?? [],
@@ -466,6 +467,7 @@ FoodTemplate foodTemplateFromData(Map<dynamic, dynamic> data) {
       id: data['id'],
       name: data['name'],
       price: data['price'],
+      soldOut: data['soldOut'],
       description: data['description']);
 }
 

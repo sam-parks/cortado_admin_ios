@@ -54,6 +54,8 @@ class ChangeRedeemableSize extends DrinkItemEvent {
   final SizeInOunces redeemableSize;
 
   ChangeRedeemableSize(this.redeemableSize);
+  @override
+  List<Object> get props => [redeemableSize];
 }
 
 class ChangeRedeemableType extends DrinkItemEvent {
@@ -61,6 +63,8 @@ class ChangeRedeemableType extends DrinkItemEvent {
   final SizeInOunces size;
 
   ChangeRedeemableType(this.type, this.size);
+  @override
+  List<Object> get props => [type, size];
 }
 
 class AddToRequiredAddIns extends DrinkItemEvent {
