@@ -31,7 +31,7 @@ class BaristaService {
   }
 
   Future<CortadoUser> createBarista(String firstName, String lastName,
-      String email, String password, String coffeeShopId) async {
+      String phone, String email, String password, String coffeeShopId) async {
     try {
       final _user = await _authService.createUser(email, password);
       if (_user != null) {
@@ -39,6 +39,7 @@ class BaristaService {
           "firstName": firstName,
           "lastName": lastName,
           "email": email,
+          "phone": phone,
           'coffeeShopId': coffeeShopId
         });
         DocumentSnapshot coffeeShopAdmin =

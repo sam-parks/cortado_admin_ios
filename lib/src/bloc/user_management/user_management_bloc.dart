@@ -20,6 +20,7 @@ class BaristaManagementBloc
       CortadoUser newBarista = await _baristaService.createBarista(
           event.firstName,
           event.lastName,
+          event.phone,
           event.email,
           event.password,
           event.coffeeShopId);

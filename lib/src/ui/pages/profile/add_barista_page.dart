@@ -19,12 +19,14 @@ class _AddBaristaPageState extends State<AddBaristaPage> {
   FocusNode _lastNameFocus = FocusNode();
   FocusNode _emailFocus = FocusNode();
   FocusNode _passwordFocus = FocusNode();
+  FocusNode _phoneFocus = FocusNode();
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _email;
   String _firstName;
   String _lastName;
   String _password;
+  String _phone;
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +106,24 @@ class _AddBaristaPageState extends State<AddBaristaPage> {
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: CortadoInputField(
+                        focusNode: _phoneFocus,
+                        textInputType: TextInputType.phone,
+                        inputFormatters: [UsNumberTextInputFormatter()],
+                        label: "Phone Number",
+                        onChanged: (value) => setState(() {
+                          _phone = value;
+                        }),
+                        validator: _phoneValidator,
+                        textAlign: TextAlign.start,
+                        autofocus: false,
+                        isPassword: false,
+                        enabled: true,
+                        textCapitalization: TextCapitalization.sentences,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: CortadoInputField(
                         textCapitalization: TextCapitalization.sentences,
                         focusNode: _emailFocus,
                         isPassword: false,
@@ -153,13 +173,29 @@ class _AddBaristaPageState extends State<AddBaristaPage> {
             width: 300,
             onTap: () {
               if (_formKey.currentState.validate()) {
-                _baristaManagementBloc.add(CreateBarista(_email, _firstName,
-                    _lastName, _password, _coffeeShopState.coffeeShop.id));
+                _baristaManagementBloc.add(CreateBarista(
+                    _email,
+                    _firstName,
+                    _lastName,
+                    Format.phoneToE164(_phone),
+                    _password,
+                    _coffeeShopState.coffeeShop.id));
               }
             },
           ),
         ),
       ),
     );
+  }
+
+  String _phoneValidator(String input) {
+    RegExp regExp = RegExp(r'(^(\([0-9]{3}\) |[0-9]{3}-)[0-9]{3}-[0-9]{4}$)');
+    if (input == null || input.isEmpty) {
+      return 'Cannot be empty';
+    } else if (!regExp.hasMatch(input)) {
+      return 'Follow this format: (407) 741-8904';
+    }
+
+    return null;
   }
 }
