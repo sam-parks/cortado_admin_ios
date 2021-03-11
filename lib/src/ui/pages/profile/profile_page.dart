@@ -14,7 +14,6 @@ import 'package:cortado_admin_ios/src/ui/widgets/cortado_admin_loading_indicator
 import 'package:cortado_admin_ios/src/ui/widgets/cortado_fat_button.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/dashboard_card.dart';
 import 'package:cortado_admin_ios/src/ui/widgets/latte_loader.dart';
-import 'package:cortado_admin_ios/src/ui/widgets/loading_state_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -585,16 +584,13 @@ class _ProfilePageState extends State<ProfilePage> {
             flex: 2,
             child: Row(
               children: <Widget>[
-                LoadingStateButton<FinanceLinksLoading>(
-                  bloc: financeLinksBloc,
-                  button: CortadoFatButton(
-                      width: SizeConfig.screenWidth * .1,
-                      height: 70,
-                      backgroundColor: AppColors.dark,
-                      text: "Get Verified",
-                      onTap: () => financeLinksBloc.add(CreateCustomAccountLink(
-                          financeBloc.state.customAccount.id))),
-                ),
+                CortadoFatButton(
+                    width: SizeConfig.screenWidth * .1,
+                    height: 70,
+                    backgroundColor: AppColors.dark,
+                    text: "Get Verified",
+                    onTap: () => financeLinksBloc.add(CreateCustomAccountLink(
+                        financeBloc.state.customAccount.id))),
                 Expanded(child: Image.asset('images/make_it_rain.png')),
               ],
             ),

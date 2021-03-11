@@ -9,7 +9,10 @@ class FinanceState extends Equatable {
 
   const FinanceState.inital() : this._();
 
-  const FinanceState.unverified() : this._(status: FinanceStatus.unverified);
+  const FinanceState.unverified({CustomAccount customAccount})
+      : this._(
+            customAccount: customAccount ?? CustomAccount.empty,
+            status: FinanceStatus.unverified);
 
   const FinanceState.loading() : this._(status: FinanceStatus.loading);
 
@@ -22,4 +25,3 @@ class FinanceState extends Equatable {
   @override
   List<Object> get props => [status, customAccount];
 }
-

@@ -64,11 +64,10 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
       CustomAccount customAccount =
           await stripeService.retrieveCustomAccount(event.account);
 
-      if (
-          customAccount.requirements.currentlyDue.isNotEmpty) {
+      if (customAccount.requirements.currentlyDue.isNotEmpty) {
         print(customAccount.id + " is not verified yet");
         print("Currently due:" + customAccount.requirements.currentlyDue[0]);
-        yield FinanceState.unverified();
+        yield FinanceState.unverified(customAccount: customAccount);
       } else {
         yield FinanceState.verified(customAccount);
       }
