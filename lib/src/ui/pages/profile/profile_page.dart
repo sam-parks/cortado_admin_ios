@@ -83,15 +83,15 @@ class _ProfilePageState extends State<ProfilePage> {
     return reformattedHours;
   }
 
-  _payoutWidget(FinanceStatus status) {
+  _payoutWidget(FinanceState financeState) {
     return Stack(
       children: [
         DashboardCard(
             innerHorizontalPadding: 10,
             title: "Payout details",
             innerColor: AppColors.light,
-            content: _financeStatusToWidget(status)),
-        if (status == FinanceStatus.verified)
+            content: _financeStatusToWidget(financeState)),
+        if (financeState.status == FinanceStatus.verified)
           Positioned(
             right: 15,
             top: 10,
@@ -317,16 +317,16 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  _financeStatusToWidget(FinanceStatus status) {
-    switch (status) {
+  _financeStatusToWidget(FinanceState financeState) {
+    switch (financeState.status) {
       case FinanceStatus.initial:
         return _financeInitialWidget();
         break;
       case FinanceStatus.unverified:
-        return _verifyAccountContent();
+        return _verifyAccountContent(financeState);
         break;
       case FinanceStatus.verified:
-        return _customAccountContent();
+        return _customAccountContent(financeState);
         break;
       case FinanceStatus.loading:
         return Center(child: LatteLoader());
@@ -334,9 +334,9 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  _customAccountContent() {
+  _customAccountContent(FinanceState financeState) {
     ExternalAccount externalAccount =
-        financeBloc.state.customAccount.externalAccounts.externalAccounts.first;
+        financeState.customAccount.externalAccounts.externalAccounts.first;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -551,11 +551,11 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  _verifyAccountContent() {
+  _verifyAccountContent(FinanceState financeState) {
     return Container(
       child: Column(
         children: <Widget>[
-          financeBloc.state.customAccount == null
+          financeState.customAccount == CustomAccount.empty
               ? Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: AutoSizeText(
@@ -564,8 +564,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     maxLines: 4,
                   ),
                 )
-              : financeBloc
-                      .state.customAccount.requirements.currentlyDue.isNotEmpty
+              : financeState.customAccount.requirements.currentlyDue.isNotEmpty
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: AutoSizeText(
@@ -677,7 +676,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           _shopDetailsWidget(coffeeShopState),
                           Column(
                             children: <Widget>[
-                              _payoutWidget(financeState.status),
+                              _payoutWidget(financeState),
                               _baristaWidget(coffeeShopState)
                             ],
                           )
